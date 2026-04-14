@@ -1,0 +1,157 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "networkInterfaceName": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "virtualMachineName": {
+            "type": "string"
+        },
+        "virtualMachineComputerName": {
+            "type": "string"
+        },
+        "virtualMachineRG": {
+            "type": "string"
+        },
+        "osDiskType": {
+            "type": "string"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "secureString"
+        },
+        "virtualMachineZone": {
+            "type": "string" 
+        },
+        "privateIP":{
+            "type": "string"
+        },
+        "imageResourceId":{
+            "type": "string"
+        },
+        "ResourceGroupName":{
+            "type": "string"
+        },
+        "vnetRG": {
+            "type": "string"
+        },
+        "osDiskName":{
+            "type" : "string"
+        },
+        "diskEncryptionSetId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "dataDiskName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "dataDiskSizeGB": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "dataDiskStorageType": {
+            "type": "string",
+            "defaultValue": "StandardSSD_LRS"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId(parameters('vnetRG'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "static",
+                            "privateIPAddress": "[parameters('privateIP')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('virtualMachineName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "location": "[parameters('location')]",
+            "zones" : [ 
+                "[parameters('virtualMachineZone')]" 
+            ],
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "name": "[parameters('osDiskName')]",
+                        "createOption": "fromImage",
+                        "caching": "None",
+                        "managedDisk": "[if(empty(parameters('diskEncryptionSetId')), json(concat('{\"storageAccountType\":\"', parameters('osDiskType'), '\"}')), json(concat('{\"storageAccountType\":\"', parameters('osDiskType'), '\",\"diskEncryptionSet\":{\"id\":\"', parameters('diskEncryptionSetId'), '\"}}')))]"
+                    },
+                    "dataDisks": "[if(or(empty(parameters('dataDiskName')), lessOrEquals(parameters('dataDiskSizeGB'), 0)), json('[]'), json(concat('[{\"name\":\"', parameters('dataDiskName'), '\",\"lun\":0,\"createOption\":\"Empty\",\"diskSizeGB\":', string(parameters('dataDiskSizeGB')), ',\"caching\":\"None\",\"managedDisk\":{\"storageAccountType\":\"', parameters('dataDiskStorageType'), '\"}}]')))]",
+                    "imageReference": {
+                        "id": "[parameters('imageResourceId')]"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachineComputerName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "linuxConfiguration": {
+                        "patchSettings": {
+                            "patchMode": "ImageDefault"
+                        }
+                    }
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
+}
