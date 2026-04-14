@@ -56,18 +56,6 @@
         "diskEncryptionSetId": {
             "type": "string",
             "defaultValue": ""
-        },
-        "dataDiskName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "dataDiskSizeGB": {
-            "type": "int",
-            "defaultValue": 0
-        },
-        "dataDiskStorageType": {
-            "type": "string",
-            "defaultValue": "StandardSSD_LRS"
         }
     },
     "variables": {
@@ -118,7 +106,6 @@
                         "caching": "None",
                         "managedDisk": "[if(empty(parameters('diskEncryptionSetId')), json(concat('{\"storageAccountType\":\"', parameters('osDiskType'), '\"}')), json(concat('{\"storageAccountType\":\"', parameters('osDiskType'), '\",\"diskEncryptionSet\":{\"id\":\"', parameters('diskEncryptionSetId'), '\"}}')))]"
                     },
-                    "dataDisks": "[if(or(empty(parameters('dataDiskName')), lessOrEquals(parameters('dataDiskSizeGB'), 0)), json('[]'), json(concat('[{\"name\":\"', parameters('dataDiskName'), '\",\"lun\":0,\"createOption\":\"Empty\",\"diskSizeGB\":', string(parameters('dataDiskSizeGB')), ',\"caching\":\"None\",\"managedDisk\":{\"storageAccountType\":\"', parameters('dataDiskStorageType'), '\"}}]')))]",
                     "imageReference": {
                         "id": "[parameters('imageResourceId')]"
                     }
