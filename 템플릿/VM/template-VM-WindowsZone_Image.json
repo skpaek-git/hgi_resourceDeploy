@@ -93,6 +93,13 @@
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
                 },
+                "securityProfile": {
+                    "securityType": "TrustedLaunch",
+                    "uefiSettings": {
+                        "secureBootEnabled": true,
+                        "vTpmEnabled": true
+                    }
+                },
                 "storageProfile": {
                     "osDisk": {
                         "name": "[concat(parameters('virtualMachineName'),'-OsDisk')]",
