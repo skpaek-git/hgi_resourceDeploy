@@ -1606,16 +1606,6 @@ function New-VmTemplateParameter {
 
     $adminPassword = Resolve-VmAdminPassword -Context $Context -Row $Row -VmName $VmName
     $desId = Resolve-DiskEncryptionSetId -Context $Context -Row $Row -FallbackRgName $RgName
-    $dataDiskSizeRaw = Get-CellValue -Row $Row -Field 'DataDiskSize'
-    $dataDiskSizeGB = 0
-    if ($dataDiskSizeRaw) {
-        $parsedDiskSize = 0
-        if (-not [int]::TryParse($dataDiskSizeRaw, [ref]$parsedDiskSize)) {
-            throw "DataDiskSize 값이 숫자가 아닙니다. VM=$VmName, DataDiskSize=$dataDiskSizeRaw"
-        }
-        $dataDiskSizeGB = $parsedDiskSize
-    }
-
     $vnetRG = Get-CellValue -Row $Row -Field 'VnetRG'
     if (-not $vnetRG) {
         $vnetRG = $RgName
@@ -1638,9 +1628,6 @@ function New-VmTemplateParameter {
         adminPassword                 = $adminPassword
         virtualMachineZone            = (Get-CellValue -Row $Row -Field 'Zones')
         ResourceGroupName             = $RgName
-        dataDiskName                  = (Get-CellValue -Row $Row -Field 'DataDiskName')
-        dataDiskSizeGB                = $dataDiskSizeGB
-        dataDiskStorageType           = (Convert-OsDiskStorageType -InputValue (Get-CellValue -Row $Row -Field 'DataDiskStorageType'))
     }
 
     if ($desId) {

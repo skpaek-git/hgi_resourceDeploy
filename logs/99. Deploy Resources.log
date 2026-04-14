@@ -1733,3 +1733,25 @@ OperationID : c120314c-e98e-41f9-9087-c34a01c320dc
 2026-04-14 16:39:17.349	[INFO] [DryRun] VM 배포 예정: hazr-d-bdp-cxmap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
 2026-04-14 16:39:17.467	[INFO] [END] Deploy-Vms
 2026-04-14 16:39:17.599	[INFO] [END] Script
+2026-04-14 18:15:17.729	[INFO] [START] Script
+2026-04-14 18:15:17.803	[INFO] [START] Initialize-Modules
+2026-04-14 18:15:47.974	[INFO] [END] Initialize-Modules
+2026-04-14 18:15:48.215	[INFO] [START] Ensure-AzSession
+2026-04-14 18:16:02.010	[INFO] [END] Ensure-AzSession
+2026-04-14 18:16:02.092	[INFO] [START] Validate-Inputs
+2026-04-14 18:16:02.526	[INFO] Excel 시트 로드: VM_DEV
+2026-04-14 18:16:03.105	[INFO] Excel 시트 로드: KV_PRD_Old
+2026-04-14 18:16:03.502	[INFO] Excel 시트 로드: VM_DEV
+2026-04-14 18:16:03.698	[INFO] [END] Validate-Inputs
+2026-04-14 18:16:03.749	[INFO] [START] Deploy-Vms
+2026-04-14 18:16:03.922	[INFO] Excel 시트 로드: VM_DEV
+2026-04-14 18:16:04.129	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-d-dis-rg (koreacentral)
+2026-04-14 18:16:04.206	[INFO] [DryRun] VM 배포 예정: hazr-d-dis-ap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-04-14 18:16:04.250	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-d-dis-rg (koreacentral)
+2026-04-14 18:16:04.297	[INFO] [DryRun] VM 배포 예정: hazr-d-dis-adm01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-04-14 18:16:04.348	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-d-dis-rg (koreacentral)
+2026-04-14 18:16:04.395	[INFO] [DryRun] VM 배포 예정: hazr-d-dis-dfir01 (Template=.\템플릿\VM\template-VM-WindowsZone_Image.json)
+2026-04-14 18:16:04.446	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-d-bdp-rg (koreacentral)
+2026-04-14 18:16:04.493	[INFO] [DryRun] VM 배포 예정: hazr-d-bdp-cxmap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-04-14 18:16:04.548	[INFO] [END] Deploy-Vms
+2026-04-14 18:16:04.598	[INFO] [END] Script
