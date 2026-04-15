@@ -8,6 +8,10 @@ param(
     [string[]]$DeployType = @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM'),
 
     [Parameter()]
+    [Alias('VmRole','Role')]
+    [string[]]$Option = @(),
+
+    [Parameter()]
     [switch]$ConnectAccount,
 
     [Parameter()]
@@ -20,12 +24,14 @@ $ErrorActionPreference = 'Stop'
 class DeploymentContext {
     [string]$ExcelPath
     [string[]]$DeployType
+    [string[]]$VmRoleFilter
     [bool]$DryRun
     [string]$SubscriptionId
 
-    DeploymentContext([string]$excelPath, [string[]]$deployType, [bool]$dryRun, [string]$subscriptionId) {
+    DeploymentContext([string]$excelPath, [string[]]$deployType, [string[]]$vmRoleFilter, [bool]$dryRun, [string]$subscriptionId) {
         $this.ExcelPath = $excelPath
         $this.DeployType = $deployType
+        $this.VmRoleFilter = $vmRoleFilter
         $this.DryRun = $dryRun
         $this.SubscriptionId = $subscriptionId
     }
@@ -205,6 +211,44 @@ function Add-Issue {
         [string]$Message
     )
     $Issues.Add([ValidationIssue]::new($Type, $Row, $ResourceName, $Field, $Message))
+}
+
+function Get-FilteredVmRows {
+    param(
+        [DeploymentContext]$Context,
+        [psobject[]]$Rows
+    )
+
+    $allRows = @($Rows)
+    if ($Context.VmRoleFilter.Count -eq 0) { return $allRows }
+
+    $filters = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($f in $Context.VmRoleFilter) {
+        if (-not [string]::IsNullOrWhiteSpace($f)) {
+            [void]$filters.Add($f.Trim())
+        }
+    }
+    if ($filters.Count -eq 0) { return $allRows }
+
+    $roleFieldExists = $false
+    foreach ($r in $allRows) {
+        if ($r.PSObject.Properties['Role']) {
+            $roleFieldExists = $true
+            break
+        }
+    }
+    if (-not $roleFieldExists) {
+        throw "VM 시트에 'Role' 컬럼이 없습니다. -Option 필터를 사용하려면 Role 컬럼이 필요합니다."
+    }
+
+    $filtered = @(
+        $allRows | Where-Object {
+            $role = Get-CellValue -Row $_ -Field 'Role'
+            $role -and $filters.Contains($role)
+        }
+    )
+    Write-Info "VM Role 필터 적용: $($filters -join ', ') / 대상 행 수: $($filtered.Count)"
+    return $filtered
 }
 
 function Test-RequiredField {
@@ -442,6 +486,7 @@ function Validate-Inputs {
 
     if ($Context.DeployType -contains 'VM') {
         $rows = Get-SheetRows -Context $Context -SheetCandidates @('VM','VM_PRD')
+        $rows = Get-FilteredVmRows -Context $Context -Rows $rows
         $i = 1
         foreach ($r in $rows) {
             $vmName = Get-CellValue -Row $r -Field 'Name'
@@ -511,7 +556,10 @@ function Validate-Inputs {
     }
     $vmRows = @()
     if ($Context.DeployType -contains 'VM') {
-        try { $vmRows = @(Get-SheetRows -Context $Context -SheetCandidates @('VM','VM_PRD') -Optional) } catch {}
+        try {
+            $vmRows = @(Get-SheetRows -Context $Context -SheetCandidates @('VM','VM_PRD') -Optional)
+            $vmRows = @(Get-FilteredVmRows -Context $Context -Rows $vmRows)
+        } catch {}
     }
 
     $kvNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
@@ -1670,6 +1718,7 @@ function Deploy-Vms {
 
     Start-Step 'Deploy-Vms'
     $rows = Get-SheetRows -Context $Context -SheetCandidates @('VM','VM_PRD')
+    $rows = Get-FilteredVmRows -Context $Context -Rows $rows
 
     foreach ($row in $rows) {
         $vmName = Get-CellValue -Row $row -Field 'Name'
@@ -1786,7 +1835,7 @@ function Run-Main {
     $resolvedExcelPath = Resolve-ExcelFullPath -Path $ExcelPath
     $subscriptionId = Ensure-AzSession -ConnectAccount:$ConnectAccount -DryRun:$DryRun
 
-    $context = [DeploymentContext]::new($resolvedExcelPath, $DeployType, [bool]$DryRun, $subscriptionId)
+    $context = [DeploymentContext]::new($resolvedExcelPath, $DeployType, $Option, [bool]$DryRun, $subscriptionId)
 
     $issues = @(Validate-Inputs -Context $context)
     $blockingIssues = @($issues | Where-Object { $_.Message -notlike '권장 필드*' })
