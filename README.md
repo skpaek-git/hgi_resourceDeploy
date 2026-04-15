@@ -47,14 +47,14 @@
 & ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('NSG') -ConnectAccount
 
 # 통합 배포 (권장 순서)
-& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM') -ConnectAccount
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM')
 ```
 
 ## 실행 환경 권장
 - `powershell`(5.1)보다 `pwsh`(7+) 사용 권장
 - 예시:
 ```powershell
-pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\배포파일.xlsx" -DeployType @('KV','DES','VM') -ConnectAccount
+pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\배포파일.xlsx" -DeployType @('KV','DES','VM')
 ```
 
 ## 핵심 동작 규칙

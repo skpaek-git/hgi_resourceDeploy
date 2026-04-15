@@ -1652,27 +1652,6 @@ function New-VmTemplateParameter {
         $osDiskName = "$VmName-OsDisk"
     }
 
-    $dataDiskName = Get-CellValue -Row $Row -Field 'DataDiskName'
-    $dataDiskSizeText = Get-CellValue -Row $Row -Field 'DataDiskSize'
-    $dataDiskSizeGB = 0
-    if ($dataDiskSizeText) {
-        $parsedDataDiskSize = 0
-        if (-not [int]::TryParse($dataDiskSizeText, [ref]$parsedDataDiskSize)) {
-            throw "DataDiskSize 값이 숫자가 아닙니다. VM=$VmName, DataDiskSize=$dataDiskSizeText"
-        }
-        if ($parsedDataDiskSize -lt 0) {
-            throw "DataDiskSize 값은 0 이상이어야 합니다. VM=$VmName, DataDiskSize=$dataDiskSizeText"
-        }
-        $dataDiskSizeGB = $parsedDataDiskSize
-    }
-
-    $dataDiskStorageRaw = Get-CellValue -Row $Row -Field 'DataDiskStorageType'
-    $dataDiskStorageType = if ($dataDiskStorageRaw) {
-        Convert-OsDiskStorageType -InputValue $dataDiskStorageRaw
-    } else {
-        'StandardSSD_LRS'
-    }
-
     $adminPassword = Resolve-VmAdminPassword -Context $Context -Row $Row -VmName $VmName
     $desId = Resolve-DiskEncryptionSetId -Context $Context -Row $Row -FallbackRgName $RgName
     $vnetRG = Get-CellValue -Row $Row -Field 'VnetRG'
@@ -1693,9 +1672,6 @@ function New-VmTemplateParameter {
         virtualMachineSize            = $vmSize
         osDiskType                    = (Convert-OsDiskStorageType -InputValue (Get-CellValue -Row $Row -Field 'OsDiskStorageType'))
         osDiskName                    = $osDiskName
-        dataDiskName                  = $dataDiskName
-        dataDiskSizeGB                = $dataDiskSizeGB
-        dataDiskStorageType           = $dataDiskStorageType
         adminUsername                 = (Get-CellValue -Row $Row -Field 'AdminUsername')
         adminPassword                 = $adminPassword
         virtualMachineZone            = (Get-CellValue -Row $Row -Field 'Zones')
