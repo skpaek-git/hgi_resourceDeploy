@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter()]
     [string]$ExcelPath = '.\서버정보\20260320_샘플_리소스배포_정리.xlsx',
@@ -1561,6 +1561,64 @@ function Resolve-DiskEncryptionSetId {
     return $des.Id
 }
 
+function Get-DiskEncryptionSetByResourceId {
+    param([string]$ResourceId)
+
+    if ([string]::IsNullOrWhiteSpace($ResourceId)) { return $null }
+    if ($ResourceId -notmatch '/resourceGroups/([^/]+)/providers/Microsoft\.Compute/diskEncryptionSets/([^/]+)$') {
+        throw "DiskEncryptionSetId 형식이 올바르지 않습니다: $ResourceId"
+    }
+
+    $rgName = $Matches[1]
+    $desName = $Matches[2]
+    return (Get-AzDiskEncryptionSet -ResourceGroupName $rgName -Name $desName -ErrorAction SilentlyContinue)
+}
+
+function Assert-DesDoubleEncryption {
+    param(
+        [DeploymentContext]$Context,
+        [psobject]$Row,
+        [string]$FallbackRgName
+    )
+
+    $requireDoubleEncryption = Convert-ToBoolean -Value (Get-CellValueAny -Row $Row -Fields @('UseOsDiskDoubleEncryption','EnableOsDiskDoubleEncryption')) -Default $false
+    if (-not $requireDoubleEncryption) { return }
+
+    $explicitId = Get-CellValueAny -Row $Row -Fields @('DiskEncryptionSetId','DesResourceId')
+    $desName = Get-CellValueAny -Row $Row -Fields @('DESName','DiskEncryptionSetName')
+    if (-not $explicitId -and -not $desName) {
+        throw "UseOsDiskDoubleEncryption=TRUE 인 경우 DESName 또는 DiskEncryptionSetId가 필요합니다."
+    }
+    if ($Context.DryRun) { return }
+
+    $des = $null
+    if ($explicitId) {
+        $des = Get-DiskEncryptionSetByResourceId -ResourceId $explicitId
+    } else {
+        $desRg = Get-CellValueAny -Row $Row -Fields @('DESRG','DesRG')
+        if (-not $desRg) { $desRg = $FallbackRgName }
+        $des = Get-AzDiskEncryptionSet -ResourceGroupName $desRg -Name $desName -ErrorAction SilentlyContinue
+    }
+
+    if (-not $des) {
+        throw "이중 암호화 확인 대상 DES를 찾을 수 없습니다. DESName=$desName, DiskEncryptionSetId=$explicitId"
+    }
+
+    $encType = $null
+    if ($des.PSObject.Properties['EncryptionType']) {
+        $encType = [string]$des.EncryptionType
+    }
+
+    if ([string]::IsNullOrWhiteSpace($encType)) {
+        Write-WarnLog "DES EncryptionType을 확인하지 못했습니다. DES=$($des.Name)"
+        return
+    }
+
+    if ($encType -ne 'EncryptionAtRestWithPlatformAndCustomerKeys') {
+        throw "DES 이중 암호화 설정이 필요합니다. DES=$($des.Name), EncryptionType=$encType"
+    }
+}
+
 function Resolve-VmAdminPassword {
     param(
         [DeploymentContext]$Context,
@@ -1653,11 +1711,13 @@ function New-VmTemplateParameter {
     }
 
     $adminPassword = Resolve-VmAdminPassword -Context $Context -Row $Row -VmName $VmName
+    Assert-DesDoubleEncryption -Context $Context -Row $Row -FallbackRgName $RgName
     $desId = Resolve-DiskEncryptionSetId -Context $Context -Row $Row -FallbackRgName $RgName
     $vnetRG = Get-CellValue -Row $Row -Field 'VnetRG'
     if (-not $vnetRG) {
         $vnetRG = $RgName
     }
+    $enableAcceleratedNetworking = Convert-ToBoolean -Value (Get-CellValue -Row $Row -Field 'EnableAcceleratedNetworking') -Default $true
 
     $params = @{
         location                      = (Get-CellValue -Row $Row -Field 'Location')
@@ -1674,6 +1734,7 @@ function New-VmTemplateParameter {
         osDiskName                    = $osDiskName
         adminUsername                 = (Get-CellValue -Row $Row -Field 'AdminUsername')
         adminPassword                 = $adminPassword
+        enableAcceleratedNetworking   = $enableAcceleratedNetworking
         virtualMachineZone            = (Get-CellValue -Row $Row -Field 'Zones')
         ResourceGroupName             = $RgName
     }
@@ -1878,3 +1939,4 @@ try {
     Write-ErrorLog "치명적 오류: $($_.Exception.Message)"
     throw
 }
+

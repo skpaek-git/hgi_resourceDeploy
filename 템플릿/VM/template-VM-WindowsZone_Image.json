@@ -38,6 +38,10 @@
         "adminPassword": {
             "type": "secureString"
         },
+        "enableAcceleratedNetworking": {
+            "type": "bool",
+            "defaultValue": true
+        },
         "virtualMachineZone": {
             "type": "string" 
         },
@@ -64,6 +68,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [],
             "properties": {
+                "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
