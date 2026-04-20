@@ -1979,3 +1979,14 @@ s
 2026-04-20 11:13:37.641	[INFO] [DryRun] VM 배포 예정: znc-temp-vm02 (Template=.\템플릿\VM\template-VM-WindowsZone_Image.json)
 2026-04-20 11:13:37.683	[INFO] [END] Deploy-Vms
 2026-04-20 11:13:37.722	[INFO] [END] Script
+2026-04-20 14:49:40.366	[INFO] [START] Script
+2026-04-20 14:49:40.456	[INFO] [START] Initialize-Modules
+2026-04-20 14:50:24.632	[INFO] [END] Initialize-Modules
+2026-04-20 14:50:24.694	[INFO] [START] Ensure-AzSession
+2026-04-20 14:50:36.007	[INFO] [END] Ensure-AzSession
+2026-04-20 14:50:36.078	[INFO] [START] Validate-Inputs
+2026-04-20 14:50:36.426	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-20 14:50:36.468	[INFO] [END] Validate-Inputs
+2026-04-20 14:50:36.510	[INFO] [START] Deploy-DataDisks
+2026-04-20 14:50:37.274	[INFO] [END] Deploy-DataDisks
+2026-04-20 14:50:37.325	[INFO] [END] Script

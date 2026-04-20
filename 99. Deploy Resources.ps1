@@ -4,7 +4,7 @@ param(
     [string]$ExcelPath = '.\서버정보\20260320_샘플_리소스배포_정리.xlsx',
 
     [Parameter()]
-    [ValidateSet('RG','VNET','STORAGE','KV','DES','LB','NSG','VM')]
+    [ValidateSet('RG','VNET','STORAGE','KV','DES','LB','NSG','VM','DATADISK')]
     [string[]]$DeployType = @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM'),
 
     [Parameter()]
@@ -1815,6 +1815,32 @@ function Deploy-Vms {
     End-Step 'Deploy-Vms'
 }
 
+function Deploy-DataDisks {
+    param([DeploymentContext]$Context)
+
+    Start-Step 'Deploy-DataDisks'
+
+    $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath '8. Deploy DataDisk.ps1'
+    if (-not (Test-Path -LiteralPath $scriptPath)) {
+        throw "데이터 디스크 스크립트를 찾을 수 없습니다: $scriptPath"
+    }
+
+    $invokeParams = @{
+        ExcelPath      = $Context.ExcelPath
+        WorksheetName  = 'VM_DEV_Datadisk'
+        DryRun         = $Context.DryRun
+        ConnectAccount = $false
+    }
+
+    if ($Context.VmRoleFilter.Count -gt 0) {
+        $invokeParams['Option'] = $Context.VmRoleFilter
+    }
+
+    & $scriptPath @invokeParams
+
+    End-Step 'Deploy-DataDisks'
+}
+
 function Initialize-Modules {
     Start-Step 'Initialize-Modules'
 
@@ -1915,7 +1941,7 @@ function Run-Main {
         throw '입력 데이터 검증에 실패했습니다. Excel 데이터를 수정한 후 다시 실행해 주세요.'
     }
 
-    $deploymentOrder = @('RG','VNET','STORAGE','KV','DES','LB','VM','NSG')
+    $deploymentOrder = @('RG','VNET','STORAGE','KV','DES','LB','VM','DATADISK','NSG')
     foreach ($type in $deploymentOrder) {
         if ($context.DeployType -notcontains $type) { continue }
         switch ($type) {
@@ -1927,6 +1953,7 @@ function Run-Main {
             'LB' { Deploy-LoadBalancers -Context $context }
             'NSG' { Deploy-Nsgs -Context $context }
             'VM' { Deploy-Vms -Context $context }
+            'DATADISK' { Deploy-DataDisks -Context $context }
         }
     }
 
