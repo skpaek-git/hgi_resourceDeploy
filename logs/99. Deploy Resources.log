@@ -2001,3 +2001,25 @@ s
 2026-04-22 09:51:03.093	[INFO] [START] Deploy-DataDisks
 2026-04-22 09:51:03.943	[INFO] [END] Deploy-DataDisks
 2026-04-22 09:51:03.984	[INFO] [END] Script
+2026-04-22 10:22:50.924	[INFO] [START] Script
+2026-04-22 10:22:50.989	[INFO] [START] Initialize-Modules
+2026-04-22 10:23:10.848	[INFO] [END] Initialize-Modules
+2026-04-22 10:23:10.897	[INFO] [START] Ensure-AzSession
+2026-04-22 10:23:19.599	[INFO] [END] Ensure-AzSession
+2026-04-22 10:23:19.709	[INFO] [START] Validate-Inputs
+2026-04-22 10:23:20.174	[INFO] Excel 시트 로드: VM_DEV
+2026-04-22 10:23:20.595	[INFO] VM Role 필터 적용: TEST / 대상 행 수: 2
+2026-04-22 10:23:20.860	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-22 10:23:21.020	[INFO] Excel 시트 로드: VM_DEV
+2026-04-22 10:23:21.230	[INFO] VM Role 필터 적용: TEST / 대상 행 수: 2
+2026-04-22 10:23:21.268	[INFO] [END] Validate-Inputs
+2026-04-22 10:23:21.322	[INFO] [START] Deploy-Vms
+2026-04-22 10:23:21.531	[INFO] Excel 시트 로드: VM_DEV
+2026-04-22 10:23:21.751	[INFO] VM Role 필터 적용: TEST / 대상 행 수: 2
+2026-04-22 10:23:21.814	[INFO] [DryRun] 리소스 그룹 생성 예정: temp-zenithcloud-rg (koreacentral)
+2026-04-22 10:23:21.979	[INFO] [DryRun] VM 배포 예정: temp-znc-vm01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-04-22 10:23:22.036	[INFO] [DryRun] 리소스 그룹 생성 예정: temp-zenithcloud-rg (koreacentral)
+2026-04-22 10:23:22.095	[WARN] 템플릿 미정의 파라미터 제외: osDiskName, ResourceGroupName (Template=.\템플릿\VM\template-VM-WindowsZone_Image.json)
+2026-04-22 10:23:22.149	[INFO] [DryRun] VM 배포 예정: temp-znc-vm02 (Template=.\템플릿\VM\template-VM-WindowsZone_Image.json)
+2026-04-22 10:23:22.202	[INFO] [END] Deploy-Vms
+2026-04-22 10:23:22.252	[INFO] [END] Script

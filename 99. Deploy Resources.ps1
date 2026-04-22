@@ -1774,6 +1774,52 @@ function Get-VmTemplateFile {
     throw "지원하지 않는 VM 조합입니다. OsType=$osType, SourceType=$sourceType"
 }
 
+function Get-TemplateParameterNameSet {
+    param([string]$TemplateFile)
+
+    $fullTemplatePath = if ([System.IO.Path]::IsPathRooted($TemplateFile)) {
+        $TemplateFile
+    } else {
+        Join-Path -Path $PSScriptRoot -ChildPath $TemplateFile
+    }
+
+    if (-not (Test-Path -LiteralPath $fullTemplatePath)) {
+        throw "템플릿 파일을 찾을 수 없습니다: $fullTemplatePath"
+    }
+
+    $templateJson = Get-Content -Path $fullTemplatePath -Raw | ConvertFrom-Json -Depth 20
+    $set = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($p in $templateJson.parameters.PSObject.Properties.Name) {
+        [void]$set.Add($p)
+    }
+    return $set
+}
+
+function Filter-TemplateParameters {
+    param(
+        [hashtable]$Parameters,
+        [string]$TemplateFile
+    )
+
+    $allowed = Get-TemplateParameterNameSet -TemplateFile $TemplateFile
+    $filtered = @{}
+    $dropped = New-Object System.Collections.Generic.List[string]
+
+    foreach ($k in $Parameters.Keys) {
+        if ($allowed.Contains($k)) {
+            $filtered[$k] = $Parameters[$k]
+        } else {
+            [void]$dropped.Add($k)
+        }
+    }
+
+    if ($dropped.Count -gt 0) {
+        Write-WarnLog "템플릿 미정의 파라미터 제외: $($dropped -join ', ') (Template=$TemplateFile)"
+    }
+
+    return $filtered
+}
+
 function Deploy-Vms {
     param([DeploymentContext]$Context)
 
@@ -1792,6 +1838,7 @@ function Deploy-Vms {
 
         $templateFile = Get-VmTemplateFile -Row $row
         $params = New-VmTemplateParameter -Context $Context -Row $row -VmName $vmName -RgName $rgName
+        $params = Filter-TemplateParameters -Parameters $params -TemplateFile $templateFile
 
         if ($Context.DryRun) {
             Write-Info "[DryRun] VM 배포 예정: $vmName (Template=$templateFile)"
