@@ -1990,3 +1990,14 @@ s
 2026-04-20 14:50:36.510	[INFO] [START] Deploy-DataDisks
 2026-04-20 14:50:37.274	[INFO] [END] Deploy-DataDisks
 2026-04-20 14:50:37.325	[INFO] [END] Script
+2026-04-22 09:50:07.959	[INFO] [START] Script
+2026-04-22 09:50:08.052	[INFO] [START] Initialize-Modules
+2026-04-22 09:50:53.170	[INFO] [END] Initialize-Modules
+2026-04-22 09:50:53.231	[INFO] [START] Ensure-AzSession
+2026-04-22 09:51:02.430	[INFO] [END] Ensure-AzSession
+2026-04-22 09:51:02.523	[INFO] [START] Validate-Inputs
+2026-04-22 09:51:02.993	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-22 09:51:03.040	[INFO] [END] Validate-Inputs
+2026-04-22 09:51:03.093	[INFO] [START] Deploy-DataDisks
+2026-04-22 09:51:03.943	[INFO] [END] Deploy-DataDisks
+2026-04-22 09:51:03.984	[INFO] [END] Script
