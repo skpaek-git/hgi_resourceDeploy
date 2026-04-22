@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string]$ExcelPath = '.\서버정보\20260320_샘플_리소스배포_정리.xlsx',
+    [string]$ExcelPath = '.\서버정보\20260422_리소스배포_종합.xlsx',
 
     [Parameter()]
     [switch]$ConnectAccount,

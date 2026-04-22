@@ -5,7 +5,7 @@ Connect-AzAccount
     # Module
     Install-Module ImportExcel
     Import-Module ImportExcel
-    $rgListData = Import-Excel ".\서버정보\20260320_샘플_리소스배포_정리.xlsx" -WorksheetName "RG"
+    $rgListData = Import-Excel ".\서버정보\20260422_리소스배포_종합.xlsx" -WorksheetName "RG"
 
     # Deploy RG
     Write-Host "----------------------------------------------------" -ForegroundColor Cyan

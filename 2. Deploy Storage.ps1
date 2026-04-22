@@ -5,7 +5,7 @@ Connect-AzAccount
     # Module
     Install-Module ImportExcel
     Import-Module ImportExcel
-    $storageListData = Import-Excel ".\서버정보\20260320_샘플_리소스배포_정리.xlsx" -WorksheetName "Storage"
+    $storageListData = Import-Excel ".\서버정보\20260422_리소스배포_종합.xlsx" -WorksheetName "Storage"
 
     # Deploy Storage(Boot)
     Write-Host "----------------------------------------------------" -ForegroundColor Cyan

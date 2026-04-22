@@ -5,7 +5,7 @@ Connect-AzAccount
     # Module
     Install-Module ImportExcel
     Import-Module ImportExcel
-    $ruleListData = Import-Excel ".\서버정보\20260320_샘플_리소스배포_정리.xlsx" -WorksheetName "NSG_PRD"
+    $ruleListData = Import-Excel ".\서버정보\20260422_리소스배포_종합.xlsx" -WorksheetName "NSG"
 
     # Deploy NSG
         $nsgGroups = $nsgListData <#| Where-Object {$_.Role -eq "WEB3"}#>| Group-Object NSGName 
@@ -93,7 +93,7 @@ Connect-AzAccount
     # Module
     Install-Module ImportExcel
     Import-Module ImportExcel
-    $ruleListData = Import-Excel ".\서버정보\20260318_샘플_리소스배포_CustomImageVM_NSG_RG_VNET_LB.xlsx" -WorksheetName "NSG_PRD_Rule"
+    $ruleListData = Import-Excel ".\서버정보\20260422_리소스배포_종합.xlsx" -WorksheetName "NSG_Rule"
 
     $ruleGroups = $ruleListData <#| Where-Object {$_.Role -eq "WEB3"} #>| Group-Object NSGName
     foreach ($group in $ruleGroups) {

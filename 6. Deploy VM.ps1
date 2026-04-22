@@ -8,7 +8,7 @@ Install-Module ImportExcel
 Import-Module ImportExcel
 
 # Import Excel
-$xls = Import-Excel ".\서버정보\20260320_샘플_리소스배포_정리.xlsx" -WorksheetName "VM_PRD" # CSV 파일 체크 필요
+$xls = Import-Excel ".\서버정보\20260422_리소스배포_종합.xlsx" -WorksheetName "VM" # CSV 파일 체크 필요
 
 # Linux VM 배포
 $VMs = $xls | Where-Object {$_.OsType -eq "Linux"}

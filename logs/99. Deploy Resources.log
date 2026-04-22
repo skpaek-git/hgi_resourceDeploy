@@ -2023,3 +2023,30 @@ s
 2026-04-22 10:23:22.149	[INFO] [DryRun] VM 배포 예정: temp-znc-vm02 (Template=.\템플릿\VM\template-VM-WindowsZone_Image.json)
 2026-04-22 10:23:22.202	[INFO] [END] Deploy-Vms
 2026-04-22 10:23:22.252	[INFO] [END] Script
+2026-04-22 10:52:44.628	[INFO] [START] Script
+2026-04-22 10:52:44.681	[INFO] [START] Initialize-Modules
+2026-04-22 10:53:14.850	[INFO] [END] Initialize-Modules
+2026-04-22 10:53:14.894	[INFO] [START] Ensure-AzSession
+2026-04-22 10:53:22.174	[INFO] [END] Ensure-AzSession
+2026-04-22 10:53:22.263	[INFO] [START] Validate-Inputs
+2026-04-22 10:53:22.701	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-22 10:53:22.748	[INFO] [END] Validate-Inputs
+2026-04-22 10:53:22.799	[INFO] [START] Deploy-DataDisks
+2026-04-22 10:53:23.556	[INFO] [END] Deploy-DataDisks
+2026-04-22 10:53:23.620	[INFO] [END] Script
+2026-04-22 11:01:35.535	[INFO] [START] Script
+2026-04-22 11:01:35.629	[INFO] [START] Initialize-Modules
+2026-04-22 11:01:58.256	[INFO] [END] Initialize-Modules
+2026-04-22 11:01:58.302	[ERR] 치명적 오류: Excel 파일을 찾을 수 없습니다: .\서버정보\20260422_리소스배포_종합.xlsx
+2026-04-22 11:04:10.754	[INFO] [START] Script
+2026-04-22 11:04:10.824	[INFO] [START] Initialize-Modules
+2026-04-22 11:04:29.523	[INFO] [END] Initialize-Modules
+2026-04-22 11:04:29.589	[WARN] 지정한 Excel 파일을 찾지 못해 최신 파일을 사용합니다: C:\Users\zenithn\PowerShell - 리소스 배포\서버정보\20260422_리소스배포_개발.xlsx
+2026-04-22 11:04:29.633	[INFO] [START] Ensure-AzSession
+2026-04-22 11:04:39.174	[INFO] [END] Ensure-AzSession
+2026-04-22 11:04:39.252	[INFO] [START] Validate-Inputs
+2026-04-22 11:04:39.644	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-22 11:04:39.672	[INFO] [END] Validate-Inputs
+2026-04-22 11:04:39.719	[INFO] [START] Deploy-DataDisks
+2026-04-22 11:04:40.345	[INFO] [END] Deploy-DataDisks
+2026-04-22 11:04:40.384	[INFO] [END] Script

@@ -1,7 +1,7 @@
 ﻿[CmdletBinding()]
 param(
     [Parameter()]
-    [string]$ExcelPath = '.\서버정보\20260320_샘플_리소스배포_정리.xlsx',
+    [string]$ExcelPath = '.\서버정보\20260422_리소스배포_종합.xlsx',
 
     [Parameter()]
     [ValidateSet('RG','VNET','STORAGE','KV','DES','LB','NSG','VM','DATADISK')]
@@ -1874,7 +1874,7 @@ function Deploy-DataDisks {
 
     $invokeParams = @{
         ExcelPath      = $Context.ExcelPath
-        WorksheetName  = 'VM_DEV_Datadisk'
+        WorksheetName  = 'VM_Datadisk'
         DryRun         = $Context.DryRun
         ConnectAccount = $false
     }
@@ -1910,9 +1910,34 @@ function Initialize-Modules {
 
 function Resolve-ExcelFullPath {
     param([string]$Path)
-    if (Test-Path -LiteralPath $Path) {
-        return (Resolve-Path -LiteralPath $Path).Path
+
+    $candidatePath = $Path
+    if (-not [System.IO.Path]::IsPathRooted($candidatePath)) {
+        $candidatePath = Join-Path -Path $PSScriptRoot -ChildPath $candidatePath
     }
+
+    if (Test-Path -LiteralPath $candidatePath) {
+        return (Resolve-Path -LiteralPath $candidatePath).Path
+    }
+
+    # 기본 파일명이 바뀌는 경우를 대비해 서버정보 폴더의 최신 리소스배포 파일로 보완
+    $serverInfoDir = if ([System.IO.Path]::IsPathRooted($Path)) {
+        Split-Path -Path $candidatePath -Parent
+    } else {
+        Join-Path -Path $PSScriptRoot -ChildPath '서버정보'
+    }
+
+    if (Test-Path -LiteralPath $serverInfoDir) {
+        $fallback = Get-ChildItem -Path $serverInfoDir -File -Filter '*.xlsx' -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}_리소스배포_.*\.xlsx$' } |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1
+        if ($fallback) {
+            Write-WarnLog "지정한 Excel 파일을 찾지 못해 최신 파일을 사용합니다: $($fallback.FullName)"
+            return $fallback.FullName
+        }
+    }
+
     throw "Excel 파일을 찾을 수 없습니다: $Path"
 }
 

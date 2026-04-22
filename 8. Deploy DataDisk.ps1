@@ -1,10 +1,10 @@
 ﻿[CmdletBinding()]
 param(
     [Parameter()]
-    [string]$ExcelPath = '.\서버정보\20260320_샘플_리소스배포_정리.xlsx',
+    [string]$ExcelPath = '.\서버정보\20260422_리소스배포_종합.xlsx',
 
     [Parameter()]
-    [string]$WorksheetName = 'VM_DEV_Datadisk',
+    [string]$WorksheetName = 'VM_Datadisk',
 
     [Parameter()]
     [Alias('VmRole','Role')]
@@ -178,9 +178,9 @@ function Resolve-DiskEncryptionSetId {
         throw 'DiskEncryptionSetId or DESName(DiskEncryptionSetName) is required.'
     }
 
-    $desRg = Get-CellValueAny -Row $Row -Fields @('DESRG','DesRG','DiskEncryptionSetRG','RGname','ResourceGroupName')
+    $desRg = Get-CellValueAny -Row $Row -Fields @('DESRG','DesRG','DiskEncryptionSetRG')
     if (-not $desRg) {
-        throw 'DESRG (or RGname) is required to resolve DES.'
+        throw 'DESRG is required to resolve DESName.'
     }
 
     if ($IsDryRun) {
@@ -322,7 +322,18 @@ if (-not [System.IO.Path]::IsPathRooted($excelCandidatePath)) {
     $excelCandidatePath = Join-Path -Path $PSScriptRoot -ChildPath $excelCandidatePath
 }
 if (-not (Test-Path -LiteralPath $excelCandidatePath)) {
-    throw "Excel file not found: $excelCandidatePath"
+    $serverInfoDir = Join-Path -Path $PSScriptRoot -ChildPath '서버정보'
+    $fallback = Get-ChildItem -Path $serverInfoDir -File -Filter '*.xlsx' -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -match '^\d{8}_리소스배포_.*\.xlsx$' } |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+    if ($fallback) {
+        Write-WarnLog "Excel file not found: $excelCandidatePath"
+        Write-WarnLog "Fallback Excel selected: $($fallback.FullName)"
+        $excelCandidatePath = $fallback.FullName
+    } else {
+        throw "Excel file not found: $excelCandidatePath"
+    }
 }
 $resolvedExcelPath = [string](Resolve-Path -LiteralPath $excelCandidatePath)
 
@@ -345,7 +356,7 @@ $rowNo = 2
 foreach ($row in $rows) {
     try {
         $vmName = Get-CellValueAny -Row $row -Fields @('VMName','VmName','VirtualMachineName','Name')
-        $rgName = Get-CellValueAny -Row $row -Fields @('RGname','ResourceGroupName')
+        $rgName = Get-CellValueAny -Row $row -Fields @('RGname','ResourceGroupName','DataDiskRG','DiskRG')
         $location = Get-CellValue -Row $row -Field 'Location'
         $zoneRaw = Get-CellValueAny -Row $row -Fields @('Zone','Zones')
         $enableRaw = Get-CellValueAny -Row $row -Fields @('Enable','Enabled')
@@ -374,7 +385,7 @@ foreach ($row in $rows) {
         }
 
         if (-not $vmName) { throw 'VMName is required.' }
-        if (-not $rgName) { throw 'RGname is required.' }
+        if (-not $rgName) { throw 'RGname (or DataDiskRG/DiskRG) is required.' }
         if (-not $location) { throw 'Location is required.' }
         if (-not $zoneRaw) { throw 'Zone/Zones is required.' }
         $zone = $zoneRaw.Trim()
