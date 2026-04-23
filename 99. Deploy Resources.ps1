@@ -1575,7 +1575,12 @@ function Deploy-Udrs {
                 $routeParams['NextHopIpAddress'] = $nextHopIp
             }
 
-            $routeTable = Set-AzRouteConfig @routeParams
+            $existingRoute = $routeTable.Routes | Where-Object { $_.Name -eq $routeName } | Select-Object -First 1
+            if ($existingRoute) {
+                $routeTable = Set-AzRouteConfig @routeParams
+            } else {
+                $routeTable = Add-AzRouteConfig @routeParams
+            }
             $tableChanged = $true
             Write-Info "UDR Route 반영(대기): $udrName/$routeName"
         }
