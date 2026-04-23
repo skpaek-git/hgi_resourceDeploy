@@ -2050,3 +2050,127 @@ s
 2026-04-22 11:04:39.719	[INFO] [START] Deploy-DataDisks
 2026-04-22 11:04:40.345	[INFO] [END] Deploy-DataDisks
 2026-04-22 11:04:40.384	[INFO] [END] Script
+2026-04-22 16:35:39.755	[INFO] [START] Script
+2026-04-22 16:35:39.821	[INFO] [START] Initialize-Modules
+2026-04-22 16:36:04.563	[INFO] [END] Initialize-Modules
+2026-04-22 16:36:04.625	[INFO] [START] Ensure-AzSession
+2026-04-22 16:36:13.947	[INFO] [END] Ensure-AzSession
+2026-04-22 16:36:14.046	[INFO] [START] Validate-Inputs
+2026-04-22 16:36:14.555	[INFO] Excel 시트 로드: NSG
+2026-04-22 16:36:15.128	[INFO] Excel 시트 로드: NSG_Rule
+2026-04-22 16:36:15.655	[WARN] 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-04-22 16:36:15.702	[INFO] [END] Validate-Inputs
+2026-04-22 16:36:15.785	[ERR] [NSG_Detail] Row=1, Name=PRDWEB01-nic-NSG, Field=NSGName: NSG 시트에 존재하지 않는 NSGName 입니다.
+2026-04-22 16:37:04.491	[INFO] [START] Script
+2026-04-22 16:37:04.548	[INFO] [START] Initialize-Modules
+2026-04-22 16:37:22.842	[INFO] [END] Initialize-Modules
+2026-04-22 16:37:22.895	[INFO] [START] Ensure-AzSession
+2026-04-22 16:37:30.636	[INFO] [END] Ensure-AzSession
+2026-04-22 16:37:30.706	[INFO] [START] Validate-Inputs
+2026-04-22 16:37:31.031	[INFO] Excel 시트 로드: NSG
+2026-04-22 16:37:31.425	[INFO] Excel 시트 로드: NSG_Rule
+2026-04-22 16:37:31.670	[INFO] [END] Validate-Inputs
+2026-04-22 16:37:31.732	[ERR] [NSG_Detail] Row=1, Name=PRDWEB01-nic-NSG, Field=NSGName: NSG 시트에 존재하지 않는 NSGName 입니다.
+2026-04-23 11:32:05.959	[INFO] [START] Script
+2026-04-23 11:32:06.027	[INFO] [START] Initialize-Modules
+2026-04-23 11:33:13.058	[INFO] [END] Initialize-Modules
+2026-04-23 11:33:13.046	[INFO] [END] Initialize-Modules
+2026-04-23 11:33:13.201	[INFO] [START] Ensure-AzSession
+2026-04-23 11:33:13.203	[INFO] [START] Ensure-AzSession
+2026-04-23 11:33:23.527	[INFO] [END] Ensure-AzSession
+2026-04-23 11:33:23.599	[INFO] [START] Validate-Inputs
+2026-04-23 11:33:24.007	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:33:24.007	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:33:24.446	[ERR] 치명적 오류: 시트에 Option 컬럼이 없습니다. -Option 필터를 사용하려면 Option 컬럼이 필요합니다.
+2026-04-23 11:34:41.011	[INFO] [START] Script
+2026-04-23 11:34:41.086	[INFO] [START] Initialize-Modules
+2026-04-23 11:34:41.095	[INFO] [START] Script
+2026-04-23 11:34:41.139	[INFO] [START] Initialize-Modules
+2026-04-23 11:35:24.651	[INFO] [END] Initialize-Modules
+2026-04-23 11:35:24.878	[INFO] [END] Initialize-Modules
+2026-04-23 11:35:24.958	[INFO] [START] Ensure-AzSession
+2026-04-23 11:35:34.636	[INFO] [END] Ensure-AzSession
+2026-04-23 11:35:34.894	[INFO] [START] Validate-Inputs
+2026-04-23 11:35:35.165	[INFO] [START] Validate-Inputs
+2026-04-23 11:35:36.197	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:35:36.396	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:35:37.395	[INFO] Option 필터 적용: TEST / 대상 행 수: 0
+2026-04-23 11:35:37.534	[INFO] [END] Validate-Inputs
+2026-04-23 11:35:37.778	[INFO] [START] Deploy-Udrs
+2026-04-23 11:35:37.941	[INFO] [END] Validate-Inputs
+2026-04-23 11:35:38.101	[INFO] [START] Deploy-Udrs
+2026-04-23 11:35:38.285	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:35:38.577	[INFO] Excel 시트 로드: UDR
+2026-04-23 11:35:39.006	[INFO] Option 필터 적용: TEST / 대상 행 수: 0
+2026-04-23 11:35:39.140	[INFO] [END] Deploy-Udrs
+2026-04-23 11:35:39.260	[INFO] Option 필터 적용: EXT / 대상 행 수: 65
+2026-04-23 11:35:39.315	[INFO] [END] Script
+2026-04-23 11:35:39.794	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dch-rg (koreacentral)
+2026-04-23 11:35:39.903	[INFO] [DryRun] UDR 배포 예정: t-dch-ext-vnet-udr (RG=hazr-t-dch-rg, DisableBGPRoutePropagation=False)
+2026-04-23 11:35:40.013	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Internet (0.0.0.0/0 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.085	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-o-devops-int-vnet_1 (10.155.128.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.131	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-o-devops-int-vnet_2 (10.155.129.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.230	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-o-devops-int-vnet_3 (10.155.130.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.417	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-o-devops-int-vnet_4 (10.155.131.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.533	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-l-comm-vnet (10.155.160.0/22 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.604	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-lt-sec-int-vnet (10.155.193.128/26 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.677	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_1 (10.157.144.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.751	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_2 (10.157.145.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.824	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_3 (10.157.146.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.889	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_4 (10.157.147.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:40.977	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_5 (10.157.148.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.062	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_6 (10.157.149.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.139	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_7 (10.157.150.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.215	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_8 (10.157.151.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.286	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_9 (10.157.152.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.353	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_10 (10.157.153.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.427	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_11 (10.157.154.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.483	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_12 (10.157.155.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.544	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_13 (10.157.156.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.610	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_14 (10.157.157.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.671	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_15 (10.157.158.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.736	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_16 (10.157.159.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.807	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_17 (10.157.160.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.870	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_18 (10.157.161.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.921	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_19 (10.157.162.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:41.970	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_20 (10.157.163.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.023	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_21 (10.157.164.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.070	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_22 (10.157.165.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.124	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_23 (10.157.166.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.178	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_24 (10.157.167.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.236	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_25 (10.157.168.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.282	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_26 (10.157.169.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.326	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_27 (10.157.170.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.374	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_28 (10.157.171.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.426	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_29 (10.157.172.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.471	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_30 (10.157.173.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.491	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_31 (10.157.174.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.542	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_32 (10.157.175.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.584	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_33 (10.157.176.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.632	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_34 (10.157.177.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.693	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_35 (10.157.178.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.742	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_36 (10.157.179.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.787	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_37 (10.157.180.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.830	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_38 (10.157.181.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.884	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_39 (10.157.182.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.930	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_40 (10.157.183.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:42.972	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_41 (10.157.184.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.027	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_42 (10.157.185.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.073	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_43 (10.157.186.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.115	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_44 (10.157.187.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.168	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_45 (10.157.188.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.215	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_46 (10.157.189.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.268	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_47 (10.157.190.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.321	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/hazr-t-dch-int-vnet_48 (10.157.191.0/24 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.367	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem01 (10.0.0.0/8 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.419	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem02 (172.16.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.483	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem03 (172.18.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.527	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem04 (172.20.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.571	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem05 (172.26.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.622	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem06 (172.28.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.670	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem07 (172.29.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.715	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem08 (172.30.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.758	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem09 (172.31.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.801	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem10 (172.32.0.0/16 -> VirtualAppliance 10.155.200.4)
+2026-04-23 11:35:43.842	[INFO] [END] Deploy-Udrs
+2026-04-23 11:35:43.892	[INFO] [END] Script

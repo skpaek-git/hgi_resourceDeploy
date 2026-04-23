@@ -4,7 +4,7 @@ param(
     [string]$ExcelPath = '.\서버정보\20260422_리소스배포_종합.xlsx',
 
     [Parameter()]
-    [ValidateSet('RG','VNET','STORAGE','KV','DES','LB','NSG','VM','DATADISK')]
+    [ValidateSet('RG','VNET','UDR','STORAGE','KV','DES','LB','NSG','VM','DATADISK')]
     [string[]]$DeployType = @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM'),
 
     [Parameter()]
@@ -251,6 +251,71 @@ function Get-FilteredVmRows {
     return $filtered
 }
 
+function Get-FilteredRowsByOption {
+    param(
+        [psobject[]]$Rows,
+        [string[]]$OptionFilters,
+        [string[]]$Columns = @('Option')
+    )
+
+    $allRows = @($Rows)
+    if ($OptionFilters.Count -eq 0) { return $allRows }
+
+    $filters = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($f in $OptionFilters) {
+        if (-not [string]::IsNullOrWhiteSpace($f)) {
+            [void]$filters.Add($f.Trim())
+        }
+    }
+    if ($filters.Count -eq 0) { return $allRows }
+
+    $columnExists = $false
+    foreach ($r in $allRows) {
+        foreach ($col in $Columns) {
+            if ($r.PSObject.Properties[$col]) {
+                $columnExists = $true
+                break
+            }
+        }
+        if ($columnExists) { break }
+    }
+    if (-not $columnExists) {
+        throw "시트에 필터 컬럼이 없습니다. -Option 필터를 사용하려면 다음 중 하나가 필요합니다: $($Columns -join ', ')"
+    }
+
+    $filtered = @(
+        $allRows | Where-Object {
+            $value = $null
+            foreach ($col in $Columns) {
+                $value = Get-CellValue -Row $_ -Field $col
+                if ($value) { break }
+            }
+            $value -and $filters.Contains($value)
+        }
+    )
+
+    Write-Info "Option 필터 적용: $($filters -join ', ') / 대상 행 수: $($filtered.Count)"
+    return $filtered
+}
+
+function Convert-ToRouteNextHopType {
+    param([string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        throw 'NextHopType 값이 필요합니다.'
+    }
+
+    $raw = $Value.Trim().ToUpperInvariant()
+    switch ($raw) {
+        'VIRTUALAPPLIANCE' { return 'VirtualAppliance' }
+        'INTERNET' { return 'Internet' }
+        'VIRTUALNETWORKGATEWAY' { return 'VirtualNetworkGateway' }
+        'VNETLOCAL' { return 'VnetLocal' }
+        'NONE' { return 'None' }
+        default { throw "지원하지 않는 NextHopType 입니다: $Value" }
+    }
+}
+
 function Test-RequiredField {
     param(
         [System.Collections.Generic.List[ValidationIssue]]$Issues,
@@ -294,6 +359,49 @@ function Validate-Inputs {
             $vnetAddresses = @(Get-VnetAddresses -Row $r)
             if ($vnetAddresses.Count -eq 0) {
                 Add-Issue -Issues $issues -Type 'VNET' -Row $i -ResourceName $vnetName -Field 'VNet* Address' -Message '필수 값이 비어 있습니다.'
+            }
+            $i++
+        }
+    }
+
+    if ($Context.DeployType -contains 'UDR') {
+        $rows = Get-SheetRows -Context $Context -SheetCandidates @('UDR','RouteTable','UDR_Route')
+        $rows = Get-FilteredRowsByOption -Rows $rows -OptionFilters $Context.VmRoleFilter -Columns @('Option','UDRType','Direction','Role')
+        $i = 1
+        foreach ($r in $rows) {
+            if (-not (Test-IsEnabledRow -Row $r -Default $true)) { $i++; continue }
+
+            $udrName = Get-CellValueAny -Row $r -Fields @('UDRName','RouteTableName')
+            $routeName = Get-CellValue -Row $r -Field 'RouteName'
+
+            if (-not $udrName -and -not $routeName) { $i++; continue }
+
+            if (-not $udrName) {
+                Add-Issue -Issues $issues -Type 'UDR' -Row $i -ResourceName '' -Field 'UDRName' -Message '필수 값이 비어 있습니다.'
+            }
+            if (-not (Get-CellValueAny -Row $r -Fields @('RGname','RGName'))) {
+                Add-Issue -Issues $issues -Type 'UDR' -Row $i -ResourceName $udrName -Field 'RGname' -Message '필수 값이 비어 있습니다.'
+            }
+            Test-RequiredField -Issues $issues -Type 'UDR' -Row $i -Data $r -Field 'Location' -ResourceName $udrName
+            Test-RequiredField -Issues $issues -Type 'UDR' -Row $i -Data $r -Field 'RouteName' -ResourceName $udrName
+            Test-RequiredField -Issues $issues -Type 'UDR' -Row $i -Data $r -Field 'AddressPrefix' -ResourceName $udrName
+            Test-RequiredField -Issues $issues -Type 'UDR' -Row $i -Data $r -Field 'NextHopType' -ResourceName $udrName
+
+            $nextHopType = Get-CellValue -Row $r -Field 'NextHopType'
+            if ($nextHopType -and $nextHopType.Trim().ToUpperInvariant() -eq 'VIRTUALAPPLIANCE') {
+                if (-not (Get-CellValue -Row $r -Field 'NextHopIpAddress')) {
+                    Add-Issue -Issues $issues -Type 'UDR' -Row $i -ResourceName $udrName -Field 'NextHopIpAddress' -Message 'NextHopType=VirtualAppliance 인 경우 값이 필요합니다.'
+                }
+            }
+
+            $associateSubnet = Convert-ToBoolean -Value (Get-CellValue -Row $r -Field 'AssociateToSubnet') -Default $false
+            if ($associateSubnet) {
+                if (-not (Get-CellValueAny -Row $r -Fields @('VnetName','VirtualNetworkName','VNetName'))) {
+                    Add-Issue -Issues $issues -Type 'UDR' -Row $i -ResourceName $udrName -Field 'VnetName' -Message 'AssociateToSubnet=TRUE 인 경우 값이 필요합니다.'
+                }
+                if (-not (Get-CellValueAny -Row $r -Fields @('SubnetName','Subnet'))) {
+                    Add-Issue -Issues $issues -Type 'UDR' -Row $i -ResourceName $udrName -Field 'SubnetName' -Message 'AssociateToSubnet=TRUE 인 경우 값이 필요합니다.'
+                }
             }
             $i++
         }
@@ -549,7 +657,9 @@ function Validate-Inputs {
 
     # Cross-sheet consistency checks for CMK chain (KV -> DES -> VM)
     $kvRows = @()
-    try { $kvRows = @(Get-SheetRows -Context $Context -SheetCandidates @('KV','KeyVault') -Optional) } catch {}
+    if ($Context.DeployType -contains 'DES') {
+        try { $kvRows = @(Get-SheetRows -Context $Context -SheetCandidates @('KV','KeyVault') -Optional) } catch {}
+    }
     $desRows = @()
     if ($Context.DeployType -contains 'DES') {
         try { $desRows = @(Get-SheetRows -Context $Context -SheetCandidates @('DES','DES_PRD') -Optional) } catch {}
@@ -1382,6 +1492,133 @@ function Deploy-LoadBalancers {
     End-Step 'Deploy-LoadBalancers'
 }
 
+function Deploy-Udrs {
+    param([DeploymentContext]$Context)
+
+    Start-Step 'Deploy-Udrs'
+    $rows = Get-SheetRows -Context $Context -SheetCandidates @('UDR','RouteTable','UDR_Route')
+    $rows = Get-FilteredRowsByOption -Rows $rows -OptionFilters $Context.VmRoleFilter -Columns @('Option','UDRType','Direction','Role')
+
+    $groups = $rows |
+        Where-Object {
+            (Test-IsEnabledRow -Row $_ -Default $true) -and
+            (Get-CellValueAny -Row $_ -Fields @('UDRName','RouteTableName'))
+        } |
+        Group-Object -Property { ("{0}|{1}" -f (Get-CellValueAny -Row $_ -Fields @('RGname','RGName')), (Get-CellValueAny -Row $_ -Fields @('UDRName','RouteTableName'))) }
+
+    foreach ($group in $groups) {
+        $base = $group.Group | Select-Object -First 1
+        $rgName = Get-CellValueAny -Row $base -Fields @('RGname','RGName')
+        $location = Get-CellValue -Row $base -Field 'Location'
+        $udrName = Get-CellValueAny -Row $base -Fields @('UDRName','RouteTableName')
+        $disableBgp = Convert-ToBoolean -Value (Get-CellValue -Row $base -Field 'DisableBGPRoutePropagation') -Default $false
+
+        Ensure-ResourceGroup -Name $rgName -Location $location -DryRun:$Context.DryRun
+
+        if ($Context.DryRun) {
+            Write-Info "[DryRun] UDR 배포 예정: $udrName (RG=$rgName, DisableBGPRoutePropagation=$disableBgp)"
+            foreach ($row in $group.Group) {
+                if (-not (Test-IsEnabledRow -Row $row -Default $true)) { continue }
+                $routeName = Get-CellValue -Row $row -Field 'RouteName'
+                if (-not $routeName) { continue }
+                $addressPrefix = Get-CellValue -Row $row -Field 'AddressPrefix'
+                $nextHopType = Convert-ToRouteNextHopType -Value (Get-CellValue -Row $row -Field 'NextHopType')
+                $nextHopIp = Get-CellValue -Row $row -Field 'NextHopIpAddress'
+                if ($nextHopType -eq 'VirtualAppliance') {
+                    Write-Info "[DryRun] UDR Route 추가/갱신 예정: $udrName/$routeName ($addressPrefix -> $nextHopType $nextHopIp)"
+                } else {
+                    Write-Info "[DryRun] UDR Route 추가/갱신 예정: $udrName/$routeName ($addressPrefix -> $nextHopType)"
+                }
+
+                $associateSubnet = Convert-ToBoolean -Value (Get-CellValue -Row $row -Field 'AssociateToSubnet') -Default $false
+                if ($associateSubnet) {
+                    $vnetName = Get-CellValueAny -Row $row -Fields @('VnetName','VirtualNetworkName','VNetName')
+                    $subnetName = Get-CellValueAny -Row $row -Fields @('SubnetName','Subnet')
+                    $vnetRg = Get-CellValueAny -Row $row -Fields @('VnetRG','VNetRG','VirtualNetworkRG')
+                    if (-not $vnetRg) { $vnetRg = $rgName }
+                    Write-Info "[DryRun] Subnet-UDR 연결 예정: $vnetRg/$vnetName/$subnetName -> $udrName"
+                }
+            }
+            continue
+        }
+
+        $routeTable = Get-AzRouteTable -ResourceGroupName $rgName -Name $udrName -ErrorAction SilentlyContinue
+        if (-not $routeTable) {
+            $routeTable = New-AzRouteTable -ResourceGroupName $rgName -Name $udrName -Location $location -DisableBgpRoutePropagation:$disableBgp -ErrorAction Stop
+            Write-Info "UDR 생성 완료: $udrName"
+        } else {
+            Write-Info "UDR 유지: $udrName"
+            if ([bool]$routeTable.DisableBgpRoutePropagation -ne $disableBgp) {
+                $routeTable.DisableBgpRoutePropagation = $disableBgp
+                $routeTable = $routeTable | Set-AzRouteTable -ErrorAction Stop
+                Write-Info "UDR BGP 전파 설정 갱신: $udrName (DisableBGPRoutePropagation=$disableBgp)"
+            }
+        }
+
+        $tableChanged = $false
+        foreach ($row in $group.Group) {
+            if (-not (Test-IsEnabledRow -Row $row -Default $true)) { continue }
+
+            $routeName = Get-CellValue -Row $row -Field 'RouteName'
+            if (-not $routeName) { continue }
+            $addressPrefix = Get-CellValue -Row $row -Field 'AddressPrefix'
+            $nextHopType = Convert-ToRouteNextHopType -Value (Get-CellValue -Row $row -Field 'NextHopType')
+            $nextHopIp = Get-CellValue -Row $row -Field 'NextHopIpAddress'
+
+            $routeParams = @{
+                Name          = $routeName
+                AddressPrefix = $addressPrefix
+                NextHopType   = $nextHopType
+                RouteTable    = $routeTable
+            }
+            if ($nextHopType -eq 'VirtualAppliance') {
+                $routeParams['NextHopIpAddress'] = $nextHopIp
+            }
+
+            $routeTable = Set-AzRouteConfig @routeParams
+            $tableChanged = $true
+            Write-Info "UDR Route 반영(대기): $udrName/$routeName"
+        }
+
+        if ($tableChanged) {
+            $routeTable = $routeTable | Set-AzRouteTable -ErrorAction Stop
+            Write-Info "UDR Route 업데이트 완료: $udrName"
+        }
+
+        $subnetLinkSet = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+        foreach ($row in $group.Group) {
+            if (-not (Test-IsEnabledRow -Row $row -Default $true)) { continue }
+            $associateSubnet = Convert-ToBoolean -Value (Get-CellValue -Row $row -Field 'AssociateToSubnet') -Default $false
+            if (-not $associateSubnet) { continue }
+
+            $vnetName = Get-CellValueAny -Row $row -Fields @('VnetName','VirtualNetworkName','VNetName')
+            $subnetName = Get-CellValueAny -Row $row -Fields @('SubnetName','Subnet')
+            $vnetRg = Get-CellValueAny -Row $row -Fields @('VnetRG','VNetRG','VirtualNetworkRG')
+            if (-not $vnetRg) { $vnetRg = $rgName }
+            $linkKey = "$vnetRg|$vnetName|$subnetName"
+            if ($subnetLinkSet.Contains($linkKey)) { continue }
+            [void]$subnetLinkSet.Add($linkKey)
+
+            $vnet = Get-AzVirtualNetwork -ResourceGroupName $vnetRg -Name $vnetName -ErrorAction Stop
+            $subnet = $vnet.Subnets | Where-Object { $_.Name -eq $subnetName } | Select-Object -First 1
+            if (-not $subnet) {
+                throw "UDR 연결 대상 Subnet을 찾을 수 없습니다. VNet=$vnetName, Subnet=$subnetName, RG=$vnetRg"
+            }
+
+            if ($subnet.RouteTable -and $subnet.RouteTable.Id -eq $routeTable.Id) {
+                Write-Info "Subnet-UDR 연결 유지: $vnetRg/$vnetName/$subnetName -> $udrName"
+                continue
+            }
+
+            $subnet.RouteTable = $routeTable
+            $null = Set-AzVirtualNetwork -VirtualNetwork $vnet -ErrorAction Stop
+            Write-Info "Subnet-UDR 연결 완료: $vnetRg/$vnetName/$subnetName -> $udrName"
+        }
+    }
+
+    End-Step 'Deploy-Udrs'
+}
+
 function Deploy-Nsgs {
     param([DeploymentContext]$Context)
 
@@ -1909,7 +2146,10 @@ function Initialize-Modules {
 }
 
 function Resolve-ExcelFullPath {
-    param([string]$Path)
+    param(
+        [string]$Path,
+        [switch]$AllowFallback
+    )
 
     $candidatePath = $Path
     if (-not [System.IO.Path]::IsPathRooted($candidatePath)) {
@@ -1918,6 +2158,10 @@ function Resolve-ExcelFullPath {
 
     if (Test-Path -LiteralPath $candidatePath) {
         return (Resolve-Path -LiteralPath $candidatePath).Path
+    }
+
+    if (-not $AllowFallback) {
+        throw "Excel 파일을 찾을 수 없습니다: $Path"
     }
 
     # 기본 파일명이 바뀌는 경우를 대비해 서버정보 폴더의 최신 리소스배포 파일로 보완
@@ -1991,7 +2235,8 @@ function Run-Main {
 
     Initialize-Modules
 
-    $resolvedExcelPath = Resolve-ExcelFullPath -Path $ExcelPath
+    $allowFallback = -not $PSBoundParameters.ContainsKey('ExcelPath')
+    $resolvedExcelPath = Resolve-ExcelFullPath -Path $ExcelPath -AllowFallback:$allowFallback
     $subscriptionId = Ensure-AzSession -ConnectAccount:$ConnectAccount -DryRun:$DryRun
 
     $context = [DeploymentContext]::new($resolvedExcelPath, $DeployType, $Option, [bool]$DryRun, $subscriptionId)
@@ -2013,12 +2258,13 @@ function Run-Main {
         throw '입력 데이터 검증에 실패했습니다. Excel 데이터를 수정한 후 다시 실행해 주세요.'
     }
 
-    $deploymentOrder = @('RG','VNET','STORAGE','KV','DES','LB','VM','DATADISK','NSG')
+    $deploymentOrder = @('RG','VNET','UDR','STORAGE','KV','DES','LB','VM','DATADISK','NSG')
     foreach ($type in $deploymentOrder) {
         if ($context.DeployType -notcontains $type) { continue }
         switch ($type) {
             'RG' { Deploy-ResourceGroups -Context $context }
             'VNET' { Deploy-Vnets -Context $context }
+            'UDR' { Deploy-Udrs -Context $context }
             'STORAGE' { Deploy-Storages -Context $context }
             'KV' { Deploy-KeyVaults -Context $context }
             'DES' { Deploy-DiskEncryptionSets -Context $context }
