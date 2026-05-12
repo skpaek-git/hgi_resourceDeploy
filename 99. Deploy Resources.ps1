@@ -20,6 +20,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:IsExcelPathExplicit = $PSBoundParameters.ContainsKey('ExcelPath')
 
 class DeploymentContext {
     [string]$ExcelPath
@@ -469,6 +470,19 @@ function Validate-Inputs {
     if ($Context.DeployType -contains 'NSG') {
         $rows = Get-SheetRows -Context $Context -SheetCandidates @('NSG')
         $ruleRowsForNsg = Get-SheetRows -Context $Context -SheetCandidates @('NSG_Detail','NSG_Rule','NSG_PRD_Rule') -Optional
+        $rows = Get-FilteredRowsByOption -Rows $rows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+
+        $selectedNsgNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+        foreach ($nr in $rows) {
+            $nn = Get-CellValue -Row $nr -Field 'NSGName'
+            if ($nn) { [void]$selectedNsgNames.Add($nn) }
+        }
+        if ($selectedNsgNames.Count -gt 0) {
+            $ruleRowsForNsg = @($ruleRowsForNsg | Where-Object {
+                $target = Get-CellValue -Row $_ -Field 'NSGName'
+                $target -and $selectedNsgNames.Contains($target)
+            })
+        }
         $nsgNameSet = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
         $i = 1
         foreach ($r in $rows) {
@@ -1669,6 +1683,19 @@ function Deploy-Nsgs {
     $nsgRows = Get-SheetRows -Context $Context -SheetCandidates @('NSG')
     $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('NSG_Detail','NSG_Rule','NSG_PRD_Rule') -Optional
     $vnetRows = Get-SheetRows -Context $Context -SheetCandidates @('VNET') -Optional
+    $nsgRows = Get-FilteredRowsByOption -Rows $nsgRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+
+    $selectedNsgNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($nr in $nsgRows) {
+        $nn = Get-CellValue -Row $nr -Field 'NSGName'
+        if ($nn) { [void]$selectedNsgNames.Add($nn) }
+    }
+    if ($selectedNsgNames.Count -gt 0) {
+        $ruleRows = @($ruleRows | Where-Object {
+            $target = Get-CellValue -Row $_ -Field 'NSGName'
+            $target -and $selectedNsgNames.Contains($target)
+        })
+    }
 
     $vnetRgMap = @{}
     foreach ($vr in $vnetRows) {
@@ -1690,10 +1717,12 @@ function Deploy-Nsgs {
             foreach ($row in $group.Group) {
                 $useNic = (Get-CellValue -Row $row -Field 'UseNIC')
                 $nicName = Get-CellValueAny -Row $row -Fields @('NIC','NicName')
+                $nicRg = Get-CellValueAny -Row $row -Fields @('NICRG','NicRG','NetworkInterfaceRG')
+                if (-not $nicRg) { $nicRg = $rgName }
                 $subnetName = Get-CellValueAny -Row $row -Fields @('Subnet','SubnetName')
                 $vnetName = Get-CellValueAny -Row $row -Fields @('VirtualNetwork','VNetName','VnetName')
                 if ($useNic -and $useNic.ToUpperInvariant() -eq 'O' -and $nicName) {
-                    Write-Info "[DryRun] NIC-NSG 연결 예정: $nicName -> $nsgName"
+                    Write-Info "[DryRun] NIC-NSG 연결 예정: $nicName (RG=$nicRg) -> $nsgName"
                 } elseif ($subnetName -and $vnetName) {
                     Write-Info "[DryRun] Subnet-NSG 연결 예정: $vnetName/$subnetName -> $nsgName"
                 }
@@ -1716,20 +1745,22 @@ function Deploy-Nsgs {
         foreach ($row in $group.Group) {
             $useNic = (Get-CellValue -Row $row -Field 'UseNIC')
             $nicName = Get-CellValueAny -Row $row -Fields @('NIC','NicName')
+            $nicRg = Get-CellValueAny -Row $row -Fields @('NICRG','NicRG','NetworkInterfaceRG')
+            if (-not $nicRg) { $nicRg = $rgName }
             $subnetName = Get-CellValueAny -Row $row -Fields @('Subnet','SubnetName')
             $vnetName = Get-CellValueAny -Row $row -Fields @('VirtualNetwork','VNetName','VnetName')
 
             if ($useNic -and $useNic.ToUpperInvariant() -eq 'O' -and $nicName) {
                 if ($Context.DryRun) {
-                    Write-Info "[DryRun] NIC-NSG 연결 예정: $nicName -> $nsgName"
+                    Write-Info "[DryRun] NIC-NSG 연결 예정: $nicName (RG=$nicRg) -> $nsgName"
                 } else {
-                    $nic = Get-AzNetworkInterface -Name $nicName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
+                    $nic = Get-AzNetworkInterface -Name $nicName -ResourceGroupName $nicRg -ErrorAction SilentlyContinue
                     if ($nic) {
                         $nic.NetworkSecurityGroup = $nsg
                         $nic | Set-AzNetworkInterface | Out-Null
-                        Write-Info "NIC-NSG 연결 완료: $nicName -> $nsgName"
+                        Write-Info "NIC-NSG 연결 완료: $nicName (RG=$nicRg) -> $nsgName"
                     } else {
-                        Write-WarnLog "NIC를 찾지 못해 NSG 연결을 건너뜁니다. NIC=$nicName, RG=$rgName, NSG=$nsgName"
+                        Write-WarnLog "NIC를 찾지 못해 NSG 연결을 건너뜁니다. NIC=$nicName, RG=$nicRg, NSG=$nsgName"
                     }
                 }
                 continue
@@ -2278,7 +2309,7 @@ function Run-Main {
 
     Initialize-Modules
 
-    $allowFallback = -not $PSBoundParameters.ContainsKey('ExcelPath')
+    $allowFallback = -not $script:IsExcelPathExplicit
     $resolvedExcelPath = Resolve-ExcelFullPath -Path $ExcelPath -AllowFallback:$allowFallback
     $subscriptionId = Ensure-AzSession -ConnectAccount:$ConnectAccount -DryRun:$DryRun
 
