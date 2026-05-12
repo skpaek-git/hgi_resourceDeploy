@@ -517,6 +517,25 @@ function Validate-Inputs {
         $lbRows = Get-SheetRows -Context $Context -SheetCandidates @('LB','LB_PRD','Load Balancer')
         $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
         $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
+        $lbRows = Get-FilteredRowsByOption -Rows $lbRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+        $probeRows = Get-FilteredRowsByOption -Rows $probeRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+        $ruleRows = Get-FilteredRowsByOption -Rows $ruleRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+
+        $selectedLbNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+        foreach ($lr in $lbRows) {
+            $ln = Get-CellValueAny -Row $lr -Fields @('LBName','LoadBalancerName')
+            if ($ln) { [void]$selectedLbNames.Add($ln) }
+        }
+        if ($selectedLbNames.Count -gt 0) {
+            $probeRows = @($probeRows | Where-Object {
+                $target = Get-CellValue -Row $_ -Field 'LBName'
+                $target -and $selectedLbNames.Contains($target)
+            })
+            $ruleRows = @($ruleRows | Where-Object {
+                $target = Get-CellValue -Row $_ -Field 'LBName'
+                $target -and $selectedLbNames.Contains($target)
+            })
+        }
 
         $lbNameSet = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
         $i = 1
@@ -1278,6 +1297,25 @@ function Deploy-LoadBalancers {
     $lbRows = Get-SheetRows -Context $Context -SheetCandidates @('LB','LB_PRD','Load Balancer')
     $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
     $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
+    $lbRows = Get-FilteredRowsByOption -Rows $lbRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+    $probeRows = Get-FilteredRowsByOption -Rows $probeRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+    $ruleRows = Get-FilteredRowsByOption -Rows $ruleRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+
+    $selectedLbNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($lr in $lbRows) {
+        $ln = Get-CellValueAny -Row $lr -Fields @('LBName','LoadBalancerName')
+        if ($ln) { [void]$selectedLbNames.Add($ln) }
+    }
+    if ($selectedLbNames.Count -gt 0) {
+        $probeRows = @($probeRows | Where-Object {
+            $target = Get-CellValue -Row $_ -Field 'LBName'
+            $target -and $selectedLbNames.Contains($target)
+        })
+        $ruleRows = @($ruleRows | Where-Object {
+            $target = Get-CellValue -Row $_ -Field 'LBName'
+            $target -and $selectedLbNames.Contains($target)
+        })
+    }
 
     $groups = $lbRows | Where-Object { Get-CellValueAny -Row $_ -Fields @('LBName','LoadBalancerName') } | Group-Object -Property LBName
     foreach ($group in $groups) {
@@ -2289,4 +2327,3 @@ try {
     Write-ErrorLog "치명적 오류: $($_.Exception.Message)"
     throw
 }
-

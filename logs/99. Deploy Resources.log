@@ -2174,3 +2174,14 @@ s
 2026-04-23 11:35:43.801	[INFO] [DryRun] UDR Route 추가/갱신 예정: t-dch-ext-vnet-udr/Onprem10 (172.32.0.0/16 -> VirtualAppliance 10.155.200.4)
 2026-04-23 11:35:43.842	[INFO] [END] Deploy-Udrs
 2026-04-23 11:35:43.892	[INFO] [END] Script
+2026-04-28 17:35:03.582	[INFO] [START] Script
+2026-04-28 17:35:03.658	[INFO] [START] Initialize-Modules
+2026-04-28 17:35:27.659	[INFO] [END] Initialize-Modules
+2026-04-28 17:35:27.712	[INFO] [START] Ensure-AzSession
+2026-04-28 17:35:39.290	[INFO] [END] Ensure-AzSession
+2026-04-28 17:35:39.552	[INFO] [START] Validate-Inputs
+2026-04-28 17:35:40.402	[INFO] Excel 시트 로드: LB
+2026-04-28 17:35:41.289	[INFO] Excel 시트 로드: LB_Probe
+2026-04-28 17:35:41.799	[INFO] Excel 시트 로드: LB_Rule
+2026-04-28 17:35:42.372	[INFO] [END] Validate-Inputs
+2026-04-28 17:35:42.484	[ERR] [LB_Probe] Row=9, Name=hazr-t-dip-ap-lb, Field=Port: 필수 값이 비어 있습니다.

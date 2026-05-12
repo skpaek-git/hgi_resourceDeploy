@@ -51,6 +51,9 @@
 # Load Balancer만
 & ".\5. Deploy LB.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -ConnectAccount
 
+# Load Balancer만 (Role/Option 필터)
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB') -Option 'EXT' -ConnectAccount
+
 # VM만
 & ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('VM') -ConnectAccount
 
@@ -125,13 +128,14 @@ pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\�
 - LB 배포 시:
   - Internal LB는 `FEVNetRG/FEVNetName/FESubnetName` 정확히 입력
   - `FEVNetRG` 비우면 LB RG를 기본값으로 사용함
+  - `-Option` 사용 시 `LB`, `LB_Probe`, `LB_Rule` 시트 모두 `Role`(또는 `Option`) 값으로 필터링됨
 
 ## 자주 발생하는 오류
 - `KV 시트에 존재하지 않는 Key Vault 참조입니다`
   - DES 시트의 `KVName`과 KV 시트 `KVName` 불일치
 - `Resource ... virtualNetworks/... was not found`
   - VM/LB의 `VnetName` 오타 또는 `VnetRG` 불일치
-  - 컨텍스트 설정이 잘못되어 있을수 있음
+  - 혹은 Command 실행 환경에서 Context Setting이 잘못되어 있을수 있음
     - Bash(Azure CLI) : az account set -s {Subscription id}
     - PowerShell(Azure Powershell) : Set-azContext -Subscription {Subscription id}
 - `The term 'if' is not recognized...`
@@ -201,3 +205,8 @@ pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\�
 - `99. Deploy Resources.ps1`에 `-DeployType UDR` 추가
 - `UDR` 시트 기준 Route Table 생성/갱신, Route 등록, Subnet 연결 지원
 - `-Option` 필터로 `EXT`/`INT` 분리 실행 지원
+
+### 2026-04-28 (LB Role/Option 필터 + UDR 안정화)
+- `LB` 배포(검증/실행)에서 `-Option` 필터를 `Role`/`Option` 컬럼 기준으로 적용
+- `LB`, `LB_Probe`, `LB_Rule` 각각에 `-Option` 필터를 직접 적용하고, 이후 선택된 LB에 매핑된 Probe/Rule만 처리하도록 보강
+- UDR 라우트 반영 시 신규 Route는 `Add`, 기존 Route는 `Set`으로 분기 처리
