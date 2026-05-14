@@ -2534,3 +2534,156 @@ s
 2026-05-12 14:25:20.119	[INFO] [DryRun] NIC-NSG 연결 예정: temp-zen-02-nic (RG=hazr-d-cs-rg) -> temp-zen-02-nsg
 2026-05-12 14:25:20.160	[INFO] [END] Deploy-Nsgs
 2026-05-12 14:25:20.209	[INFO] [END] Script
+2026-05-14 11:16:28.971	[INFO] [START] Script
+2026-05-14 11:16:29.015	[INFO] [START] Initialize-Modules
+2026-05-14 11:16:53.432	[INFO] [END] Initialize-Modules
+2026-05-14 11:16:53.477	[INFO] [START] Ensure-AzSession
+2026-05-14 11:16:57.635	[INFO] [END] Ensure-AzSession
+2026-05-14 11:16:57.709	[INFO] [START] Validate-Inputs
+2026-05-14 11:16:58.108	[INFO] Excel 시트 로드: VM
+2026-05-14 11:16:58.533	[INFO] VM Role 필터 적용: dtg / 대상 행 수: 24
+2026-05-14 11:16:58.813	[INFO] Excel 시트 로드: VM
+2026-05-14 11:16:59.050	[INFO] VM Role 필터 적용: dtg / 대상 행 수: 24
+2026-05-14 11:16:59.086	[INFO] [END] Validate-Inputs
+2026-05-14 11:16:59.133	[INFO] [START] Deploy-Vms
+2026-05-14 11:16:59.332	[INFO] Excel 시트 로드: VM
+2026-05-14 11:16:59.550	[INFO] VM Role 필터 적용: dtg / 대상 행 수: 24
+2026-05-14 11:16:59.591	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:16:59.694	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-ingap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:16:59.732	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:16:59.792	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-ap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:16:59.840	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:16:59.893	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-extgeoap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:16:59.931	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:16:59.984	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-geoap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.042	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.106	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-mq01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.158	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.221	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-admweb01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.267	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.326	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-admap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.365	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.423	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-dtoms01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.468	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.555	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-tsdb01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.604	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.665	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-web01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.704	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.758	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-zkp01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.795	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.847	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-zkp02 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.885	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:00.937	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-zkp03 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:00.975	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.028	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-kfk01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.062	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.094	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-kfk02 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.132	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.177	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-kfk03 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.226	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.280	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-mdoms01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.320	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.372	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-cdmlap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.411	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.468	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-cdstap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.503	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.571	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-cdsvadm01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.610	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.675	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-diosap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.730	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.795	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-diosweb01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.844	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.896	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-dprweb01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:01.943	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 11:17:01.999	[INFO] [DryRun] VM 배포 예정: hazr-t-dtg-dprap01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-05-14 11:17:02.043	[INFO] [END] Deploy-Vms
+2026-05-14 11:17:02.083	[INFO] [END] Script
+2026-05-14 13:59:54.228	[INFO] [START] Script
+2026-05-14 13:59:54.288	[INFO] [START] Initialize-Modules
+2026-05-14 14:00:13.210	[INFO] [END] Initialize-Modules
+2026-05-14 14:00:13.269	[INFO] [START] Ensure-AzSession
+2026-05-14 14:00:16.745	[INFO] [END] Ensure-AzSession
+2026-05-14 14:00:16.826	[INFO] [START] Validate-Inputs
+2026-05-14 14:00:17.219	[INFO] Excel 시트 로드: LB
+2026-05-14 14:00:17.674	[INFO] Excel 시트 로드: LB_Probe
+2026-05-14 14:00:17.991	[INFO] Excel 시트 로드: LB_Rule
+2026-05-14 14:00:18.241	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:00:18.288	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:00:18.336	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:00:18.466	[INFO] [END] Validate-Inputs
+2026-05-14 14:00:18.542	[ERR] [LB_Probe] Row=1, Name=hazr-t-dtg-admap-lb, Field=Port: 필수 값이 비어 있습니다.
+2026-05-14 14:00:47.083	[INFO] [START] Script
+2026-05-14 14:00:47.128	[INFO] [START] Initialize-Modules
+2026-05-14 14:01:08.127	[INFO] [END] Initialize-Modules
+2026-05-14 14:01:08.175	[INFO] [START] Ensure-AzSession
+2026-05-14 14:01:12.043	[INFO] [END] Ensure-AzSession
+2026-05-14 14:01:12.116	[INFO] [START] Validate-Inputs
+2026-05-14 14:01:12.516	[INFO] Excel 시트 로드: LB
+2026-05-14 14:01:12.957	[INFO] Excel 시트 로드: LB_Probe
+2026-05-14 14:01:13.239	[INFO] Excel 시트 로드: LB_Rule
+2026-05-14 14:01:13.432	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:13.478	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:13.518	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:13.583	[INFO] [END] Validate-Inputs
+2026-05-14 14:01:13.637	[INFO] [START] Deploy-LoadBalancers
+2026-05-14 14:01:13.797	[INFO] Excel 시트 로드: LB
+2026-05-14 14:01:14.077	[INFO] Excel 시트 로드: LB_Probe
+2026-05-14 14:01:14.352	[INFO] Excel 시트 로드: LB_Rule
+2026-05-14 14:01:14.532	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:14.578	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:14.632	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:01:14.725	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:14.757	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admap-lb-fe, Pool=t-dtg-admap-lb-bp)
+2026-05-14 14:01:14.791	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:14.824	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admweb-lb-fe, Pool=t-dtg-admweb-lb-bp)
+2026-05-14 14:01:14.858	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:14.893	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ap-lb-fe, Pool=t-dtg-ap-lb-bp)
+2026-05-14 14:01:14.928	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:14.962	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdmlap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdmlap-lb-fe, Pool=t-dtg-cdmlap-lb-bp)
+2026-05-14 14:01:14.998	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.037	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdstap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdstap-lb-fe, Pool=t-dtg-cdstap-lb-bp)
+2026-05-14 14:01:15.073	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.109	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdsvadm-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdsvadm-lb-fe, Pool=t-dtg-cdsvadm-lb-bp)
+2026-05-14 14:01:15.146	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.182	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosap-lb-fe, Pool=t-dtg-diosap-lb-bp)
+2026-05-14 14:01:15.216	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.250	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosweb-lb-fe, Pool=t-dtg-diosweb-lb-bp)
+2026-05-14 14:01:15.285	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.346	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprap-lb-fe, Pool=t-dtg-dprap-lb-bp)
+2026-05-14 14:01:15.385	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.422	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprweb-lb-fe, Pool=t-dtg-dprweb-lb-bp)
+2026-05-14 14:01:15.470	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.504	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-extgeoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-extgeoap-lb-fe, Pool=t-dtg-extgeoap-lb-bp)
+2026-05-14 14:01:15.546	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.593	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-geoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-geoap-lb-fe, Pool=t-dtg-geoap-lb-bp)
+2026-05-14 14:01:15.627	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.663	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ingap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ingap-lb-fe, Pool=t-dtg-ingap-lb-bp)
+2026-05-14 14:01:15.704	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.742	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-mq-lb (RG=hazr-t-dtg-rg, FE=t-dtg-mq-lb-fe, Pool=t-dtg-mq-lb-bp)
+2026-05-14 14:01:15.778	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-14 14:01:15.810	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-web-lb (RG=hazr-t-dtg-rg, FE=t-dtg-web-lb-fe, Pool=t-dtg-web-lb-bp)
+2026-05-14 14:01:15.845	[INFO] [END] Deploy-LoadBalancers
+2026-05-14 14:01:15.876	[INFO] [END] Script
+2026-05-14 14:04:10.010	[INFO] [START] Script
+2026-05-14 14:04:10.067	[INFO] [START] Initialize-Modules
+2026-05-14 14:04:32.793	[INFO] [END] Initialize-Modules
+2026-05-14 14:04:32.873	[INFO] [START] Ensure-AzSession
+2026-05-14 14:04:33.181	[INFO] [END] Initialize-Modules
+2026-05-14 14:04:33.244	[INFO] [START] Ensure-AzSession
+2026-05-14 14:04:36.013	[INFO] [END] Ensure-AzSession
+2026-05-14 14:04:36.129	[INFO] [START] Validate-Inputs
+2026-05-14 14:04:36.337	[INFO] [END] Ensure-AzSession
+2026-05-14 14:04:36.435	[INFO] [START] Validate-Inputs
+2026-05-14 14:04:36.567	[INFO] Excel 시트 로드: LB
+2026-05-14 14:04:36.907	[INFO] Excel 시트 로드: LB
+2026-05-14 14:04:37.139	[INFO] Excel 시트 로드: LB_Probe
+2026-05-14 14:04:37.418	[INFO] Excel 시트 로드: LB_Probe
+2026-05-14 14:04:37.507	[INFO] Excel 시트 로드: LB_Rule
+2026-05-14 14:04:37.868	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:04:37.947	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:04:38.002	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:04:38.185	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:04:38.219	[ERR] [LB_Probe] Row=1, Name=hazr-t-dtg-admap-lb, Field=Port: 필수 값이 비어 있습니다.
+2026-05-14 14:04:38.280	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
+2026-05-14 14:04:38.425	[INFO] [END] Validate-Inputs
+2026-05-14 14:04:38.483	[ERR] [LB_Rule] Row=1, Name=hazr-t-dtg-admap-lb, Field=FEPort: 필수 값이 비어 있습니다.

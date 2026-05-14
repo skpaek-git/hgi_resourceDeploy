@@ -245,7 +245,9 @@ function New-DiskSpecsFromRow {
     $disk1Caching = Get-CellValueAny -Row $Row -Fields @('Datadisk1HostCaching','DataDisk1HostCaching','Disk1HostCaching')
     $disk1Lun = Get-CellValueAny -Row $Row -Fields @('Datadisk1Lun','DataDisk1Lun','Disk1Lun')
 
-    if ($disk1Name -or $disk1Type -or $disk1Size) {
+    # Treat as an actual disk request only when both name and size are provided.
+    # If either one is blank (or '-' which maps to null), skip this slot.
+    if ($disk1Name -and $disk1Size) {
         $specs += [pscustomobject]@{
             Slot = 1
             Name = $disk1Name
@@ -264,7 +266,8 @@ function New-DiskSpecsFromRow {
     $disk2Caching = Get-CellValueAny -Row $Row -Fields @('Datadisk2HostCaching','DataDisk2HostCaching','Disk2HostCaching')
     $disk2Lun = Get-CellValueAny -Row $Row -Fields @('Datadisk2Lun','DataDisk2Lun','Disk2Lun')
 
-    if ($disk2Name -or $disk2Type -or $disk2Size) {
+    # Same rule for slot 2.
+    if ($disk2Name -and $disk2Size) {
         $specs += [pscustomobject]@{
             Slot = 2
             Name = $disk2Name

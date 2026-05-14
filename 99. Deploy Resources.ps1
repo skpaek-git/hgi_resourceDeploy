@@ -4,7 +4,7 @@ param(
     [string]$ExcelPath = '.\서버정보\20260422_리소스배포_종합.xlsx',
 
     [Parameter()]
-    [ValidateSet('RG','VNET','UDR','STORAGE','KV','DES','LB','NSG','VM','DATADISK')]
+    [ValidateSet('RG','VNET','UDR','STORAGE','KV','DES','LB','LB_PROBE','LB_RULE','NSG','VM','DATADISK')]
     [string[]]$DeployType = @('RG','VNET','STORAGE','KV','DES','LB','NSG','VM'),
 
     [Parameter()]
@@ -16,6 +16,9 @@ param(
 
     [Parameter()]
     [switch]$DryRun
+    ,
+    [Parameter()]
+    [switch]$LbResourceOnly
 )
 
 Set-StrictMode -Version Latest
@@ -28,13 +31,15 @@ class DeploymentContext {
     [string[]]$VmRoleFilter
     [bool]$DryRun
     [string]$SubscriptionId
+    [bool]$LbResourceOnly
 
-    DeploymentContext([string]$excelPath, [string[]]$deployType, [string[]]$vmRoleFilter, [bool]$dryRun, [string]$subscriptionId) {
+    DeploymentContext([string]$excelPath, [string[]]$deployType, [string[]]$vmRoleFilter, [bool]$dryRun, [string]$subscriptionId, [bool]$lbResourceOnly) {
         $this.ExcelPath = $excelPath
         $this.DeployType = $deployType
         $this.VmRoleFilter = $vmRoleFilter
         $this.DryRun = $dryRun
         $this.SubscriptionId = $subscriptionId
+        $this.LbResourceOnly = $lbResourceOnly
     }
 }
 
@@ -67,6 +72,43 @@ function Write-WarnLog {
 function Write-ErrorLog {
     param([string]$Message)
     if (Get-Command Out-ErrLog -ErrorAction SilentlyContinue) { Out-ErrLog $Message } else { Write-Error $Message }
+}
+
+function Invoke-WithRetry {
+    param(
+        [scriptblock]$ScriptBlock,
+        [string]$Operation = 'Operation',
+        [int]$MaxAttempts = 3,
+        [int]$InitialDelaySeconds = 2
+    )
+
+    $attempt = 1
+    while ($true) {
+        try {
+            return & $ScriptBlock
+        } catch {
+            $message = $_.Exception.Message
+            $isTransient = (
+                $message -match 'while sending the request' -or
+                $message -match 'The request was aborted' -or
+                $message -match 'A task was canceled' -or
+                $message -match 'temporarily unavailable' -or
+                $message -match 'timed out' -or
+                $message -match 'timeout' -or
+                $message -match 'TooManyRequests' -or
+                $message -match '\(429\)'
+            )
+
+            if (-not $isTransient -or $attempt -ge $MaxAttempts) {
+                throw
+            }
+
+            Write-WarnLog "$Operation 일시 오류(시도 $attempt/$MaxAttempts): $message"
+            $delay = [int]([Math]::Pow(2, ($attempt - 1)) * $InitialDelaySeconds)
+            Start-Sleep -Seconds $delay
+            $attempt++
+        }
+    }
 }
 
 function Start-Step {
@@ -549,7 +591,7 @@ function Validate-Inputs {
         }
     }
 
-    if ($Context.DeployType -contains 'LB') {
+    if (@($Context.DeployType | Where-Object { $_ -in @('LB','LB_PROBE','LB_RULE') }).Count -gt 0) {
         $lbRows = Get-SheetRows -Context $Context -SheetCandidates @('LB','LB_PRD','Load Balancer')
         $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
         $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
@@ -609,41 +651,49 @@ function Validate-Inputs {
             $i++
         }
 
-        $j = 1
-        foreach ($pr in $probeRows) {
-            $targetLb = Get-CellValue -Row $pr -Field 'LBName'
-            if (-not $targetLb) { $j++; continue }
-            if (-not $lbNameSet.Contains($targetLb)) {
-                Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
+        $validateProbes = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_PROBE')
+        $validateRules = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_RULE')
+
+        if ($validateProbes) {
+            $j = 1
+            foreach ($pr in $probeRows) {
+                $targetLb = Get-CellValue -Row $pr -Field 'LBName'
+                if (-not $targetLb) { $j++; continue }
+                if (-not $lbNameSet.Contains($targetLb)) {
+                    Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
+                }
+                if (-not (Get-CellValue -Row $pr -Field 'ProbeName')) {
+                    Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'ProbeName' -Message '필수 값이 비어 있습니다.'
+                }
+                if (-not (Get-CellValue -Row $pr -Field 'Port')) {
+                    Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'Port' -Message '필수 값이 비어 있습니다.'
+                }
+                $j++
             }
-            if (-not (Get-CellValue -Row $pr -Field 'ProbeName')) {
-                Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'ProbeName' -Message '필수 값이 비어 있습니다.'
-            }
-            if (-not (Get-CellValue -Row $pr -Field 'Port')) {
-                Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'Port' -Message '필수 값이 비어 있습니다.'
-            }
-            $j++
+
         }
 
-        $j = 1
-        foreach ($rr in $ruleRows) {
-            $targetLb = Get-CellValue -Row $rr -Field 'LBName'
-            if (-not $targetLb) { $j++; continue }
-            if (-not $lbNameSet.Contains($targetLb)) {
-                Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
-            }
-            foreach ($f in @('RuleName','FEName','BEPoolName')) {
-                if (-not (Get-CellValue -Row $rr -Field $f)) {
-                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field $f -Message '필수 값이 비어 있습니다.'
+        if ($validateRules) {
+            $j = 1
+            foreach ($rr in $ruleRows) {
+                $targetLb = Get-CellValue -Row $rr -Field 'LBName'
+                if (-not $targetLb) { $j++; continue }
+                if (-not $lbNameSet.Contains($targetLb)) {
+                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
                 }
+                foreach ($f in @('RuleName','FEName','BEPoolName')) {
+                    if (-not (Get-CellValue -Row $rr -Field $f)) {
+                        Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field $f -Message '필수 값이 비어 있습니다.'
+                    }
+                }
+                if (-not (Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort'))) {
+                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'FEPort' -Message '필수 값이 비어 있습니다.'
+                }
+                if (-not (Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort'))) {
+                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'BEPort' -Message '필수 값이 비어 있습니다.'
+                }
+                $j++
             }
-            if (-not (Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort'))) {
-                Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'FEPort' -Message '필수 값이 비어 있습니다.'
-            }
-            if (-not (Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort'))) {
-                Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'BEPort' -Message '필수 값이 비어 있습니다.'
-            }
-            $j++
         }
     }
 
@@ -785,13 +835,17 @@ function Ensure-ResourceGroup {
         return
     }
 
-    $rg = Get-AzResourceGroup -Name $Name -ErrorAction SilentlyContinue
+    $rg = Invoke-WithRetry -Operation "Get-AzResourceGroup:$Name" -ScriptBlock {
+        Get-AzResourceGroup -Name $Name -ErrorAction SilentlyContinue
+    }
     if ($rg) {
         Write-Info "리소스 그룹 유지: $Name"
         return
     }
 
-    New-AzResourceGroup -Name $Name -Location $Location -Force | Out-Null
+    Invoke-WithRetry -Operation "New-AzResourceGroup:$Name" -ScriptBlock {
+        New-AzResourceGroup -Name $Name -Location $Location -Force | Out-Null
+    }
     Write-Info "리소스 그룹 생성 완료: $Name"
 }
 
@@ -1338,6 +1392,10 @@ function Deploy-LoadBalancers {
     param([DeploymentContext]$Context)
 
     Start-Step 'Deploy-LoadBalancers'
+    $deployLbResource = ($Context.DeployType -contains 'LB')
+    $deployProbes = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_PROBE')
+    $deployRules = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_RULE')
+
     $lbRows = Get-SheetRows -Context $Context -SheetCandidates @('LB','LB_PRD','Load Balancer')
     $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
     $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
@@ -1389,11 +1447,29 @@ function Deploy-LoadBalancers {
 
         if ($Context.DryRun) {
             Write-Info "[DryRun] LB 배포 예정: $lbName (RG=$rgName, FE=$feName, Pool=$bePoolName)"
+            if ($deployProbes) {
+                $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+                foreach ($pr in $targetProbes) {
+                    $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
+                    if ($probeName) {
+                        Write-Info "[DryRun] LB Probe 배포 예정: $lbName/$probeName"
+                    }
+                }
+            }
+            if ($deployRules) {
+                $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+                foreach ($rr in $targetRules) {
+                    $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
+                    if ($ruleName) {
+                        Write-Info "[DryRun] LB Rule 배포 예정: $lbName/$ruleName"
+                    }
+                }
+            }
             continue
         }
 
         $lb = Get-AzLoadBalancer -ResourceGroupName $rgName -Name $lbName -ErrorAction SilentlyContinue
-        if (-not $lb) {
+        if ($deployLbResource -and -not $lb) {
             if ($feType.ToUpperInvariant() -ne 'INTERNAL') {
                 throw "현재 스크립트는 Internal FEType만 지원합니다. LB=$lbName, FEType=$feType"
             }
@@ -1419,13 +1495,16 @@ function Deploy-LoadBalancers {
             $backendPool = New-AzLoadBalancerBackendAddressPoolConfig -Name $bePoolName
             $lb = New-AzLoadBalancer -ResourceGroupName $rgName -Name $lbName -Location $location -Sku $sku -FrontendIpConfiguration @($frontendConfig) -BackendAddressPool @($backendPool) -Force
             Write-Info "LB 생성 완료: $lbName"
-        } else {
+        } elseif ($lb) {
             Write-Info "LB 유지: $lbName"
+        } else {
+            Write-WarnLog "LB가 없어 Probe/Rule 배포를 건너뜁니다. LB=$lbName, RG=$rgName"
+            continue
         }
 
         $changed = $false
         $frontendRef = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName | Select-Object -First 1
-        if (-not $frontendRef) {
+        if ($deployLbResource -and -not $frontendRef) {
             if ($feType.ToUpperInvariant() -ne 'INTERNAL') {
                 throw "현재 스크립트는 Internal FEType만 지원합니다. LB=$lbName, FEType=$feType"
             }
@@ -1452,48 +1531,61 @@ function Deploy-LoadBalancers {
         }
 
         $backendRef = $lb.BackendAddressPools | Where-Object Name -eq $bePoolName | Select-Object -First 1
-        if (-not $backendRef) {
+        if ($deployLbResource -and -not $backendRef) {
             $lb = Add-AzLoadBalancerBackendAddressPoolConfig -LoadBalancer $lb -Name $bePoolName
             $changed = $true
             $backendRef = $lb.BackendAddressPools | Where-Object Name -eq $bePoolName | Select-Object -First 1
             Write-Info "LB BackendPool 추가: $lbName/$bePoolName"
         }
 
-        $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
-        foreach ($pr in $targetProbes) {
-            $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
-            if (-not $probeName) { continue }
-            if ($lb.Probes | Where-Object Name -eq $probeName) { continue }
-
-            $probePortText = Get-CellValue -Row $pr -Field 'Port'
-            if (-not $probePortText) { continue }
-            $probeIntervalText = Get-CellValue -Row $pr -Field 'IntervalInSeconds'
-            $probeCountText = Get-CellValue -Row $pr -Field 'ProbeCount'
-
-            $probeProtocol = Convert-LbProtocol -Value (Get-CellValue -Row $pr -Field 'Protocol') -Default 'Tcp'
-            if ($probeProtocol -eq 'All') { $probeProtocol = 'Tcp' }
-
-            $probeParams = @{
-                LoadBalancer = $lb
-                Name = $probeName
-                Protocol = $probeProtocol
-                Port = [int]$probePortText
-                IntervalInSeconds = if ($probeIntervalText) { [int]$probeIntervalText } else { 5 }
-                ProbeCount = if ($probeCountText) { [int]$probeCountText } else { 2 }
+        if (-not $deployProbes -and -not $deployRules) {
+            if ($changed) {
+                $lb | Set-AzLoadBalancer | Out-Null
+                Write-Info "LB 리소스만 업데이트 완료(Probe/Rule 제외): $lbName"
+            } else {
+                Write-Info "LB 리소스 변경 없음(Probe/Rule 제외): $lbName"
             }
-
-            $requestPath = Get-CellValue -Row $pr -Field 'RequestPath'
-            if (($probeProtocol -eq 'Http' -or $probeProtocol -eq 'Https') -and $requestPath) {
-                $probeParams['RequestPath'] = $requestPath
-            }
-
-            $lb = Add-AzLoadBalancerProbeConfig @probeParams
-            $changed = $true
-            Write-Info "LB Probe 추가: $lbName/$probeName"
+            continue
         }
 
-        $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
-        foreach ($rr in $targetRules) {
+        if ($deployProbes) {
+            $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+            foreach ($pr in $targetProbes) {
+                $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
+                if (-not $probeName) { continue }
+                if ($lb.Probes | Where-Object Name -eq $probeName) { continue }
+
+                $probePortText = Get-CellValue -Row $pr -Field 'Port'
+                if (-not $probePortText) { continue }
+                $probeIntervalText = Get-CellValue -Row $pr -Field 'IntervalInSeconds'
+                $probeCountText = Get-CellValue -Row $pr -Field 'ProbeCount'
+
+                $probeProtocol = Convert-LbProtocol -Value (Get-CellValue -Row $pr -Field 'Protocol') -Default 'Tcp'
+                if ($probeProtocol -eq 'All') { $probeProtocol = 'Tcp' }
+
+                $probeParams = @{
+                    LoadBalancer = $lb
+                    Name = $probeName
+                    Protocol = $probeProtocol
+                    Port = [int]$probePortText
+                    IntervalInSeconds = if ($probeIntervalText) { [int]$probeIntervalText } else { 5 }
+                    ProbeCount = if ($probeCountText) { [int]$probeCountText } else { 2 }
+                }
+
+                $requestPath = Get-CellValue -Row $pr -Field 'RequestPath'
+                if (($probeProtocol -eq 'Http' -or $probeProtocol -eq 'Https') -and $requestPath) {
+                    $probeParams['RequestPath'] = $requestPath
+                }
+
+                $lb = Add-AzLoadBalancerProbeConfig @probeParams
+                $changed = $true
+                Write-Info "LB Probe 추가: $lbName/$probeName"
+            }
+        }
+
+        if ($deployRules) {
+            $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+            foreach ($rr in $targetRules) {
             $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
             if (-not $ruleName) { continue }
             if ($lb.LoadBalancingRules | Where-Object Name -eq $ruleName) { continue }
@@ -1561,6 +1653,7 @@ function Deploy-LoadBalancers {
             $lb = Add-AzLoadBalancerRuleConfig @ruleParams
             $changed = $true
             Write-Info "LB Rule 추가: $lbName/$ruleName"
+            }
         }
 
         if ($changed) {
@@ -2200,7 +2293,9 @@ function Deploy-Vms {
             continue
         }
 
-        $result = New-AzResourceGroupDeployment -ResourceGroupName $rgName -TemplateFile $templateFile -TemplateParameterObject $params -ErrorAction Stop
+        $result = Invoke-WithRetry -Operation "New-AzResourceGroupDeployment:$vmName" -ScriptBlock {
+            New-AzResourceGroupDeployment -ResourceGroupName $rgName -TemplateFile $templateFile -TemplateParameterObject $params -ErrorAction Stop
+        }
         if ($result.ProvisioningState -eq 'Succeeded') {
             Write-Info "VM 배포 성공: $vmName"
         } else {
@@ -2351,7 +2446,7 @@ function Run-Main {
     $resolvedExcelPath = Resolve-ExcelFullPath -Path $ExcelPath -AllowFallback:$allowFallback
     $subscriptionId = Ensure-AzSession -ConnectAccount:$ConnectAccount -DryRun:$DryRun
 
-    $context = [DeploymentContext]::new($resolvedExcelPath, $DeployType, $Option, [bool]$DryRun, $subscriptionId)
+    $context = [DeploymentContext]::new($resolvedExcelPath, $DeployType, $Option, [bool]$DryRun, $subscriptionId, [bool]$LbResourceOnly)
 
     $issues = @(Validate-Inputs -Context $context)
     $blockingIssues = @($issues | Where-Object { $_.Message -notlike '권장 필드*' })
@@ -2370,7 +2465,8 @@ function Run-Main {
         throw '입력 데이터 검증에 실패했습니다. Excel 데이터를 수정한 후 다시 실행해 주세요.'
     }
 
-    $deploymentOrder = @('RG','VNET','UDR','STORAGE','KV','DES','LB','VM','DATADISK','NSG')
+    $deploymentOrder = @('RG','VNET','UDR','STORAGE','KV','DES','LB','LB_PROBE','LB_RULE','VM','DATADISK','NSG')
+    $lbDeployHandled = $false
     foreach ($type in $deploymentOrder) {
         if ($context.DeployType -notcontains $type) { continue }
         switch ($type) {
@@ -2380,7 +2476,24 @@ function Run-Main {
             'STORAGE' { Deploy-Storages -Context $context }
             'KV' { Deploy-KeyVaults -Context $context }
             'DES' { Deploy-DiskEncryptionSets -Context $context }
-            'LB' { Deploy-LoadBalancers -Context $context }
+            'LB' {
+                if (-not $lbDeployHandled) {
+                    Deploy-LoadBalancers -Context $context
+                    $lbDeployHandled = $true
+                }
+            }
+            'LB_PROBE' {
+                if (-not $lbDeployHandled) {
+                    Deploy-LoadBalancers -Context $context
+                    $lbDeployHandled = $true
+                }
+            }
+            'LB_RULE' {
+                if (-not $lbDeployHandled) {
+                    Deploy-LoadBalancers -Context $context
+                    $lbDeployHandled = $true
+                }
+            }
             'NSG' { Deploy-Nsgs -Context $context }
             'VM' { Deploy-Vms -Context $context }
             'DATADISK' { Deploy-DataDisks -Context $context }
