@@ -156,6 +156,28 @@ function Convert-OsDiskStorageType {
     }
 }
 
+function Test-WindowsComputerName {
+    param([string]$Name)
+
+    if ([string]::IsNullOrWhiteSpace($Name)) { return $false }
+    $trimmed = $Name.Trim()
+    if ($trimmed.Length -gt 15) { return $false }
+    if ($trimmed -match '^\d+$') { return $false }
+    if ($trimmed -notmatch '^[A-Za-z0-9-]+$') { return $false }
+    return $true
+}
+
+function Get-WindowsComputerName {
+    param([string]$VmName)
+
+    if ([string]::IsNullOrWhiteSpace($VmName)) { return $VmName }
+    $name = $VmName.Trim()
+    if ($name.Length -gt 15) {
+        return $name.Substring(0, 15)
+    }
+    return $name
+}
+
 function Get-VmSourceType {
     param([psobject]$Row)
     $imageResourceId = Get-CellValue -Row $Row -Field 'ImageResourceId'
@@ -635,6 +657,14 @@ function Validate-Inputs {
 
             foreach ($field in @('RGname','Location','NicName','SubnetName','VnetName','PrivateIP','VmSize','OsDiskStorageType','AdminUsername','OsType')) {
                 Test-RequiredField -Issues $issues -Type 'VM' -Row $i -Data $r -Field $field -ResourceName $vmName
+            }
+
+            $osType = Get-CellValue -Row $r -Field 'OsType'
+            if ($osType -and $osType.Trim().ToUpperInvariant() -eq 'WINDOWS') {
+                $computerName = Get-WindowsComputerName -VmName $vmName
+                if (-not (Test-WindowsComputerName -Name $computerName)) {
+                    Add-Issue -Issues $issues -Type 'VM' -Row $i -ResourceName $vmName -Field 'Name' -Message "Windows ComputerName 생성값이 유효하지 않습니다. 생성값=$computerName, 규칙: 1~15자, 영문/숫자/하이픈(-)만 허용, 숫자만으로 구성 불가"
+                }
             }
 
             $useKvPassword = Convert-ToBoolean -Value (Get-CellValue -Row $r -Field 'UseKeyVaultPassword') -Default $false
@@ -2029,6 +2059,14 @@ function New-VmTemplateParameter {
         $vnetRG = $RgName
     }
     $enableAcceleratedNetworking = Convert-ToBoolean -Value (Get-CellValue -Row $Row -Field 'EnableAcceleratedNetworking') -Default $true
+    $osType = Get-CellValue -Row $Row -Field 'OsType'
+    $computerName = $VmName
+    if ($osType -and $osType.Trim().ToUpperInvariant() -eq 'WINDOWS') {
+        $computerName = Get-WindowsComputerName -VmName $VmName
+        if ($computerName -ne $VmName) {
+            Write-Info "Windows ComputerName 자동 보정: VM=$VmName -> ComputerName=$computerName"
+        }
+    }
 
     $params = @{
         location                      = (Get-CellValue -Row $Row -Field 'Location')
@@ -2038,7 +2076,7 @@ function New-VmTemplateParameter {
         virtualNetworkName            = (Get-CellValue -Row $Row -Field 'VnetName')
         privateIP                     = (Get-CellValue -Row $Row -Field 'PrivateIP')
         virtualMachineName            = $VmName
-        virtualMachineComputerName    = $VmName
+        virtualMachineComputerName    = $computerName
         virtualMachineRG              = $RgName
         virtualMachineSize            = $vmSize
         osDiskType                    = (Convert-OsDiskStorageType -InputValue (Get-CellValue -Row $Row -Field 'OsDiskStorageType'))
