@@ -54,6 +54,31 @@
 # Load Balancer만 (Role/Option 필터)
 & ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB') -Option 'EXT' -ConnectAccount
 
+# LB 리소스만 선배포(Probe/Rule 제외)
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB') -Option 'DTG' -LbResourceOnly -ConnectAccount
+
+# LB Probe만 배포
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB_PROBE') -Option 'DTG' -ConnectAccount
+
+# LB Rule만 배포
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB_RULE') -Option 'DTG' -ConnectAccount
+
+# LB 분리 배포 가이드
+# 1) LB 리소스(Frontend/BackendPool)만 먼저 생성
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB') -Option 'DTG' -LbResourceOnly -ConnectAccount
+
+# 2) 상태 프로브만 별도 반영(사전 협의 후)
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB_PROBE') -Option 'DTG' -ConnectAccount
+
+# 3) 부하분산 규칙만 별도 반영(사전 협의 후)
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB_RULE') -Option 'DTG' -ConnectAccount
+
+# 4) 프로브 + 룰을 한 번에 반영
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB_PROBE','LB_RULE') -Option 'DTG' -ConnectAccount
+
+# 5) 기존 방식(리소스 + 프로브 + 룰 일괄)
+& ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('LB') -Option 'DTG' -ConnectAccount
+
 # VM만
 & ".\99. Deploy Resources.ps1" -ExcelPath '.\서버정보\배포파일.xlsx' -DeployType @('VM') -ConnectAccount
 
@@ -88,7 +113,7 @@ pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\�
 
 ## 핵심 동작 규칙
 - 입력 검증 실패 시 배포 중단
-- 실행 순서는 내부적으로 고정: `RG -> VNET -> UDR -> STORAGE -> KV -> DES -> LB -> VM -> DATADISK -> NSG`
+- 실행 순서는 내부적으로 고정: `RG -> VNET -> UDR -> STORAGE -> KV -> DES -> LB -> LB_PROBE -> LB_RULE -> VM -> DATADISK -> NSG`
 - 로그는 `PSOutLog` 기반으로 `logs\99. Deploy Resources.log`에 기록
 
 ## CMK 연동 규칙 (현재)
@@ -210,3 +235,12 @@ pwsh -NoProfile -File ".\99. Deploy Resources.ps1" -ExcelPath ".\서버정보\�
 - `LB` 배포(검증/실행)에서 `-Option` 필터를 `Role`/`Option` 컬럼 기준으로 적용
 - `LB`, `LB_Probe`, `LB_Rule` 각각에 `-Option` 필터를 직접 적용하고, 이후 선택된 LB에 매핑된 Probe/Rule만 처리하도록 보강
 - UDR 라우트 반영 시 신규 Route는 `Add`, 기존 Route는 `Set`으로 분기 처리
+
+### 2026-05-14 (운영 안정화/단계 배포 강화)
+- Windows VM 배포 시 `computerName`을 자동 보정하도록 개선 (VM 이름 15자 초과 시 앞 15자로 자동 적용)
+- Windows VM `computerName` 규칙 사전 검증 로직 보강 (길이/허용문자/숫자-only 체크)
+- ARM 호출 일시 오류(예: `An error occurred while sending the request`, timeout/429)에 대한 재시도 로직 추가 (`Get/New-AzResourceGroup`, `New-AzResourceGroupDeployment`)
+- DataDisk 시트에서 `-`/빈값 처리 시 디스크 슬롯 인식 기준을 강화 (`Name`과 `Size`가 모두 있을 때만 배포 대상으로 간주)
+- LB 단계 배포를 위해 `-LbResourceOnly` 옵션 추가 (LB 리소스만 선배포, Probe/Rule 제외)
+- `DeployType`에 `LB_PROBE`, `LB_RULE` 추가 (시트 단위 실행 지원)
+- `LB_PROBE`/`LB_RULE` 단독 실행 시 해당 항목 검증/처리만 수행하도록 분기 로직 정비
