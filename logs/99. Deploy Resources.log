@@ -2687,3 +2687,385 @@ s
 2026-05-14 14:04:38.280	[INFO] Option 필터 적용: dtg / 대상 행 수: 15
 2026-05-14 14:04:38.425	[INFO] [END] Validate-Inputs
 2026-05-14 14:04:38.483	[ERR] [LB_Rule] Row=1, Name=hazr-t-dtg-admap-lb, Field=FEPort: 필수 값이 비어 있습니다.
+2026-05-18 16:17:24.153	[INFO] [START] Script
+2026-05-18 16:17:24.215	[INFO] [START] Initialize-Modules
+2026-05-18 16:17:46.740	[INFO] [END] Initialize-Modules
+2026-05-18 16:17:46.793	[INFO] [START] Ensure-AzSession
+2026-05-18 16:17:50.854	[INFO] [END] Ensure-AzSession
+2026-05-18 16:17:50.928	[INFO] [START] Validate-Inputs
+2026-05-18 16:17:51.275	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:17:51.704	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:17:51.839	[INFO] [END] Validate-Inputs
+2026-05-18 16:17:51.885	[INFO] [START] Deploy-Nsgs
+2026-05-18 16:17:52.024	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:17:52.290	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:17:52.417	[INFO] Excel 시트 로드: VNET
+2026-05-18 16:17:52.647	[INFO] [DryRun] NSG 배포 예정: d-bdp-airfw01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:52.689	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-airfw01-nic (RG=hazr-d-bdp-rg) -> d-bdp-airfw01-nsg
+2026-05-18 16:17:52.725	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:52.756	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkap01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkap01-nsg
+2026-05-18 16:17:52.787	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkml01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:52.820	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkml01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkml01-nsg
+2026-05-18 16:17:52.856	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:52.890	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkweb01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkweb01-nsg
+2026-05-18 16:17:52.927	[INFO] [DryRun] NSG 배포 예정: d-bdp-cxmadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:52.965	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-cxmadm01-nic (RG=hazr-d-bdp-rg) -> d-bdp-cxmadm01-nsg
+2026-05-18 16:17:53.002	[INFO] [DryRun] NSG 배포 예정: d-bdp-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.035	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-bdp-db-sbn -> d-bdp-db-nsg
+2026-05-18 16:17:53.077	[INFO] [DryRun] NSG 배포 예정: d-bdp-kepler01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.124	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-kepler01-nic (RG=hazr-d-bdp-rg) -> d-bdp-kepler01-nsg
+2026-05-18 16:17:53.165	[INFO] [DryRun] NSG 배포 예정: d-bdp-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.201	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-bdp-pe-sbn -> d-bdp-pe-nsg
+2026-05-18 16:17:53.234	[INFO] [DryRun] NSG 배포 예정: d-bdp-slap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.274	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-slap01-nic (RG=hazr-d-bdp-rg) -> d-bdp-slap01-nsg
+2026-05-18 16:17:53.307	[INFO] [DryRun] NSG 배포 예정: d-com-auth01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.342	[INFO] [DryRun] NIC-NSG 연결 예정: d-com-auth01-nic (RG=hazr-d-com-rg) -> d-com-auth01-nsg
+2026-05-18 16:17:53.376	[INFO] [DryRun] NSG 배포 예정: d-com-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.410	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-com-db-sbn -> d-com-db-nsg
+2026-05-18 16:17:53.445	[INFO] [DryRun] NSG 배포 예정: d-com-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.489	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-com-pe-sbn -> d-com-pe-nsg
+2026-05-18 16:17:53.541	[INFO] [DryRun] NSG 배포 예정: d-com-proxy01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.596	[INFO] [DryRun] NIC-NSG 연결 예정: d-com-proxy01-nic (RG=hazr-d-com-rg) -> d-com-proxy01-nsg
+2026-05-18 16:17:53.647	[INFO] [DryRun] NSG 배포 예정: d-cs-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.693	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-cs-db-sbn -> d-cs-db-nsg
+2026-05-18 16:17:53.734	[INFO] [DryRun] NSG 배포 예정: d-cs-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.779	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-cs-pe-sbn -> d-cs-pe-nsg
+2026-05-18 16:17:53.820	[INFO] [DryRun] NSG 배포 예정: d-ddg-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.858	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-ddg-db-sbn -> d-ddg-db-nsg
+2026-05-18 16:17:53.902	[INFO] [DryRun] NSG 배포 예정: d-ddg-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:53.949	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-ddg-pe-sbn -> d-ddg-pe-nsg
+2026-05-18 16:17:54.044	[INFO] [DryRun] NSG 배포 예정: d-dip-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.082	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-adm01-nic (RG=hazr-d-dip-rg) -> d-dip-adm01-nsg
+2026-05-18 16:17:54.124	[INFO] [DryRun] NSG 배포 예정: d-dip-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.162	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-ap01-nic (RG=hazr-d-dip-rg) -> d-dip-ap01-nsg
+2026-05-18 16:17:54.203	[INFO] [DryRun] NSG 배포 예정: d-dip-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.245	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-dip-db-sbn -> d-dip-db-nsg
+2026-05-18 16:17:54.283	[INFO] [DryRun] NSG 배포 예정: d-dip-flk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.316	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk01-nic (RG=hazr-d-dip-rg) -> d-dip-flk01-nsg
+2026-05-18 16:17:54.349	[INFO] [DryRun] NSG 배포 예정: d-dip-flk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.387	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk02-nic (RG=hazr-d-dip-rg) -> d-dip-flk02-nsg
+2026-05-18 16:17:54.421	[INFO] [DryRun] NSG 배포 예정: d-dip-flk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.455	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk03-nic (RG=hazr-d-dip-rg) -> d-dip-flk03-nsg
+2026-05-18 16:17:54.495	[INFO] [DryRun] NSG 배포 예정: d-dip-geoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.534	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-geoap01-nic (RG=hazr-d-dip-rg) -> d-dip-geoap01-nsg
+2026-05-18 16:17:54.571	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.605	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk01-nic (RG=hazr-d-dip-rg) -> d-dip-kfk01-nsg
+2026-05-18 16:17:54.641	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.677	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk02-nic (RG=hazr-d-dip-rg) -> d-dip-kfk02-nsg
+2026-05-18 16:17:54.715	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.749	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk03-nic (RG=hazr-d-dip-rg) -> d-dip-kfk03-nsg
+2026-05-18 16:17:54.784	[INFO] [DryRun] NSG 배포 예정: d-dip-mqap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.830	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-mqap01-nic (RG=hazr-d-dip-rg) -> d-dip-mqap01-nsg
+2026-05-18 16:17:54.873	[INFO] [DryRun] NSG 배포 예정: d-dip-mqweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.914	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-mqweb01-nic (RG=hazr-d-dip-rg) -> d-dip-mqweb01-nsg
+2026-05-18 16:17:54.953	[INFO] [DryRun] NSG 배포 예정: d-dip-oms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:54.997	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-oms01-nic (RG=hazr-d-dip-rg) -> d-dip-oms01-nsg
+2026-05-18 16:17:55.068	[INFO] [DryRun] NSG 배포 예정: d-dip-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.113	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-web01-nic (RG=hazr-d-dip-rg) -> d-dip-web01-nsg
+2026-05-18 16:17:55.169	[INFO] [DryRun] NSG 배포 예정: d-dis-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.226	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-adm01-nic (RG=hazr-d-dis-rg) -> d-dis-adm01-nsg
+2026-05-18 16:17:55.276	[INFO] [DryRun] NSG 배포 예정: d-dis-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.322	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-ap01-nic (RG=hazr-d-dis-rg) -> d-dis-ap01-nsg
+2026-05-18 16:17:55.381	[INFO] [DryRun] NSG 배포 예정: d-dis-bat01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.425	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bat01-nic (RG=hazr-d-dis-rg) -> d-dis-bat01-nsg
+2026-05-18 16:17:55.446	[INFO] [DryRun] NSG 배포 예정: d-dis-bbicltap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.470	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbicltap01-nic (RG=hazr-d-dis-rg) -> d-dis-bbicltap01-nsg
+2026-05-18 16:17:55.520	[INFO] [DryRun] NSG 배포 예정: d-dis-bbimsgap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.565	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbimsgap01-nic (RG=hazr-d-dis-rg) -> d-dis-bbimsgap01-nsg
+2026-05-18 16:17:55.595	[INFO] [DryRun] NSG 배포 예정: d-dis-bbiweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.645	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbiweb01-nic (RG=hazr-d-dis-rg) -> d-dis-bbiweb01-nsg
+2026-05-18 16:17:55.690	[INFO] [DryRun] NSG 배포 예정: d-dis-cmbsap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.737	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmbsap01-nic (RG=hazr-d-dis-rg) -> d-dis-cmbsap01-nsg
+2026-05-18 16:17:55.784	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.831	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsadm01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsadm01-nsg
+2026-05-18 16:17:55.877	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:55.932	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsap01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsap01-nsg
+2026-05-18 16:17:55.985	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.028	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsweb01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsweb01-nsg
+2026-05-18 16:17:56.077	[INFO] [DryRun] NSG 배포 예정: d-dis-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.132	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-dis-db-sbn -> d-dis-db-nsg
+2026-05-18 16:17:56.183	[INFO] [DryRun] NSG 배포 예정: d-dis-dfir01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.247	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-dfir01-nic (RG=hazr-d-dis-rg) -> d-dis-dfir01-nsg
+2026-05-18 16:17:56.309	[INFO] [DryRun] NSG 배포 예정: d-dis-drvcltap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.364	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-drvcltap01-nic (RG=hazr-d-dis-rg) -> d-dis-drvcltap01-nsg
+2026-05-18 16:17:56.418	[INFO] [DryRun] NSG 배포 예정: d-dis-drvmsgap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.461	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-drvmsgap01-nic (RG=hazr-d-dis-rg) -> d-dis-drvmsgap01-nsg
+2026-05-18 16:17:56.503	[INFO] [DryRun] NSG 배포 예정: d-dis-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.547	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-dis-pe-sbn -> d-dis-pe-nsg
+2026-05-18 16:17:56.589	[INFO] [DryRun] NSG 배포 예정: d-dis-walkap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.628	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-walkap01-nic (RG=hazr-d-dis-rg) -> d-dis-walkap01-nsg
+2026-05-18 16:17:56.669	[INFO] [DryRun] NSG 배포 예정: d-dis-walkweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.713	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-walkweb01-nic (RG=hazr-d-dis-rg) -> d-dis-walkweb01-nsg
+2026-05-18 16:17:56.760	[INFO] [DryRun] NSG 배포 예정: d-dis-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.810	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-web01-nic (RG=hazr-d-dis-rg) -> d-dis-web01-nsg
+2026-05-18 16:17:56.855	[INFO] [DryRun] NSG 배포 예정: d-doip-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.903	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-adm01-nic (RG=hazr-d-doip-rg) -> d-doip-adm01-nsg
+2026-05-18 16:17:56.948	[INFO] [DryRun] NSG 배포 예정: d-doip-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:56.991	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-ap01-nic (RG=hazr-d-doip-rg) -> d-doip-ap01-nsg
+2026-05-18 16:17:57.035	[INFO] [DryRun] NSG 배포 예정: d-doip-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.072	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-doip-db-sbn -> d-doip-db-nsg
+2026-05-18 16:17:57.106	[INFO] [DryRun] NSG 배포 예정: d-doip-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.141	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-doip-pe-sbn -> d-doip-pe-nsg
+2026-05-18 16:17:57.179	[INFO] [DryRun] NSG 배포 예정: d-doip-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.216	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-web01-nic (RG=hazr-d-doip-rg) -> d-doip-web01-nsg
+2026-05-18 16:17:57.253	[INFO] [DryRun] NSG 배포 예정: d-dtg-admap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.286	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-admap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-admap01-nsg
+2026-05-18 16:17:57.321	[INFO] [DryRun] NSG 배포 예정: d-dtg-admweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.355	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-admweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-admweb01-nsg
+2026-05-18 16:17:57.392	[INFO] [DryRun] NSG 배포 예정: d-dtg-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.427	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-ap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-ap01-nsg
+2026-05-18 16:17:57.465	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdmlap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.498	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdmlap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdmlap01-nsg
+2026-05-18 16:17:57.534	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdstap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.566	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdstap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdstap01-nsg
+2026-05-18 16:17:57.599	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdsvadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.630	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdsvadm01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdsvadm01-nsg
+2026-05-18 16:17:57.664	[INFO] [DryRun] NSG 배포 예정: d-dtg-diosap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.697	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-diosap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-diosap01-nsg
+2026-05-18 16:17:57.729	[INFO] [DryRun] NSG 배포 예정: d-dtg-diosweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.791	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-diosweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-diosweb01-nsg
+2026-05-18 16:17:57.826	[INFO] [DryRun] NSG 배포 예정: d-dtg-dprap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.860	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dprap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dprap01-nsg
+2026-05-18 16:17:57.895	[INFO] [DryRun] NSG 배포 예정: d-dtg-dprweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.928	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dprweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dprweb01-nsg
+2026-05-18 16:17:57.951	[INFO] [DryRun] NSG 배포 예정: d-dtg-dtoms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:57.985	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dtoms01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dtoms01-nsg
+2026-05-18 16:17:58.020	[INFO] [DryRun] NSG 배포 예정: d-dtg-extgeoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.055	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-extgeoap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-extgeoap01-nsg
+2026-05-18 16:17:58.086	[INFO] [DryRun] NSG 배포 예정: d-dtg-geoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.122	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-geoap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-geoap01-nsg
+2026-05-18 16:17:58.154	[INFO] [DryRun] NSG 배포 예정: d-dtg-ingap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.241	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-ingap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-ingap01-nsg
+2026-05-18 16:17:58.286	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.322	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk01-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk01-nsg
+2026-05-18 16:17:58.358	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.389	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk02-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk02-nsg
+2026-05-18 16:17:58.424	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.458	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk03-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk03-nsg
+2026-05-18 16:17:58.498	[INFO] [DryRun] NSG 배포 예정: d-dtg-mdoms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.534	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-mdoms01-nic (RG=hazr-d-dtg-rg) -> d-dtg-mdoms01-nsg
+2026-05-18 16:17:58.569	[INFO] [DryRun] NSG 배포 예정: d-dtg-mq01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.605	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-mq01-nic (RG=hazr-d-dtg-rg) -> d-dtg-mq01-nsg
+2026-05-18 16:17:58.641	[INFO] [DryRun] NSG 배포 예정: d-dtg-tsdb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.674	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-tsdb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-tsdb01-nsg
+2026-05-18 16:17:58.709	[INFO] [DryRun] NSG 배포 예정: d-dtg-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.744	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-web01-nic (RG=hazr-d-dtg-rg) -> d-dtg-web01-nsg
+2026-05-18 16:17:58.782	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.817	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp01-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp01-nsg
+2026-05-18 16:17:58.852	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.887	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp02-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp02-nsg
+2026-05-18 16:17:58.932	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:58.971	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp03-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp03-nsg
+2026-05-18 16:17:59.006	[INFO] [DryRun] NSG 배포 예정: d-if-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:59.045	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-if-db-sbn -> d-if-db-nsg
+2026-05-18 16:17:59.084	[INFO] [DryRun] NSG 배포 예정: d-if-gramon01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:59.119	[INFO] [DryRun] NIC-NSG 연결 예정: d-if-gramon01-nic (RG=hazr-d-if-rg) -> d-if-gramon01-nsg
+2026-05-18 16:17:59.154	[INFO] [DryRun] NSG 배포 예정: d-if-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:59.187	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-if-pe-sbn -> d-if-pe-nsg
+2026-05-18 16:17:59.229	[INFO] [DryRun] NSG 배포 예정: d-puls-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:59.263	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-puls-db-sbn -> d-puls-db-nsg
+2026-05-18 16:17:59.300	[INFO] [DryRun] NSG 배포 예정: d-puls-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:17:59.334	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-puls-pe-sbn -> d-puls-pe-nsg
+2026-05-18 16:17:59.370	[INFO] [END] Deploy-Nsgs
+2026-05-18 16:17:59.403	[INFO] [END] Script
+2026-05-18 16:18:18.526	[INFO] [START] Script
+2026-05-18 16:18:18.629	[INFO] [START] Initialize-Modules
+2026-05-18 16:18:35.135	[INFO] [END] Initialize-Modules
+2026-05-18 16:18:35.182	[INFO] [START] Ensure-AzSession
+2026-05-18 16:18:37.802	[INFO] [END] Ensure-AzSession
+2026-05-18 16:18:37.861	[INFO] [START] Validate-Inputs
+2026-05-18 16:18:38.097	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:18:38.464	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:18:38.653	[INFO] [END] Validate-Inputs
+2026-05-18 16:18:38.701	[ERR] [NSG] Row=67, Name=d-dis-db-nsg, Field=SubnetName/Subnet: 서브넷 연결용 Subnet 이름이 필요합니다.
+2026-05-18 16:18:54.532	[INFO] [START] Script
+2026-05-18 16:18:54.584	[INFO] [START] Initialize-Modules
+2026-05-18 16:19:22.699	[INFO] [END] Initialize-Modules
+2026-05-18 16:19:22.818	[INFO] [START] Ensure-AzSession
+2026-05-18 16:19:26.124	[INFO] [END] Ensure-AzSession
+2026-05-18 16:19:26.254	[INFO] [START] Validate-Inputs
+2026-05-18 16:19:26.818	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:19:28.576	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:19:29.207	[INFO] [END] Validate-Inputs
+2026-05-18 16:19:29.347	[ERR] [NSG] Row=67, Name=d-dis-db-nsg, Field=SubnetName/Subnet: 서브넷 연결용 Subnet 이름이 필요합니다.
+2026-05-18 16:19:53.270	[INFO] [START] Script
+2026-05-18 16:19:53.320	[INFO] [START] Initialize-Modules
+2026-05-18 16:20:10.387	[INFO] [END] Initialize-Modules
+2026-05-18 16:20:10.442	[INFO] [START] Ensure-AzSession
+2026-05-18 16:20:13.104	[INFO] [END] Ensure-AzSession
+2026-05-18 16:20:13.188	[INFO] [START] Validate-Inputs
+2026-05-18 16:20:13.400	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:20:13.823	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:20:13.980	[INFO] [END] Validate-Inputs
+2026-05-18 16:20:14.040	[INFO] [START] Deploy-Nsgs
+2026-05-18 16:20:14.222	[INFO] Excel 시트 로드: NSG
+2026-05-18 16:20:14.525	[WARN] 시트를 찾지 못했습니다. 후보: NSG_Detail, NSG_Rule, NSG_PRD_Rule
+2026-05-18 16:20:14.683	[INFO] Excel 시트 로드: VNET
+2026-05-18 16:20:14.933	[INFO] [DryRun] NSG 배포 예정: d-bdp-airfw01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:14.969	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-airfw01-nic (RG=hazr-d-bdp-rg) -> d-bdp-airfw01-nsg
+2026-05-18 16:20:15.004	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.039	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkap01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkap01-nsg
+2026-05-18 16:20:15.078	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkml01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.114	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkml01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkml01-nsg
+2026-05-18 16:20:15.152	[INFO] [DryRun] NSG 배포 예정: d-bdp-crkweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.190	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-crkweb01-nic (RG=hazr-d-bdp-rg) -> d-bdp-crkweb01-nsg
+2026-05-18 16:20:15.231	[INFO] [DryRun] NSG 배포 예정: d-bdp-cxmadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.278	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-cxmadm01-nic (RG=hazr-d-bdp-rg) -> d-bdp-cxmadm01-nsg
+2026-05-18 16:20:15.320	[INFO] [DryRun] NSG 배포 예정: d-bdp-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.353	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-bdp-db-sbn -> d-bdp-db-nsg
+2026-05-18 16:20:15.391	[INFO] [DryRun] NSG 배포 예정: d-bdp-kepler01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.427	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-kepler01-nic (RG=hazr-d-bdp-rg) -> d-bdp-kepler01-nsg
+2026-05-18 16:20:15.474	[INFO] [DryRun] NSG 배포 예정: d-bdp-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.508	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-bdp-pe-sbn -> d-bdp-pe-nsg
+2026-05-18 16:20:15.543	[INFO] [DryRun] NSG 배포 예정: d-bdp-slap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.582	[INFO] [DryRun] NIC-NSG 연결 예정: d-bdp-slap01-nic (RG=hazr-d-bdp-rg) -> d-bdp-slap01-nsg
+2026-05-18 16:20:15.619	[INFO] [DryRun] NSG 배포 예정: d-com-auth01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.654	[INFO] [DryRun] NIC-NSG 연결 예정: d-com-auth01-nic (RG=hazr-d-com-rg) -> d-com-auth01-nsg
+2026-05-18 16:20:15.688	[INFO] [DryRun] NSG 배포 예정: d-com-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.731	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-com-db-sbn -> d-com-db-nsg
+2026-05-18 16:20:15.765	[INFO] [DryRun] NSG 배포 예정: d-com-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.800	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-com-pe-sbn -> d-com-pe-nsg
+2026-05-18 16:20:15.844	[INFO] [DryRun] NSG 배포 예정: d-com-proxy01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.882	[INFO] [DryRun] NIC-NSG 연결 예정: d-com-proxy01-nic (RG=hazr-d-com-rg) -> d-com-proxy01-nsg
+2026-05-18 16:20:15.918	[INFO] [DryRun] NSG 배포 예정: d-cs-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:15.956	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-cs-db-sbn -> d-cs-db-nsg
+2026-05-18 16:20:15.998	[INFO] [DryRun] NSG 배포 예정: d-cs-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.035	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-cs-pe-sbn -> d-cs-pe-nsg
+2026-05-18 16:20:16.077	[INFO] [DryRun] NSG 배포 예정: d-ddg-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.110	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-ddg-db-sbn -> d-ddg-db-nsg
+2026-05-18 16:20:16.144	[INFO] [DryRun] NSG 배포 예정: d-ddg-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.182	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-ddg-pe-sbn -> d-ddg-pe-nsg
+2026-05-18 16:20:16.233	[INFO] [DryRun] NSG 배포 예정: d-dip-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.269	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-adm01-nic (RG=hazr-d-dip-rg) -> d-dip-adm01-nsg
+2026-05-18 16:20:16.312	[INFO] [DryRun] NSG 배포 예정: d-dip-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.353	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-ap01-nic (RG=hazr-d-dip-rg) -> d-dip-ap01-nsg
+2026-05-18 16:20:16.394	[INFO] [DryRun] NSG 배포 예정: d-dip-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.413	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-dip-db-sbn -> d-dip-db-nsg
+2026-05-18 16:20:16.452	[INFO] [DryRun] NSG 배포 예정: d-dip-flk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.506	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk01-nic (RG=hazr-d-dip-rg) -> d-dip-flk01-nsg
+2026-05-18 16:20:16.556	[INFO] [DryRun] NSG 배포 예정: d-dip-flk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.595	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk02-nic (RG=hazr-d-dip-rg) -> d-dip-flk02-nsg
+2026-05-18 16:20:16.633	[INFO] [DryRun] NSG 배포 예정: d-dip-flk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.670	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-flk03-nic (RG=hazr-d-dip-rg) -> d-dip-flk03-nsg
+2026-05-18 16:20:16.715	[INFO] [DryRun] NSG 배포 예정: d-dip-geoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.755	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-geoap01-nic (RG=hazr-d-dip-rg) -> d-dip-geoap01-nsg
+2026-05-18 16:20:16.799	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.844	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk01-nic (RG=hazr-d-dip-rg) -> d-dip-kfk01-nsg
+2026-05-18 16:20:16.922	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:16.967	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk02-nic (RG=hazr-d-dip-rg) -> d-dip-kfk02-nsg
+2026-05-18 16:20:17.007	[INFO] [DryRun] NSG 배포 예정: d-dip-kfk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.050	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-kfk03-nic (RG=hazr-d-dip-rg) -> d-dip-kfk03-nsg
+2026-05-18 16:20:17.094	[INFO] [DryRun] NSG 배포 예정: d-dip-mqap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.141	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-mqap01-nic (RG=hazr-d-dip-rg) -> d-dip-mqap01-nsg
+2026-05-18 16:20:17.190	[INFO] [DryRun] NSG 배포 예정: d-dip-mqweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.238	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-mqweb01-nic (RG=hazr-d-dip-rg) -> d-dip-mqweb01-nsg
+2026-05-18 16:20:17.279	[INFO] [DryRun] NSG 배포 예정: d-dip-oms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.330	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-oms01-nic (RG=hazr-d-dip-rg) -> d-dip-oms01-nsg
+2026-05-18 16:20:17.407	[INFO] [DryRun] NSG 배포 예정: d-dip-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.448	[INFO] [DryRun] NIC-NSG 연결 예정: d-dip-web01-nic (RG=hazr-d-dip-rg) -> d-dip-web01-nsg
+2026-05-18 16:20:17.470	[INFO] [DryRun] NSG 배포 예정: d-dis-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.511	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-adm01-nic (RG=hazr-d-dis-rg) -> d-dis-adm01-nsg
+2026-05-18 16:20:17.547	[INFO] [DryRun] NSG 배포 예정: d-dis-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.597	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-ap01-nic (RG=hazr-d-dis-rg) -> d-dis-ap01-nsg
+2026-05-18 16:20:17.636	[INFO] [DryRun] NSG 배포 예정: d-dis-bat01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.682	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bat01-nic (RG=hazr-d-dis-rg) -> d-dis-bat01-nsg
+2026-05-18 16:20:17.723	[INFO] [DryRun] NSG 배포 예정: d-dis-bbicltap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.765	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbicltap01-nic (RG=hazr-d-dis-rg) -> d-dis-bbicltap01-nsg
+2026-05-18 16:20:17.803	[INFO] [DryRun] NSG 배포 예정: d-dis-bbimsgap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.840	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbimsgap01-nic (RG=hazr-d-dis-rg) -> d-dis-bbimsgap01-nsg
+2026-05-18 16:20:17.898	[INFO] [DryRun] NSG 배포 예정: d-dis-bbiweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.915	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-bbiweb01-nic (RG=hazr-d-dis-rg) -> d-dis-bbiweb01-nsg
+2026-05-18 16:20:17.953	[INFO] [DryRun] NSG 배포 예정: d-dis-cmbsap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:17.988	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmbsap01-nic (RG=hazr-d-dis-rg) -> d-dis-cmbsap01-nsg
+2026-05-18 16:20:18.027	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.065	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsadm01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsadm01-nsg
+2026-05-18 16:20:18.101	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.152	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsap01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsap01-nsg
+2026-05-18 16:20:18.188	[INFO] [DryRun] NSG 배포 예정: d-dis-cmsweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.229	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-cmsweb01-nic (RG=hazr-d-dis-rg) -> d-dis-cmsweb01-nsg
+2026-05-18 16:20:18.265	[INFO] [DryRun] NSG 배포 예정: d-dis-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.300	[INFO] [DryRun] NIC-NSG 연결 예정: __NO_ATTACH_NIC__ (RG=hazr-d-dch-rg) -> d-dis-db-nsg
+2026-05-18 16:20:18.336	[INFO] [DryRun] NSG 배포 예정: d-dis-dfir01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.375	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-dfir01-nic (RG=hazr-d-dis-rg) -> d-dis-dfir01-nsg
+2026-05-18 16:20:18.414	[INFO] [DryRun] NSG 배포 예정: d-dis-drvcltap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.451	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-drvcltap01-nic (RG=hazr-d-dis-rg) -> d-dis-drvcltap01-nsg
+2026-05-18 16:20:18.517	[INFO] [DryRun] NSG 배포 예정: d-dis-drvmsgap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.577	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-drvmsgap01-nic (RG=hazr-d-dis-rg) -> d-dis-drvmsgap01-nsg
+2026-05-18 16:20:18.625	[INFO] [DryRun] NSG 배포 예정: d-dis-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.688	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-dis-pe-sbn -> d-dis-pe-nsg
+2026-05-18 16:20:18.747	[INFO] [DryRun] NSG 배포 예정: d-dis-walkap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.805	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-walkap01-nic (RG=hazr-d-dis-rg) -> d-dis-walkap01-nsg
+2026-05-18 16:20:18.874	[INFO] [DryRun] NSG 배포 예정: d-dis-walkweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:18.928	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-walkweb01-nic (RG=hazr-d-dis-rg) -> d-dis-walkweb01-nsg
+2026-05-18 16:20:18.987	[INFO] [DryRun] NSG 배포 예정: d-dis-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.036	[INFO] [DryRun] NIC-NSG 연결 예정: d-dis-web01-nic (RG=hazr-d-dis-rg) -> d-dis-web01-nsg
+2026-05-18 16:20:19.073	[INFO] [DryRun] NSG 배포 예정: d-doip-adm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.114	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-adm01-nic (RG=hazr-d-doip-rg) -> d-doip-adm01-nsg
+2026-05-18 16:20:19.151	[INFO] [DryRun] NSG 배포 예정: d-doip-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.187	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-ap01-nic (RG=hazr-d-doip-rg) -> d-doip-ap01-nsg
+2026-05-18 16:20:19.224	[INFO] [DryRun] NSG 배포 예정: d-doip-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.268	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-doip-db-sbn -> d-doip-db-nsg
+2026-05-18 16:20:19.304	[INFO] [DryRun] NSG 배포 예정: d-doip-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.340	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-doip-pe-sbn -> d-doip-pe-nsg
+2026-05-18 16:20:19.373	[INFO] [DryRun] NSG 배포 예정: d-doip-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.420	[INFO] [DryRun] NIC-NSG 연결 예정: d-doip-web01-nic (RG=hazr-d-doip-rg) -> d-doip-web01-nsg
+2026-05-18 16:20:19.506	[INFO] [DryRun] NSG 배포 예정: d-dtg-admap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.544	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-admap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-admap01-nsg
+2026-05-18 16:20:19.581	[INFO] [DryRun] NSG 배포 예정: d-dtg-admweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.619	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-admweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-admweb01-nsg
+2026-05-18 16:20:19.657	[INFO] [DryRun] NSG 배포 예정: d-dtg-ap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.691	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-ap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-ap01-nsg
+2026-05-18 16:20:19.738	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdmlap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.799	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdmlap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdmlap01-nsg
+2026-05-18 16:20:19.839	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdstap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.875	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdstap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdstap01-nsg
+2026-05-18 16:20:19.912	[INFO] [DryRun] NSG 배포 예정: d-dtg-cdsvadm01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:19.946	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-cdsvadm01-nic (RG=hazr-d-dtg-rg) -> d-dtg-cdsvadm01-nsg
+2026-05-18 16:20:19.981	[INFO] [DryRun] NSG 배포 예정: d-dtg-diosap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.019	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-diosap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-diosap01-nsg
+2026-05-18 16:20:20.056	[INFO] [DryRun] NSG 배포 예정: d-dtg-diosweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.089	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-diosweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-diosweb01-nsg
+2026-05-18 16:20:20.123	[INFO] [DryRun] NSG 배포 예정: d-dtg-dprap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.158	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dprap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dprap01-nsg
+2026-05-18 16:20:20.195	[INFO] [DryRun] NSG 배포 예정: d-dtg-dprweb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.246	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dprweb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dprweb01-nsg
+2026-05-18 16:20:20.283	[INFO] [DryRun] NSG 배포 예정: d-dtg-dtoms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.317	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-dtoms01-nic (RG=hazr-d-dtg-rg) -> d-dtg-dtoms01-nsg
+2026-05-18 16:20:20.355	[INFO] [DryRun] NSG 배포 예정: d-dtg-extgeoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.391	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-extgeoap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-extgeoap01-nsg
+2026-05-18 16:20:20.427	[INFO] [DryRun] NSG 배포 예정: d-dtg-geoap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.462	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-geoap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-geoap01-nsg
+2026-05-18 16:20:20.497	[INFO] [DryRun] NSG 배포 예정: d-dtg-ingap01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.532	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-ingap01-nic (RG=hazr-d-dtg-rg) -> d-dtg-ingap01-nsg
+2026-05-18 16:20:20.571	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.605	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk01-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk01-nsg
+2026-05-18 16:20:20.642	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.674	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk02-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk02-nsg
+2026-05-18 16:20:20.707	[INFO] [DryRun] NSG 배포 예정: d-dtg-kfk03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.742	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-kfk03-nic (RG=hazr-d-dtg-rg) -> d-dtg-kfk03-nsg
+2026-05-18 16:20:20.779	[INFO] [DryRun] NSG 배포 예정: d-dtg-mdoms01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.812	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-mdoms01-nic (RG=hazr-d-dtg-rg) -> d-dtg-mdoms01-nsg
+2026-05-18 16:20:20.848	[INFO] [DryRun] NSG 배포 예정: d-dtg-mq01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.864	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-mq01-nic (RG=hazr-d-dtg-rg) -> d-dtg-mq01-nsg
+2026-05-18 16:20:20.898	[INFO] [DryRun] NSG 배포 예정: d-dtg-tsdb01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.932	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-tsdb01-nic (RG=hazr-d-dtg-rg) -> d-dtg-tsdb01-nsg
+2026-05-18 16:20:20.948	[INFO] [DryRun] NSG 배포 예정: d-dtg-web01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:20.988	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-web01-nic (RG=hazr-d-dtg-rg) -> d-dtg-web01-nsg
+2026-05-18 16:20:21.022	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.055	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp01-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp01-nsg
+2026-05-18 16:20:21.091	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp02-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.126	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp02-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp02-nsg
+2026-05-18 16:20:21.163	[INFO] [DryRun] NSG 배포 예정: d-dtg-zkp03-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.196	[INFO] [DryRun] NIC-NSG 연결 예정: d-dtg-zkp03-nic (RG=hazr-d-dtg-rg) -> d-dtg-zkp03-nsg
+2026-05-18 16:20:21.237	[INFO] [DryRun] NSG 배포 예정: d-if-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.271	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-if-db-sbn -> d-if-db-nsg
+2026-05-18 16:20:21.306	[INFO] [DryRun] NSG 배포 예정: d-if-gramon01-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.340	[INFO] [DryRun] NIC-NSG 연결 예정: d-if-gramon01-nic (RG=hazr-d-if-rg) -> d-if-gramon01-nsg
+2026-05-18 16:20:21.386	[INFO] [DryRun] NSG 배포 예정: d-if-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.423	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-if-pe-sbn -> d-if-pe-nsg
+2026-05-18 16:20:21.459	[INFO] [DryRun] NSG 배포 예정: d-puls-db-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.515	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-puls-db-sbn -> d-puls-db-nsg
+2026-05-18 16:20:21.559	[INFO] [DryRun] NSG 배포 예정: d-puls-pe-nsg (RG=hazr-d-dch-rg)
+2026-05-18 16:20:21.596	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-puls-pe-sbn -> d-puls-pe-nsg
+2026-05-18 16:20:21.653	[INFO] [END] Deploy-Nsgs
+2026-05-18 16:20:21.691	[INFO] [END] Script
