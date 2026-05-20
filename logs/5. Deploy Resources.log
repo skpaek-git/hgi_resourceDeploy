@@ -1,0 +1,290 @@
+2026-03-20 14:14:07.312	[INFO] [START] Script
+2026-03-20 14:14:07.356	[INFO] [START] Initialize-Modules
+2026-03-20 14:14:46.182	[INFO] [END] Initialize-Modules
+2026-03-20 14:14:46.208	[INFO] [START] Ensure-AzSession
+2026-03-20 14:14:47.072	[INFO] [END] Ensure-AzSession
+2026-03-20 14:14:47.152	[INFO] [START] Validate-Inputs
+2026-03-20 14:14:47.506	[INFO] Excel 시트 로드: RG
+2026-03-20 14:14:48.118	[INFO] Excel 시트 로드: VNET
+2026-03-20 14:14:48.415	[INFO] Excel 시트 로드: Storage
+2026-03-20 14:14:48.693	[INFO] Excel 시트 로드: NSG
+2026-03-20 14:14:48.968	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:14:49.152	[INFO] [END] Validate-Inputs
+2026-03-20 14:14:49.178	[ERR] 치명적 오류: The property 'Count' cannot be found on this object. Verify that the property exists.
+2026-03-20 14:15:32.268	[INFO] [START] Script
+2026-03-20 14:15:32.332	[INFO] [START] Initialize-Modules
+2026-03-20 14:15:55.796	[INFO] [END] Initialize-Modules
+2026-03-20 14:15:55.833	[INFO] [START] Ensure-AzSession
+2026-03-20 14:15:56.484	[INFO] [END] Ensure-AzSession
+2026-03-20 14:15:56.523	[INFO] [START] Validate-Inputs
+2026-03-20 14:15:56.854	[INFO] Excel 시트 로드: RG
+2026-03-20 14:15:57.328	[INFO] Excel 시트 로드: VNET
+2026-03-20 14:15:57.643	[INFO] Excel 시트 로드: Storage
+2026-03-20 14:15:57.968	[INFO] Excel 시트 로드: NSG
+2026-03-20 14:15:58.341	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:15:58.515	[INFO] [END] Validate-Inputs
+2026-03-20 14:15:58.538	[INFO] [START] Deploy-ResourceGroups
+2026-03-20 14:15:58.663	[INFO] Excel 시트 로드: RG
+2026-03-20 14:15:58.788	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-20 14:15:58.802	[INFO] [DryRun] 리소스 그룹 생성 예정: PRG-WEB-RG (koreacentral)
+2026-03-20 14:15:58.819	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-20 14:15:58.836	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-20 14:15:58.856	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-WEB-RG (koreacentral)
+2026-03-20 14:15:58.875	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-APP-RG (koreacentral)
+2026-03-20 14:15:58.895	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-20 14:15:58.910	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-WEB-RG (koreacentral)
+2026-03-20 14:15:58.924	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-APP-RG (koreacentral)
+2026-03-20 14:15:58.940	[INFO] [END] Deploy-ResourceGroups
+2026-03-20 14:15:58.962	[INFO] [START] Deploy-Vnets
+2026-03-20 14:15:59.202	[INFO] Excel 시트 로드: VNET
+2026-03-20 14:15:59.378	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-20 14:15:59.415	[INFO] [DryRun] VNet 배포 예정: testprdnwvnet
+2026-03-20 14:15:59.435	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-20 14:15:59.460	[INFO] [DryRun] VNet 배포 예정: teststgnwvnet
+2026-03-20 14:15:59.478	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-20 14:15:59.503	[INFO] [DryRun] VNet 배포 예정: testdevnwvnet
+2026-03-20 14:15:59.524	[INFO] [END] Deploy-Vnets
+2026-03-20 14:15:59.552	[INFO] [START] Deploy-Storages
+2026-03-20 14:15:59.694	[INFO] Excel 시트 로드: Storage
+2026-03-20 14:15:59.845	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-20 14:15:59.865	[INFO] [DryRun] 스토리지 생성 예정: testprdstrboot
+2026-03-20 14:15:59.884	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-20 14:15:59.899	[INFO] [DryRun] 스토리지 생성 예정: teststgstrboot
+2026-03-20 14:15:59.916	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-20 14:15:59.934	[INFO] [DryRun] 스토리지 생성 예정: testdevstrboot
+2026-03-20 14:15:59.952	[INFO] [END] Deploy-Storages
+2026-03-20 14:15:59.980	[INFO] [START] Deploy-Nsgs
+2026-03-20 14:16:00.114	[INFO] Excel 시트 로드: NSG
+2026-03-20 14:16:00.368	[INFO] Excel 시트 로드: NSG_Detail
+2026-03-20 14:16:00.594	[INFO] [DryRun] NSG 배포 예정: Linux-001-nic-NSG (RG=TEST-Linux-RG)
+2026-03-20 14:16:00.614	[INFO] [DryRun] NIC-NSG 연결 예정: Linux-001-nic -> Linux-001-nic-NSG
+2026-03-20 14:16:00.630	[INFO] [DryRun] NSG 배포 예정: Linux-002-nic-NSG (RG=TEST-Linux-RG)
+2026-03-20 14:16:00.646	[INFO] [DryRun] NIC-NSG 연결 예정: Linux-002-nic -> Linux-002-nic-NSG
+2026-03-20 14:16:00.665	[INFO] [DryRun] NSG 배포 예정: WEB2-Subnet-NSG (RG=TEST-Window-RG)
+2026-03-20 14:16:00.681	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB2-Subnet -> WEB2-Subnet-NSG
+2026-03-20 14:16:00.699	[INFO] [DryRun] NSG 배포 예정: WEB3-Subnet-NSG (RG=TEST-Network-RG)
+2026-03-20 14:16:00.714	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB3-Subnet -> WEB3-Subnet-NSG
+2026-03-20 14:16:00.729	[INFO] [DryRun] NSG 배포 예정: WEB4-Subnet-NSG (RG=TEST-Network-RG)
+2026-03-20 14:16:00.744	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB4-Subnet -> WEB4-Subnet-NSG
+2026-03-20 14:16:00.759	[INFO] [END] Deploy-Nsgs
+2026-03-20 14:16:00.780	[INFO] [START] Deploy-Vms
+2026-03-20 14:16:00.936	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:16:01.086	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-20 14:16:01.367	[INFO] [DryRun] VM 배포 예정: PRDWEB01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:16:01.382	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-20 14:16:01.400	[INFO] [DryRun] VM 배포 예정: PRDWEB02 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:16:01.417	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-20 14:16:01.439	[INFO] [DryRun] VM 배포 예정: PRDAPP01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:16:01.459	[INFO] [END] Deploy-Vms
+2026-03-20 14:16:01.479	[INFO] [END] Script
+2026-03-20 14:18:07.779	[INFO] [START] Script
+2026-03-20 14:18:07.845	[INFO] [START] Initialize-Modules
+2026-03-20 14:18:07.992	[INFO] [START] Script
+2026-03-20 14:18:08.071	[INFO] [START] Initialize-Modules
+2026-03-20 14:18:37.035	[INFO] [END] Initialize-Modules
+2026-03-20 14:18:37.064	[INFO] [START] Ensure-AzSession
+2026-03-20 14:18:37.121	[INFO] [END] Initialize-Modules
+2026-03-20 14:18:37.160	[INFO] [START] Ensure-AzSession
+2026-03-20 14:18:38.170	[INFO] [END] Ensure-AzSession
+2026-03-20 14:18:38.209	[INFO] [START] Validate-Inputs
+2026-03-20 14:18:38.239	[INFO] [END] Ensure-AzSession
+2026-03-20 14:18:38.278	[INFO] [START] Validate-Inputs
+2026-03-20 14:18:38.554	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:18:38.642	[INFO] Excel 시트 로드: VM
+2026-03-20 14:18:39.011	[INFO] [END] Validate-Inputs
+2026-03-20 14:18:39.058	[INFO] [START] Deploy-Vms
+2026-03-20 14:18:39.240	[INFO] [END] Validate-Inputs
+2026-03-20 14:18:39.318	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:18:39.336	[ERR] [VM] Row=1, Name=Linux-01, Field=DiagStrName: 필수 값이 비어 있습니다.
+2026-03-20 14:18:39.537	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-20 14:18:39.990	[INFO] [DryRun] VM 배포 예정: PRDWEB01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:18:40.026	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-20 14:18:40.055	[INFO] [DryRun] VM 배포 예정: PRDWEB02 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:18:40.078	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-20 14:18:40.109	[INFO] [DryRun] VM 배포 예정: PRDAPP01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-20 14:18:40.134	[INFO] [END] Deploy-Vms
+2026-03-20 14:18:40.175	[INFO] [END] Script
+2026-03-20 14:43:58.705	[INFO] [START] Script
+2026-03-20 14:43:58.800	[INFO] [START] Initialize-Modules
+2026-03-20 14:44:27.818	[INFO] [END] Initialize-Modules
+2026-03-20 14:44:27.850	[INFO] [START] Ensure-AzSession
+2026-03-20 14:44:28.638	[INFO] [END] Ensure-AzSession
+2026-03-20 14:44:28.695	[INFO] [START] Validate-Inputs
+2026-03-20 14:44:29.191	[INFO] Excel 시트 로드: RG
+2026-03-20 14:44:29.788	[INFO] [END] Validate-Inputs
+2026-03-20 14:44:29.824	[INFO] [START] Deploy-ResourceGroups
+2026-03-20 14:44:30.001	[INFO] Excel 시트 로드: RG
+2026-03-20 14:44:30.203	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-20 14:44:30.225	[INFO] [DryRun] 리소스 그룹 생성 예정: PRG-WEB-RG (koreacentral)
+2026-03-20 14:44:30.248	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-20 14:44:30.272	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-20 14:44:30.295	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-WEB-RG (koreacentral)
+2026-03-20 14:44:30.322	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-APP-RG (koreacentral)
+2026-03-20 14:44:30.346	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-20 14:44:30.366	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-WEB-RG (koreacentral)
+2026-03-20 14:44:30.390	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-APP-RG (koreacentral)
+2026-03-20 14:44:30.416	[INFO] [END] Deploy-ResourceGroups
+2026-03-20 14:44:30.437	[INFO] [END] Script
+2026-03-20 14:44:56.053	[INFO] [START] Script
+2026-03-20 14:44:56.094	[INFO] [START] Initialize-Modules
+2026-03-20 14:45:35.332	[INFO] [END] Initialize-Modules
+2026-03-20 14:45:35.686	[INFO] [START] Ensure-AzSession
+2026-03-20 14:45:38.270	[INFO] [END] Ensure-AzSession
+2026-03-20 14:45:38.334	[INFO] [START] Validate-Inputs
+2026-03-20 14:45:38.989	[ERR] 치명적 오류: 필수 시트를 찾지 못했습니다. 후보: KV, KeyVault
+2026-03-20 14:49:16.669	[INFO] [START] Script
+2026-03-20 14:49:16.713	[INFO] [START] Initialize-Modules
+2026-03-20 14:49:40.895	[INFO] [END] Initialize-Modules
+2026-03-20 14:49:40.934	[INFO] [START] Ensure-AzSession
+2026-03-20 14:49:41.703	[INFO] [END] Ensure-AzSession
+2026-03-20 14:49:41.758	[INFO] [START] Validate-Inputs
+2026-03-20 14:49:42.148	[INFO] Excel 시트 로드: VM_PRD
+2026-03-20 14:49:42.702	[INFO] [END] Validate-Inputs
+2026-03-20 14:49:42.858	[ERR] [VM] Row=1, Name=PRDWEB01, Field=DESName/DiskEncryptionSetId: OS 디스크 CMK를 위해 DESName 또는 DiskEncryptionSetId가 필요합니다.
+2026-03-24 09:31:56.878	[INFO] [START] Script
+2026-03-24 09:31:56.918	[INFO] [START] Initialize-Modules
+2026-03-24 09:32:39.852	[INFO] [END] Initialize-Modules
+2026-03-24 09:32:39.895	[INFO] [START] Ensure-AzSession
+2026-03-24 09:32:40.963	[INFO] [END] Ensure-AzSession
+2026-03-24 09:32:41.033	[INFO] [START] Validate-Inputs
+2026-03-24 09:32:41.493	[INFO] Excel 시트 로드: RG
+2026-03-24 09:32:42.094	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:32:42.422	[INFO] Excel 시트 로드: Storage
+2026-03-24 09:32:42.788	[INFO] Excel 시트 로드: KV
+2026-03-24 09:32:43.159	[INFO] Excel 시트 로드: DES
+2026-03-24 09:32:43.554	[INFO] Excel 시트 로드: NSG
+2026-03-24 09:32:43.917	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:32:44.122	[INFO] [END] Validate-Inputs
+2026-03-24 09:32:44.186	[ERR] [VM] Row=1, Name=PRDWEB01, Field=Publisher: 필수 값이 비어 있습니다.
+2026-03-24 09:34:13.987	[INFO] [START] Script
+2026-03-24 09:34:14.058	[INFO] [START] Initialize-Modules
+2026-03-24 09:34:43.714	[INFO] [END] Initialize-Modules
+2026-03-24 09:34:43.762	[INFO] [START] Ensure-AzSession
+2026-03-24 09:34:46.164	[INFO] [END] Ensure-AzSession
+2026-03-24 09:34:46.236	[INFO] [START] Validate-Inputs
+2026-03-24 09:34:46.688	[INFO] Excel 시트 로드: RG
+2026-03-24 09:34:47.220	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:34:47.556	[INFO] Excel 시트 로드: Storage
+2026-03-24 09:34:47.850	[INFO] Excel 시트 로드: KV
+2026-03-24 09:34:48.127	[INFO] Excel 시트 로드: DES
+2026-03-24 09:34:48.401	[INFO] Excel 시트 로드: NSG
+2026-03-24 09:34:48.636	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:34:48.881	[INFO] Excel 시트 로드: KV
+2026-03-24 09:34:49.095	[INFO] Excel 시트 로드: DES
+2026-03-24 09:34:49.429	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:34:49.650	[INFO] [END] Validate-Inputs
+2026-03-24 09:34:49.720	[ERR] [VM] Row=1, Name=PRDWEB01, Field=Publisher: 필수 값이 비어 있습니다.
+2026-03-24 09:39:38.836	[INFO] [START] Script
+2026-03-24 09:39:38.917	[INFO] [START] Initialize-Modules
+2026-03-24 09:39:56.485	[INFO] [END] Initialize-Modules
+2026-03-24 09:39:56.542	[INFO] [START] Ensure-AzSession
+2026-03-24 09:39:57.372	[INFO] [END] Ensure-AzSession
+2026-03-24 09:39:57.484	[INFO] [START] Validate-Inputs
+2026-03-24 09:39:57.820	[INFO] Excel 시트 로드: RG
+2026-03-24 09:39:58.429	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:39:58.800	[INFO] Excel 시트 로드: Storage
+2026-03-24 09:39:59.161	[INFO] Excel 시트 로드: KV
+2026-03-24 09:39:59.474	[INFO] Excel 시트 로드: DES
+2026-03-24 09:39:59.803	[INFO] Excel 시트 로드: NSG
+2026-03-24 09:40:00.064	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:40:00.283	[INFO] Excel 시트 로드: KV
+2026-03-24 09:40:00.488	[INFO] Excel 시트 로드: DES
+2026-03-24 09:40:00.728	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:40:00.866	[INFO] [END] Validate-Inputs
+2026-03-24 09:40:00.885	[INFO] [START] Deploy-ResourceGroups
+2026-03-24 09:40:01.005	[INFO] Excel 시트 로드: RG
+2026-03-24 09:40:01.132	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:40:01.146	[INFO] [DryRun] 리소스 그룹 생성 예정: PRG-WEB-RG (koreacentral)
+2026-03-24 09:40:01.167	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-24 09:40:01.191	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-24 09:40:01.217	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-WEB-RG (koreacentral)
+2026-03-24 09:40:01.238	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-APP-RG (koreacentral)
+2026-03-24 09:40:01.254	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-24 09:40:01.271	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-WEB-RG (koreacentral)
+2026-03-24 09:40:01.291	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-APP-RG (koreacentral)
+2026-03-24 09:40:01.306	[INFO] [END] Deploy-ResourceGroups
+2026-03-24 09:40:01.330	[INFO] [START] Deploy-Vnets
+2026-03-24 09:40:01.449	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:40:01.562	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:40:01.590	[INFO] [DryRun] VNet 배포 예정: testprdnwvnet
+2026-03-24 09:40:01.608	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-24 09:40:01.629	[INFO] [DryRun] VNet 배포 예정: teststgnwvnet
+2026-03-24 09:40:01.645	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-24 09:40:01.663	[INFO] [DryRun] VNet 배포 예정: testdevnwvnet
+2026-03-24 09:40:01.676	[INFO] [END] Deploy-Vnets
+2026-03-24 09:40:01.694	[INFO] [START] Deploy-Storages
+2026-03-24 09:40:01.833	[INFO] Excel 시트 로드: Storage
+2026-03-24 09:40:02.015	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:40:02.032	[INFO] [DryRun] 스토리지 생성 예정: testprdstrboot
+2026-03-24 09:40:02.047	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-24 09:40:02.061	[INFO] [DryRun] 스토리지 생성 예정: teststgstrboot
+2026-03-24 09:40:02.077	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-24 09:40:02.096	[INFO] [DryRun] 스토리지 생성 예정: testdevstrboot
+2026-03-24 09:40:02.119	[INFO] [END] Deploy-Storages
+2026-03-24 09:40:02.137	[INFO] [START] Deploy-KeyVaults
+2026-03-24 09:40:02.251	[INFO] Excel 시트 로드: KV
+2026-03-24 09:40:02.365	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:40:02.378	[INFO] [DryRun] Key Vault 배포 예정: diskencryption-kv, Key=testkey1
+2026-03-24 09:40:02.391	[INFO] [END] Deploy-KeyVaults
+2026-03-24 09:40:02.409	[INFO] [START] Deploy-DiskEncryptionSets
+2026-03-24 09:40:02.531	[INFO] Excel 시트 로드: DES
+2026-03-24 09:40:02.648	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:40:02.666	[INFO] [DryRun] DES 배포 예정: prd-test-des (KV=diskencryption-kv, Key=testkey1)
+2026-03-24 09:40:02.694	[INFO] [END] Deploy-DiskEncryptionSets
+2026-03-24 09:40:02.730	[INFO] [START] Deploy-Nsgs
+2026-03-24 09:40:02.849	[INFO] Excel 시트 로드: NSG
+2026-03-24 09:40:03.118	[INFO] Excel 시트 로드: NSG_Detail
+2026-03-24 09:40:03.303	[INFO] [DryRun] NSG 배포 예정: Linux-001-nic-NSG (RG=TEST-Linux-RG)
+2026-03-24 09:40:03.337	[INFO] [DryRun] NIC-NSG 연결 예정: Linux-001-nic -> Linux-001-nic-NSG
+2026-03-24 09:40:03.370	[INFO] [DryRun] NSG 배포 예정: Linux-002-nic-NSG (RG=TEST-Linux-RG)
+2026-03-24 09:40:03.420	[INFO] [DryRun] NIC-NSG 연결 예정: Linux-002-nic -> Linux-002-nic-NSG
+2026-03-24 09:40:03.461	[INFO] [DryRun] NSG 배포 예정: WEB2-Subnet-NSG (RG=TEST-Window-RG)
+2026-03-24 09:40:03.497	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB2-Subnet -> WEB2-Subnet-NSG
+2026-03-24 09:40:03.538	[INFO] [DryRun] NSG 배포 예정: WEB3-Subnet-NSG (RG=TEST-Network-RG)
+2026-03-24 09:40:03.576	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB3-Subnet -> WEB3-Subnet-NSG
+2026-03-24 09:40:03.595	[INFO] [DryRun] NSG 배포 예정: WEB4-Subnet-NSG (RG=TEST-Network-RG)
+2026-03-24 09:40:03.618	[INFO] [DryRun] Subnet-NSG 연결 예정: 260303TEST-vNET/WEB4-Subnet -> WEB4-Subnet-NSG
+2026-03-24 09:40:03.638	[INFO] [END] Deploy-Nsgs
+2026-03-24 09:40:03.665	[INFO] [START] Deploy-Vms
+2026-03-24 09:40:03.791	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:40:03.910	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-24 09:40:04.629	[INFO] [DryRun] VM 배포 예정: PRDWEB01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-24 09:40:04.643	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-WEB-RG (koreacentral)
+2026-03-24 09:40:04.661	[INFO] [DryRun] VM 배포 예정: PRDWEB02 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-24 09:40:04.674	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-APP-RG (koreacentral)
+2026-03-24 09:40:04.692	[INFO] [DryRun] VM 배포 예정: PRDAPP01 (Template=.\템플릿\VM\template-VM-LinuxZone_Image.json)
+2026-03-24 09:40:04.712	[INFO] [END] Deploy-Vms
+2026-03-24 09:40:04.728	[INFO] [END] Script
+2026-03-24 09:50:43.165	[INFO] [START] Script
+2026-03-24 09:50:43.206	[INFO] [START] Initialize-Modules
+2026-03-24 09:51:06.695	[INFO] [END] Initialize-Modules
+2026-03-24 09:51:06.724	[INFO] [START] Ensure-AzSession
+2026-03-24 09:51:07.456	[INFO] [END] Ensure-AzSession
+2026-03-24 09:51:07.507	[INFO] [START] Validate-Inputs
+2026-03-24 09:51:07.924	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:51:08.489	[INFO] Excel 시트 로드: KV
+2026-03-24 09:51:08.782	[INFO] Excel 시트 로드: DES
+2026-03-24 09:51:09.079	[INFO] Excel 시트 로드: KV
+2026-03-24 09:51:09.392	[INFO] Excel 시트 로드: DES
+2026-03-24 09:51:09.719	[INFO] Excel 시트 로드: VM_PRD
+2026-03-24 09:51:09.900	[INFO] [END] Validate-Inputs
+2026-03-24 09:51:09.926	[INFO] [START] Deploy-Vnets
+2026-03-24 09:51:10.063	[INFO] Excel 시트 로드: VNET
+2026-03-24 09:51:10.199	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:51:10.222	[INFO] [DryRun] VNet 배포 예정: testprdnwvnet
+2026-03-24 09:51:10.240	[INFO] [DryRun] 리소스 그룹 생성 예정: STG-NW-RG (koreacentral)
+2026-03-24 09:51:10.261	[INFO] [DryRun] VNet 배포 예정: teststgnwvnet
+2026-03-24 09:51:10.286	[INFO] [DryRun] 리소스 그룹 생성 예정: DEV-NW-RG (koreacentral)
+2026-03-24 09:51:10.306	[INFO] [DryRun] VNet 배포 예정: testdevnwvnet
+2026-03-24 09:51:10.324	[INFO] [END] Deploy-Vnets
+2026-03-24 09:51:10.347	[INFO] [START] Deploy-KeyVaults
+2026-03-24 09:51:10.478	[INFO] Excel 시트 로드: KV
+2026-03-24 09:51:10.613	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:51:10.630	[INFO] [DryRun] Key Vault 배포 예정: diskencryption-kv, Key=testkey1
+2026-03-24 09:51:10.661	[INFO] [END] Deploy-KeyVaults
+2026-03-24 09:51:10.695	[INFO] [START] Deploy-DiskEncryptionSets
+2026-03-24 09:51:10.841	[INFO] Excel 시트 로드: DES
+2026-03-24 09:51:11.008	[INFO] [DryRun] 리소스 그룹 생성 예정: PRD-NW-RG (koreacentral)
+2026-03-24 09:51:11.025	[INFO] [DryRun] DES 배포 예정: prd-test-des (KV=diskencryption-kv, Key=testkey1)
+2026-03-24 09:51:11.055	[INFO] [END] Deploy-DiskEncryptionSets
+2026-03-24 09:51:11.096	[INFO] [END] Script
