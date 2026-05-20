@@ -1627,10 +1627,17 @@ function Deploy-LoadBalancers {
             if ($explicitOldRuleName -and $explicitOldRuleName -ne $ruleName) {
                 $oldRule = $lb.LoadBalancingRules | Where-Object Name -eq $explicitOldRuleName | Select-Object -First 1
                 if ($oldRule) {
-                    $lb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName
+                    $updatedLb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName
+                    if ($updatedLb) {
+                        $lb = $updatedLb
+                    }
                     $changed = $true
                     Write-Info "LB Rule 명시 삭제: $lbName/$explicitOldRuleName -> $ruleName (기존 삭제 후 재생성)"
                 }
+            }
+
+            if (-not $lb) {
+                throw "LB 객체가 null 상태입니다. LB Rule 처리 중단: LB=$lbName, Rule=$ruleName"
             }
 
             $existingRuleSameName = $lb.LoadBalancingRules | Where-Object Name -eq $ruleName | Select-Object -First 1
@@ -1673,7 +1680,10 @@ function Deploy-LoadBalancers {
                 $ruleParams['DisableOutboundSNAT'] = $true
             }
 
-            $lb = Add-AzLoadBalancerRuleConfig @ruleParams
+            $updatedLb = Add-AzLoadBalancerRuleConfig @ruleParams
+            if ($updatedLb) {
+                $lb = $updatedLb
+            }
             $changed = $true
             Write-Info "LB Rule 추가: $lbName/$ruleName"
             }
