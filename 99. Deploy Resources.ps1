@@ -1382,15 +1382,6 @@ function Get-LbZoneArray {
     return @()
 }
 
-function Get-ResourceNameFromId {
-    param([string]$Id)
-
-    if ([string]::IsNullOrWhiteSpace($Id)) { return $null }
-    $parts = $Id.TrimEnd('/') -split '/'
-    if ($parts.Count -eq 0) { return $null }
-    return $parts[$parts.Count - 1]
-}
-
 function Deploy-LoadBalancers {
     param([DeploymentContext]$Context)
 
@@ -1645,32 +1636,6 @@ function Deploy-LoadBalancers {
             $existingRuleSameName = $lb.LoadBalancingRules | Where-Object Name -eq $ruleName | Select-Object -First 1
             if ($existingRuleSameName) {
                 continue
-            }
-
-            $renameCandidate = $lb.LoadBalancingRules | Where-Object {
-                $existingFeName = $null
-                if ($_.FrontendIpConfiguration) {
-                    $existingFeName = Get-ResourceNameFromId -Id $_.FrontendIpConfiguration.Id
-                }
-                $existingBeName = $null
-                $existingBackendPools = @($_.BackendAddressPool) | Where-Object { $_ }
-                if ($existingBackendPools.Count -gt 0) {
-                    $existingBeName = Get-ResourceNameFromId -Id $existingBackendPools[0].Id
-                }
-                $existingProtocol = $_.Protocol.ToString()
-                ($existingFeName -eq $ruleFeName) -and
-                ($existingBeName -eq $ruleBePoolName) -and
-                ([int]$_.FrontendPort -eq $frontendPort) -and
-                ([int]$_.BackendPort -eq $backendPort) -and
-                ($existingProtocol -eq $protocol) -and
-                ($_.Name -ne $ruleName)
-            } | Select-Object -First 1
-
-            if ($renameCandidate) {
-                $oldRuleName = $renameCandidate.Name
-                $lb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $oldRuleName
-                $changed = $true
-                Write-Info "LB Rule 이름 변경 감지: $lbName/$oldRuleName -> $ruleName (기존 삭제 후 재생성)"
             }
 
             $idleTimeoutValue = Get-CellValueAny -Row $rr -Fields @('IdleTimeoutInMinutes','IdleTimeouInMin')
@@ -2565,5 +2530,20 @@ try {
     Run-Main
 } catch {
     Write-ErrorLog "치명적 오류: $($_.Exception.Message)"
+    if ($_.InvocationInfo) {
+        if ($_.InvocationInfo.ScriptLineNumber) {
+            Write-ErrorLog "오류 위치: Line=$($_.InvocationInfo.ScriptLineNumber), Command=$($_.InvocationInfo.MyCommand)"
+        }
+        if ($_.InvocationInfo.Line) {
+            Write-ErrorLog "오류 구문: $($_.InvocationInfo.Line.Trim())"
+        }
+        if ($_.InvocationInfo.PositionMessage) {
+            Write-ErrorLog $_.InvocationInfo.PositionMessage
+        }
+    }
+    $stack = $_.ScriptStackTrace
+    if ($stack) {
+        Write-ErrorLog "ScriptStackTrace: $stack"
+    }
     throw
 }
