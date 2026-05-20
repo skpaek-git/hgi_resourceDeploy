@@ -1648,10 +1648,14 @@ function Deploy-LoadBalancers {
             }
 
             $renameCandidate = $lb.LoadBalancingRules | Where-Object {
-                $existingFeName = Get-ResourceNameFromId -Id $_.FrontendIpConfiguration.Id
+                $existingFeName = $null
+                if ($_.FrontendIpConfiguration) {
+                    $existingFeName = Get-ResourceNameFromId -Id $_.FrontendIpConfiguration.Id
+                }
                 $existingBeName = $null
-                if ($_.BackendAddressPool -and $_.BackendAddressPool.Count -gt 0) {
-                    $existingBeName = Get-ResourceNameFromId -Id $_.BackendAddressPool[0].Id
+                $existingBackendPools = @($_.BackendAddressPool) | Where-Object { $_ }
+                if ($existingBackendPools.Count -gt 0) {
+                    $existingBeName = Get-ResourceNameFromId -Id $existingBackendPools[0].Id
                 }
                 $existingProtocol = $_.Protocol.ToString()
                 ($existingFeName -eq $ruleFeName) -and
