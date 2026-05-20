@@ -1626,12 +1626,11 @@ function Deploy-LoadBalancers {
 
             $explicitOldRuleName = Get-CellValueAny -Row $rr -Fields @('OldRuleName','PreviousRuleName','BeforeRuleName')
             if ($explicitOldRuleName -and $explicitOldRuleName -ne $ruleName) {
-                $oldRule = $lb.LoadBalancingRules | Where-Object Name -eq $explicitOldRuleName | Select-Object -First 1
+                $oldRule = @($lb.LoadBalancingRules) | Where-Object Name -eq $explicitOldRuleName | Select-Object -First 1
                 if ($oldRule) {
-                    $updatedLb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName -ErrorAction Stop
-                    if ($updatedLb) {
-                        $lb = $updatedLb
-                    }
+                    # Az Remove cmdlet이 환경/객체 상태에 따라 null 입력 오류를 내는 경우가 있어
+                    # 규칙 컬렉션을 직접 갱신해 이름 변경(삭제 후 재생성) 흐름을 안정화한다.
+                    $lb.LoadBalancingRules = @($lb.LoadBalancingRules) | Where-Object { $_.Name -ne $explicitOldRuleName }
                     $changed = $true
                     Write-Info "LB Rule 명시 삭제: $lbName/$explicitOldRuleName -> $ruleName (기존 삭제 후 재생성)"
                 }
@@ -1641,7 +1640,7 @@ function Deploy-LoadBalancers {
                 throw "LB 객체가 null 상태입니다. LB Rule 처리 중단: LB=$lbName, Rule=$ruleName"
             }
 
-            $existingRuleSameName = $lb.LoadBalancingRules | Where-Object Name -eq $ruleName | Select-Object -First 1
+            $existingRuleSameName = @($lb.LoadBalancingRules) | Where-Object Name -eq $ruleName | Select-Object -First 1
             if ($existingRuleSameName) {
                 continue
             }
