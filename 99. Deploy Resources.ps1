@@ -1587,6 +1587,7 @@ function Deploy-LoadBalancers {
         if ($deployRules) {
             $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
             foreach ($rr in $targetRules) {
+            try {
             if (-not (Test-IsEnabledRow -Row $rr -Default $true)) { continue }
             $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
             if (-not $ruleName) {
@@ -1627,7 +1628,7 @@ function Deploy-LoadBalancers {
             if ($explicitOldRuleName -and $explicitOldRuleName -ne $ruleName) {
                 $oldRule = $lb.LoadBalancingRules | Where-Object Name -eq $explicitOldRuleName | Select-Object -First 1
                 if ($oldRule) {
-                    $updatedLb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName
+                    $updatedLb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName -ErrorAction Stop
                     if ($updatedLb) {
                         $lb = $updatedLb
                     }
@@ -1680,17 +1681,21 @@ function Deploy-LoadBalancers {
                 $ruleParams['DisableOutboundSNAT'] = $true
             }
 
-            $updatedLb = Add-AzLoadBalancerRuleConfig @ruleParams
+            $updatedLb = Add-AzLoadBalancerRuleConfig @ruleParams -ErrorAction Stop
             if ($updatedLb) {
                 $lb = $updatedLb
             }
             $changed = $true
             Write-Info "LB Rule 추가: $lbName/$ruleName"
+            } catch {
+                $oldNameForLog = Get-CellValueAny -Row $rr -Fields @('OldRuleName','PreviousRuleName','BeforeRuleName')
+                throw "LB Rule 처리 실패: LB=$lbName, Rule=$ruleName, OldRuleName=$oldNameForLog, Error=$($_.Exception.Message)"
+            }
             }
         }
 
         if ($changed) {
-            $lb | Set-AzLoadBalancer | Out-Null
+            $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
             Write-Info "LB 업데이트 완료: $lbName"
         } else {
             Write-Info "LB 변경 없음: $lbName"
