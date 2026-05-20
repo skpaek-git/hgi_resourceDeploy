@@ -1382,6 +1382,15 @@ function Get-LbZoneArray {
     return @()
 }
 
+function Get-ResourceNameFromId {
+    param([string]$Id)
+
+    if ([string]::IsNullOrWhiteSpace($Id)) { return $null }
+    $parts = $Id.TrimEnd('/') -split '/'
+    if ($parts.Count -eq 0) { return $null }
+    return $parts[$parts.Count - 1]
+}
+
 function Deploy-LoadBalancers {
     param([DeploymentContext]$Context)
 
@@ -1593,8 +1602,6 @@ function Deploy-LoadBalancers {
                 Write-Info "[SKIP] LB Rule 필수값 누락(RuleName): LB=$lbName"
                 continue
             }
-            if ($lb.LoadBalancingRules | Where-Object Name -eq $ruleName) { continue }
-
             $ruleFeName = Get-CellValue -Row $rr -Field 'FEName'
             if (-not $ruleFeName) { $ruleFeName = $feName }
             $ruleBePoolName = Get-CellValue -Row $rr -Field 'BEPoolName'
@@ -1624,6 +1631,43 @@ function Deploy-LoadBalancers {
             }
             $frontendPort = [int]$frontendPortText
             $backendPort = [int]$backendPortText
+
+            $explicitOldRuleName = Get-CellValueAny -Row $rr -Fields @('OldRuleName','PreviousRuleName','BeforeRuleName')
+            if ($explicitOldRuleName -and $explicitOldRuleName -ne $ruleName) {
+                $oldRule = $lb.LoadBalancingRules | Where-Object Name -eq $explicitOldRuleName | Select-Object -First 1
+                if ($oldRule) {
+                    $lb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $explicitOldRuleName
+                    $changed = $true
+                    Write-Info "LB Rule 명시 삭제: $lbName/$explicitOldRuleName -> $ruleName (기존 삭제 후 재생성)"
+                }
+            }
+
+            $existingRuleSameName = $lb.LoadBalancingRules | Where-Object Name -eq $ruleName | Select-Object -First 1
+            if ($existingRuleSameName) {
+                continue
+            }
+
+            $renameCandidate = $lb.LoadBalancingRules | Where-Object {
+                $existingFeName = Get-ResourceNameFromId -Id $_.FrontendIpConfiguration.Id
+                $existingBeName = $null
+                if ($_.BackendAddressPool -and $_.BackendAddressPool.Count -gt 0) {
+                    $existingBeName = Get-ResourceNameFromId -Id $_.BackendAddressPool[0].Id
+                }
+                $existingProtocol = $_.Protocol.ToString()
+                ($existingFeName -eq $ruleFeName) -and
+                ($existingBeName -eq $ruleBePoolName) -and
+                ([int]$_.FrontendPort -eq $frontendPort) -and
+                ([int]$_.BackendPort -eq $backendPort) -and
+                ($existingProtocol -eq $protocol) -and
+                ($_.Name -ne $ruleName)
+            } | Select-Object -First 1
+
+            if ($renameCandidate) {
+                $oldRuleName = $renameCandidate.Name
+                $lb = Remove-AzLoadBalancerRuleConfig -LoadBalancer $lb -Name $oldRuleName
+                $changed = $true
+                Write-Info "LB Rule 이름 변경 감지: $lbName/$oldRuleName -> $ruleName (기존 삭제 후 재생성)"
+            }
 
             $idleTimeoutValue = Get-CellValueAny -Row $rr -Fields @('IdleTimeoutInMinutes','IdleTimeouInMin')
             if (-not $idleTimeoutValue) { $idleTimeoutValue = '4' }
