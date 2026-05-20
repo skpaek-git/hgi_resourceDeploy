@@ -657,16 +657,14 @@ function Validate-Inputs {
         if ($validateProbes) {
             $j = 1
             foreach ($pr in $probeRows) {
+                if (-not (Test-IsEnabledRow -Row $pr -Default $true)) { $j++; continue }
                 $targetLb = Get-CellValue -Row $pr -Field 'LBName'
-                if (-not $targetLb) { $j++; continue }
+                $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
+                $probePort = Get-CellValue -Row $pr -Field 'Port'
+                # Probe 필수값 일부가 비어 있으면 해당 행은 배포 대상에서 제외한다.
+                if (-not $targetLb -or -not $probeName -or -not $probePort) { $j++; continue }
                 if (-not $lbNameSet.Contains($targetLb)) {
                     Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
-                }
-                if (-not (Get-CellValue -Row $pr -Field 'ProbeName')) {
-                    Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'ProbeName' -Message '필수 값이 비어 있습니다.'
-                }
-                if (-not (Get-CellValue -Row $pr -Field 'Port')) {
-                    Add-Issue -Issues $issues -Type 'LB_Probe' -Row $j -ResourceName $targetLb -Field 'Port' -Message '필수 값이 비어 있습니다.'
                 }
                 $j++
             }
@@ -676,21 +674,17 @@ function Validate-Inputs {
         if ($validateRules) {
             $j = 1
             foreach ($rr in $ruleRows) {
+                if (-not (Test-IsEnabledRow -Row $rr -Default $true)) { $j++; continue }
                 $targetLb = Get-CellValue -Row $rr -Field 'LBName'
-                if (-not $targetLb) { $j++; continue }
+                $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
+                $enableHaPorts = Convert-ToBoolean -Value (Get-CellValue -Row $rr -Field 'EnableHAports') -Default $false
+                $fePort = Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort')
+                $bePort = Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort')
+                # Rule 필수값 일부가 비어 있으면 해당 행은 배포 대상에서 제외한다.
+                if (-not $targetLb -or -not $ruleName) { $j++; continue }
+                if (-not $enableHaPorts -and (-not $fePort -or -not $bePort)) { $j++; continue }
                 if (-not $lbNameSet.Contains($targetLb)) {
                     Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'LBName' -Message 'LB 시트에 존재하지 않는 LBName 입니다.'
-                }
-                foreach ($f in @('RuleName','FEName','BEPoolName')) {
-                    if (-not (Get-CellValue -Row $rr -Field $f)) {
-                        Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field $f -Message '필수 값이 비어 있습니다.'
-                    }
-                }
-                if (-not (Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort'))) {
-                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'FEPort' -Message '필수 값이 비어 있습니다.'
-                }
-                if (-not (Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort'))) {
-                    Add-Issue -Issues $issues -Type 'LB_Rule' -Row $j -ResourceName $targetLb -Field 'BEPort' -Message '필수 값이 비어 있습니다.'
                 }
                 $j++
             }
@@ -1551,12 +1545,19 @@ function Deploy-LoadBalancers {
         if ($deployProbes) {
             $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
             foreach ($pr in $targetProbes) {
+                if (-not (Test-IsEnabledRow -Row $pr -Default $true)) { continue }
                 $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
-                if (-not $probeName) { continue }
+                if (-not $probeName) {
+                    Write-Info "[SKIP] LB Probe 필수값 누락(ProbeName): LB=$lbName"
+                    continue
+                }
                 if ($lb.Probes | Where-Object Name -eq $probeName) { continue }
 
                 $probePortText = Get-CellValue -Row $pr -Field 'Port'
-                if (-not $probePortText) { continue }
+                if (-not $probePortText) {
+                    Write-Info "[SKIP] LB Probe 필수값 누락(Port): $lbName/$probeName"
+                    continue
+                }
                 $probeIntervalText = Get-CellValue -Row $pr -Field 'IntervalInSeconds'
                 $probeCountText = Get-CellValue -Row $pr -Field 'ProbeCount'
 
@@ -1586,8 +1587,12 @@ function Deploy-LoadBalancers {
         if ($deployRules) {
             $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
             foreach ($rr in $targetRules) {
+            if (-not (Test-IsEnabledRow -Row $rr -Default $true)) { continue }
             $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
-            if (-not $ruleName) { continue }
+            if (-not $ruleName) {
+                Write-Info "[SKIP] LB Rule 필수값 누락(RuleName): LB=$lbName"
+                continue
+            }
             if ($lb.LoadBalancingRules | Where-Object Name -eq $ruleName) { continue }
 
             $ruleFeName = Get-CellValue -Row $rr -Field 'FEName'
@@ -1605,15 +1610,20 @@ function Deploy-LoadBalancers {
             }
 
             $enableHaPorts = Convert-ToBoolean -Value (Get-CellValue -Row $rr -Field 'EnableHAports') -Default $false
-            $frontendPort = [int](Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort'))
-            $backendPort = [int](Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort'))
+            $frontendPortText = Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort')
+            $backendPortText = Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort')
             $protocol = Convert-LbProtocol -Value (Get-CellValueAny -Row $rr -Fields @('FEProtocol','Protocol')) -Default 'Tcp'
 
             if ($enableHaPorts) {
                 $protocol = 'All'
-                $frontendPort = 0
-                $backendPort = 0
+                $frontendPortText = '0'
+                $backendPortText = '0'
+            } elseif (-not $frontendPortText -or -not $backendPortText) {
+                Write-Info "[SKIP] LB Rule 필수값 누락(FEPort/BEPort): $lbName/$ruleName"
+                continue
             }
+            $frontendPort = [int]$frontendPortText
+            $backendPort = [int]$backendPortText
 
             $idleTimeoutValue = Get-CellValueAny -Row $rr -Fields @('IdleTimeoutInMinutes','IdleTimeouInMin')
             if (-not $idleTimeoutValue) { $idleTimeoutValue = '4' }
