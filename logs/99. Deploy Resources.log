@@ -3069,3 +3069,391 @@ s
 2026-05-18 16:20:21.596	[INFO] [DryRun] Subnet-NSG 연결 예정: hazr-d-dch-int-vnet/d-puls-pe-sbn -> d-puls-pe-nsg
 2026-05-18 16:20:21.653	[INFO] [END] Deploy-Nsgs
 2026-05-18 16:20:21.691	[INFO] [END] Script
+2026-05-20 17:09:01.546	[INFO] [START] Script
+2026-05-20 17:09:01.570	[INFO] [START] Initialize-Modules
+2026-05-20 17:09:18.082	[INFO] [END] Initialize-Modules
+2026-05-20 17:09:18.170	[WARN] 지정한 Excel 파일을 찾지 못해 최신 파일을 사용합니다: C:\Users\zenithn\PowerShell - 리소스 배포\서버정보\20260422_리소스배포_테스트.xlsx
+2026-05-20 17:09:18.208	[INFO] [START] Ensure-AzSession
+2026-05-20 17:09:22.825	[INFO] [END] Ensure-AzSession
+2026-05-20 17:09:22.908	[INFO] [START] Validate-Inputs
+2026-05-20 17:09:23.427	[INFO] Excel 시트 로드: LB
+2026-05-20 17:09:23.929	[INFO] Excel 시트 로드: LB_Probe
+2026-05-20 17:09:24.231	[INFO] Excel 시트 로드: LB_Rule
+2026-05-20 17:09:24.638	[INFO] [END] Validate-Inputs
+2026-05-20 17:09:24.708	[INFO] [START] Deploy-LoadBalancers
+2026-05-20 17:09:24.887	[INFO] Excel 시트 로드: LB
+2026-05-20 17:09:25.330	[INFO] Excel 시트 로드: LB_Probe
+2026-05-20 17:09:25.632	[INFO] Excel 시트 로드: LB_Rule
+2026-05-20 17:09:25.901	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:09:25.935	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkap-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkap-lb-fe, Pool=t-bdp-crkap-lb-bp)
+2026-05-20 17:09:25.998	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkap-lb/t-bdp-crkap-lb-rule8085
+2026-05-20 17:09:26.044	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:09:26.110	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkml-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkml-lb-fe, Pool=t-bdp-crkml-lb-bp)
+2026-05-20 17:09:26.163	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkml-lb/t-bdp-crkml-lb-rule8082
+2026-05-20 17:09:26.203	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:09:26.238	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkweb-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkweb-lb-fe, Pool=t-bdp-crkweb-lb-bp)
+2026-05-20 17:09:26.322	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkweb-lb/t-bdp-crkweb-lb-rule443
+2026-05-20 17:09:26.364	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:09:26.414	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-cxmadm-lb (RG=hazr-t-bdp-rg, FE=t-bdp-cxmadm-lb-fe, Pool=t-bdp-cxmadm-lb-bp)
+2026-05-20 17:09:26.469	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-cxmadm-lb/t-bdp-cxmadm-lb-rule443
+2026-05-20 17:09:26.512	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:09:26.550	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-slap-lb (RG=hazr-t-bdp-rg, FE=t-bdp-slap-lb-fe, Pool=t-bdp-slap-lb-bp)
+2026-05-20 17:09:26.593	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-slap-lb/t-bdp-slap-lb-rule443
+2026-05-20 17:09:26.634	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-com-rg (koreacentral)
+2026-05-20 17:09:26.669	[INFO] [DryRun] LB 배포 예정: hazr-t-com-auth-lb (RG=hazr-t-com-rg, FE=t-com-auth-lb-fe, Pool=t-com-auth-lb-bp)
+2026-05-20 17:09:26.713	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule8088
+2026-05-20 17:09:26.735	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule9003
+2026-05-20 17:09:26.769	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule9005
+2026-05-20 17:09:26.809	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-com-rg (koreacentral)
+2026-05-20 17:09:26.848	[INFO] [DryRun] LB 배포 예정: hazr-t-com-proxy-lb (RG=hazr-t-com-rg, FE=t-com-proxy-lb-fe, Pool=t-com-proxy-lb-bp)
+2026-05-20 17:09:26.887	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-proxy-lb/t-com-proxy-lb-rule443
+2026-05-20 17:09:26.927	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-proxy-lb/t-com-proxy-lb-rule8080
+2026-05-20 17:09:26.972	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:09:27.019	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtap-lb (RG=hazr-t-cs-rg, FE=t-cs-chtap-lb-fe, Pool=t-cs-chtap-lb-bp)
+2026-05-20 17:09:27.061	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:09:27.100	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtintweb-lb (RG=hazr-t-cs-rg, FE=t-cs-chtintweb-lb-fe, Pool=t-cs-chtintweb-lb-bp)
+2026-05-20 17:09:27.133	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:09:27.160	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtweb-lb (RG=hazr-t-cs-rg, FE=t-cs-chtweb-lb-fe, Pool=t-cs-chtweb-lb-bp)
+2026-05-20 17:09:27.240	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:27.286	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-adm-lb (RG=hazr-t-dip-rg, FE=t-dip-adm-lb-fe, Pool=t-dip-adm-lb-bp)
+2026-05-20 17:09:27.334	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule443
+2026-05-20 17:09:27.372	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8085
+2026-05-20 17:09:27.407	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8900
+2026-05-20 17:09:27.442	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8901
+2026-05-20 17:09:27.479	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule9100
+2026-05-20 17:09:27.517	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:27.554	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-ap-lb (RG=hazr-t-dip-rg, FE=t-dip-ap-lb-fe, Pool=t-dip-ap-lb-bp)
+2026-05-20 17:09:27.599	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule443
+2026-05-20 17:09:27.632	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8100
+2026-05-20 17:09:27.665	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8200
+2026-05-20 17:09:27.696	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8300
+2026-05-20 17:09:27.749	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8400
+2026-05-20 17:09:27.788	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule9100
+2026-05-20 17:09:27.825	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule9113
+2026-05-20 17:09:27.858	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:27.896	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-flk-lb (RG=hazr-t-dip-rg, FE=t-dip-flk-lb-fe, Pool=t-dip-flk-lb-bp)
+2026-05-20 17:09:27.936	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:27.967	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-geoap-lb (RG=hazr-t-dip-rg, FE=t-dip-geoap-lb-fe, Pool=t-dip-geoap-lb-bp)
+2026-05-20 17:09:28.004	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3660
+2026-05-20 17:09:28.040	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3661
+2026-05-20 17:09:28.074	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3670
+2026-05-20 17:09:28.110	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3671
+2026-05-20 17:09:28.143	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule9100
+2026-05-20 17:09:28.178	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:28.210	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-mqap-lb (RG=hazr-t-dip-rg, FE=t-dip-mqap-lb-fe, Pool=t-dip-mqap-lb-bp)
+2026-05-20 17:09:28.247	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule1883
+2026-05-20 17:09:28.280	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule1884
+2026-05-20 17:09:28.313	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule18083
+2026-05-20 17:09:28.344	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule9100
+2026-05-20 17:09:28.379	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:28.412	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-mqweb-lb (RG=hazr-t-dip-rg, FE=t-dip-mqweb-lb-fe, Pool=t-dip-mqweb-lb-bp)
+2026-05-20 17:09:28.449	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule8883
+2026-05-20 17:09:28.482	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule1884
+2026-05-20 17:09:28.519	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule9100
+2026-05-20 17:09:28.551	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:09:28.578	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-web-lb (RG=hazr-t-dip-rg, FE=t-dip-web-lb-fe, Pool=t-dip-web-lb-bp)
+2026-05-20 17:09:28.616	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-web-lb/t-dip-web-lb-rule443
+2026-05-20 17:09:28.650	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-web-lb/t-dip-web-lb-rule9100
+2026-05-20 17:09:28.685	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:28.712	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-adm-lb (RG=hazr-t-dis-rg, FE=t-dis-adm-lb-fe, Pool=t-dis-adm-lb-bp)
+2026-05-20 17:09:28.757	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-adm-lb/t-dis-adm-lb-rule443
+2026-05-20 17:09:28.796	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:28.836	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-ap-lb (RG=hazr-t-dis-rg, FE=t-dis-ap-lb-fe, Pool=t-dis-ap-lb-bp)
+2026-05-20 17:09:28.872	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-ap-lb/t-dis-ap-lb-rule8080
+2026-05-20 17:09:28.905	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:28.937	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbicltap-lb (RG=hazr-t-dis-rg, FE=t-dis-bbicltap-lb-fe, Pool=t-dis-bbicltap-lb-bp)
+2026-05-20 17:09:28.975	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule20000
+2026-05-20 17:09:29.010	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule21000
+2026-05-20 17:09:29.042	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule22000
+2026-05-20 17:09:29.079	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.110	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbimsgap-lb (RG=hazr-t-dis-rg, FE=t-dis-bbimsgap-lb-fe, Pool=t-dis-bbimsgap-lb-bp)
+2026-05-20 17:09:29.148	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbimsgap-lb/t-dis-bbimsgap-lb-rule20030
+2026-05-20 17:09:29.185	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.204	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbiweb-lb (RG=hazr-t-dis-rg, FE=t-dis-bbiweb-lb-fe, Pool=t-dis-bbiweb-lb-bp)
+2026-05-20 17:09:29.239	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbiweb-lb/t-dis-bbiweb-lb-rule443
+2026-05-20 17:09:29.272	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.305	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmbsap-lb (RG=hazr-t-dis-rg, FE=t-dis-cmbsap-lb-fe, Pool=t-dis-cmbsap-lb-bp)
+2026-05-20 17:09:29.347	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmbsap-lb/t-dis-cmbsap-lb-rule8080
+2026-05-20 17:09:29.366	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.398	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsadm-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsadm-lb-fe, Pool=t-dis-cmsadm-lb-bp)
+2026-05-20 17:09:29.437	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsadm-lb/t-dis-cmsadm-lb-rule443
+2026-05-20 17:09:29.470	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.506	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsap-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsap-lb-fe, Pool=t-dis-cmsap-lb-bp)
+2026-05-20 17:09:29.541	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsap-lb/t-dis-cmsap-lb-rule4001
+2026-05-20 17:09:29.574	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.614	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsweb-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsweb-lb-fe, Pool=t-dis-cmsweb-lb-bp)
+2026-05-20 17:09:29.652	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsweb-lb/t-dis-cmsweb-lb-rule80
+2026-05-20 17:09:29.686	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsweb-lb/t-dis-cmsweb-lb-rule443
+2026-05-20 17:09:29.719	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.751	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-drvcltap-lb (RG=hazr-t-dis-rg, FE=t-dis-drvcltap-lb-fe, Pool=t-dis-drvcltap-lb-bp)
+2026-05-20 17:09:29.788	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-drvcltap-lb/t-dis-drvcltap-lb-rule8081
+2026-05-20 17:09:29.822	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.852	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-drvmsgap-lb (RG=hazr-t-dis-rg, FE=t-dis-drvmsgap-lb-fe, Pool=t-dis-drvmsgap-lb-bp)
+2026-05-20 17:09:29.893	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-drvmsgap-lb/t-dis-drvmsgap-lb-rule8080
+2026-05-20 17:09:29.928	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:29.959	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-walkap-lb (RG=hazr-t-dis-rg, FE=t-dis-walkap-lb-fe, Pool=t-dis-walkap-lb-bp)
+2026-05-20 17:09:30.024	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-walkap-lb/t-dis-walkap-lb-rule8080
+2026-05-20 17:09:30.061	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:30.096	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-walkweb-lb (RG=hazr-t-dis-rg, FE=t-dis-walkweb-lb-fe, Pool=t-dis-walkweb-lb-bp)
+2026-05-20 17:09:30.132	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-walkweb-lb/t-dis-walkweb-lb-rule443
+2026-05-20 17:09:30.163	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:09:30.196	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-web-lb (RG=hazr-t-dis-rg, FE=t-dis-web-lb-fe, Pool=t-dis-web-lb-bp)
+2026-05-20 17:09:30.215	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-web-lb/t-dis-web-lb-rule80
+2026-05-20 17:09:30.248	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-web-lb/t-dis-web-lb-rule443
+2026-05-20 17:09:30.281	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:09:30.314	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-adm-lb (RG=hazr-t-doip-rg, FE=t-doip-adm-lb-fe, Pool=t-doip-adm-lb-bp)
+2026-05-20 17:09:30.356	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:09:30.389	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-ap-lb (RG=hazr-t-doip-rg, FE=t-doip-ap-lb-fe, Pool=t-doip-ap-lb-bp)
+2026-05-20 17:09:30.429	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:09:30.460	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-web-lb (RG=hazr-t-doip-rg, FE=t-doip-web-lb-fe, Pool=t-doip-web-lb-bp)
+2026-05-20 17:09:30.498	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:30.531	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admap-lb-fe, Pool=t-dtg-admap-lb-bp)
+2026-05-20 17:09:30.567	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admap-lb/t-dtg-admap-lb-rule8085
+2026-05-20 17:09:30.598	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admap-lb/t-dtg-admap-lb-rule8087
+2026-05-20 17:09:30.632	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:30.667	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admweb-lb-fe, Pool=t-dtg-admweb-lb-bp)
+2026-05-20 17:09:30.706	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admweb-lb/t-dtg-admweb-lb-rule8088
+2026-05-20 17:09:30.741	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:30.774	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ap-lb-fe, Pool=t-dtg-ap-lb-bp)
+2026-05-20 17:09:30.810	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ap-lb/t-dtg-ap-lb-rule8080
+2026-05-20 17:09:30.842	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ap-lb/t-dtg-ap-lb-rule9087
+2026-05-20 17:09:30.874	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:30.910	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdmlap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdmlap-lb-fe, Pool=t-dtg-cdmlap-lb-bp)
+2026-05-20 17:09:30.947	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdmlap-lb/t-dtg-cdmlap-lb-rule9305
+2026-05-20 17:09:30.982	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdmlap-lb/t-dtg-cdmlap-lb-rule9306
+2026-05-20 17:09:31.072	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.109	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdstap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdstap-lb-fe, Pool=t-dtg-cdstap-lb-bp)
+2026-05-20 17:09:31.154	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.191	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdsvadm-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdsvadm-lb-fe, Pool=t-dtg-cdsvadm-lb-bp)
+2026-05-20 17:09:31.246	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9100
+2026-05-20 17:09:31.287	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9300
+2026-05-20 17:09:31.328	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9105
+2026-05-20 17:09:31.362	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9003
+2026-05-20 17:09:31.397	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule8088
+2026-05-20 17:09:31.441	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.482	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosap-lb-fe, Pool=t-dtg-diosap-lb-bp)
+2026-05-20 17:09:31.525	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-diosap-lb/t-dtg-diosap-lb-rule8080
+2026-05-20 17:09:31.558	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.577	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosweb-lb-fe, Pool=t-dtg-diosweb-lb-bp)
+2026-05-20 17:09:31.614	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-diosweb-lb/t-dtg-diosweb-lb-rule443
+2026-05-20 17:09:31.661	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.704	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprap-lb-fe, Pool=t-dtg-dprap-lb-bp)
+2026-05-20 17:09:31.744	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-dprap-lb/t-dtg-dprap-lb-rule8082
+2026-05-20 17:09:31.776	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.807	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprweb-lb-fe, Pool=t-dtg-dprweb-lb-bp)
+2026-05-20 17:09:31.845	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-dprweb-lb/t-dtg-dprweb-lb-rule443
+2026-05-20 17:09:31.880	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:31.916	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-extgeoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-extgeoap-lb-fe, Pool=t-dtg-extgeoap-lb-bp)
+2026-05-20 17:09:31.958	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-extgeoap-lb/t-dtg-extgeoap-lb-rule3660
+2026-05-20 17:09:31.997	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-extgeoap-lb/t-dtg-extgeoap-lb-rule3661
+2026-05-20 17:09:32.036	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:32.071	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-geoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-geoap-lb-fe, Pool=t-dtg-geoap-lb-bp)
+2026-05-20 17:09:32.116	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-geoap-lb/t-dtg-geoap-lb-rule8089
+2026-05-20 17:09:32.180	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-geoap-lb/t-dtg-geoap-lb-rule9089
+2026-05-20 17:09:32.215	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:32.253	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ingap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ingap-lb-fe, Pool=t-dtg-ingap-lb-bp)
+2026-05-20 17:09:32.291	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ingap-lb/t-dtg-ingap-lb-rule8081
+2026-05-20 17:09:32.323	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:32.339	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-mq-lb (RG=hazr-t-dtg-rg, FE=t-dtg-mq-lb-fe, Pool=t-dtg-mq-lb-bp)
+2026-05-20 17:09:32.376	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-mq-lb/t-dtg-mq-lb-rule1883
+2026-05-20 17:09:32.409	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-mq-lb/t-dtg-mq-lb-rule1884
+2026-05-20 17:09:32.453	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:09:32.503	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-web-lb (RG=hazr-t-dtg-rg, FE=t-dtg-web-lb-fe, Pool=t-dtg-web-lb-bp)
+2026-05-20 17:09:32.559	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-web-lb/t-dtg-web-lb-rule8080
+2026-05-20 17:09:32.607	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-web-lb/t-dtg-web-lb-rule8081
+2026-05-20 17:09:32.657	[INFO] [END] Deploy-LoadBalancers
+2026-05-20 17:09:32.693	[INFO] [END] Script
+2026-05-20 17:14:50.333	[INFO] [START] Script
+2026-05-20 17:14:50.381	[INFO] [START] Initialize-Modules
+2026-05-20 17:15:07.591	[INFO] [END] Initialize-Modules
+2026-05-20 17:15:07.652	[WARN] 지정한 Excel 파일을 찾지 못해 최신 파일을 사용합니다: C:\Users\zenithn\PowerShell - 리소스 배포\서버정보\20260422_리소스배포_테스트.xlsx
+2026-05-20 17:15:07.688	[INFO] [START] Ensure-AzSession
+2026-05-20 17:15:10.709	[INFO] [END] Ensure-AzSession
+2026-05-20 17:15:10.821	[INFO] [START] Validate-Inputs
+2026-05-20 17:15:11.164	[INFO] Excel 시트 로드: LB
+2026-05-20 17:15:11.561	[INFO] Excel 시트 로드: LB_Probe
+2026-05-20 17:15:11.859	[INFO] Excel 시트 로드: LB_Rule
+2026-05-20 17:15:12.357	[INFO] [END] Validate-Inputs
+2026-05-20 17:15:12.401	[INFO] [START] Deploy-LoadBalancers
+2026-05-20 17:15:12.654	[INFO] Excel 시트 로드: LB
+2026-05-20 17:15:13.093	[INFO] Excel 시트 로드: LB_Probe
+2026-05-20 17:15:13.445	[INFO] Excel 시트 로드: LB_Rule
+2026-05-20 17:15:13.767	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:15:13.801	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkap-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkap-lb-fe, Pool=t-bdp-crkap-lb-bp)
+2026-05-20 17:15:13.857	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkap-lb/t-bdp-crkap-lb-rule8085
+2026-05-20 17:15:13.891	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:15:13.932	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkml-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkml-lb-fe, Pool=t-bdp-crkml-lb-bp)
+2026-05-20 17:15:13.968	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkml-lb/t-bdp-crkml-lb-rule8082
+2026-05-20 17:15:14.022	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:15:14.079	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-crkweb-lb (RG=hazr-t-bdp-rg, FE=t-bdp-crkweb-lb-fe, Pool=t-bdp-crkweb-lb-bp)
+2026-05-20 17:15:14.145	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-crkweb-lb/t-bdp-crkweb-lb-rule443
+2026-05-20 17:15:14.188	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:15:14.224	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-cxmadm-lb (RG=hazr-t-bdp-rg, FE=t-bdp-cxmadm-lb-fe, Pool=t-bdp-cxmadm-lb-bp)
+2026-05-20 17:15:14.269	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-cxmadm-lb/t-bdp-cxmadm-lb-rule443
+2026-05-20 17:15:14.314	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-bdp-rg (koreacentral)
+2026-05-20 17:15:14.357	[INFO] [DryRun] LB 배포 예정: hazr-t-bdp-slap-lb (RG=hazr-t-bdp-rg, FE=t-bdp-slap-lb-fe, Pool=t-bdp-slap-lb-bp)
+2026-05-20 17:15:14.415	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-bdp-slap-lb/t-bdp-slap-lb-rule443
+2026-05-20 17:15:14.470	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-com-rg (koreacentral)
+2026-05-20 17:15:14.523	[INFO] [DryRun] LB 배포 예정: hazr-t-com-auth-lb (RG=hazr-t-com-rg, FE=t-com-auth-lb-fe, Pool=t-com-auth-lb-bp)
+2026-05-20 17:15:14.561	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule8088
+2026-05-20 17:15:14.600	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule9003
+2026-05-20 17:15:14.636	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-auth-lb/t-com-auth-lb-rule9005
+2026-05-20 17:15:14.675	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-com-rg (koreacentral)
+2026-05-20 17:15:14.713	[INFO] [DryRun] LB 배포 예정: hazr-t-com-proxy-lb (RG=hazr-t-com-rg, FE=t-com-proxy-lb-fe, Pool=t-com-proxy-lb-bp)
+2026-05-20 17:15:14.757	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-proxy-lb/t-com-proxy-lb-rule443
+2026-05-20 17:15:14.789	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-com-proxy-lb/t-com-proxy-lb-rule8080
+2026-05-20 17:15:14.825	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:15:14.881	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtap-lb (RG=hazr-t-cs-rg, FE=t-cs-chtap-lb-fe, Pool=t-cs-chtap-lb-bp)
+2026-05-20 17:15:14.947	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:15:14.998	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtintweb-lb (RG=hazr-t-cs-rg, FE=t-cs-chtintweb-lb-fe, Pool=t-cs-chtintweb-lb-bp)
+2026-05-20 17:15:15.069	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-cs-rg (koreacentral)
+2026-05-20 17:15:15.114	[INFO] [DryRun] LB 배포 예정: hazr-t-cs-chtweb-lb (RG=hazr-t-cs-rg, FE=t-cs-chtweb-lb-fe, Pool=t-cs-chtweb-lb-bp)
+2026-05-20 17:15:15.187	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:15.253	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-adm-lb (RG=hazr-t-dip-rg, FE=t-dip-adm-lb-fe, Pool=t-dip-adm-lb-bp)
+2026-05-20 17:15:15.307	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule443
+2026-05-20 17:15:15.352	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8085
+2026-05-20 17:15:15.404	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8900
+2026-05-20 17:15:15.454	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule8901
+2026-05-20 17:15:15.500	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-adm-lb/t-dip-adm-lb-rule9100
+2026-05-20 17:15:15.543	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:15.587	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-ap-lb (RG=hazr-t-dip-rg, FE=t-dip-ap-lb-fe, Pool=t-dip-ap-lb-bp)
+2026-05-20 17:15:15.643	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule443
+2026-05-20 17:15:15.683	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8100
+2026-05-20 17:15:15.722	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8200
+2026-05-20 17:15:15.761	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8300
+2026-05-20 17:15:15.815	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule8400
+2026-05-20 17:15:15.842	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule9100
+2026-05-20 17:15:15.897	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-ap-lb/t-dip-ap-lb-rule9113
+2026-05-20 17:15:15.953	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:16.001	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-flk-lb (RG=hazr-t-dip-rg, FE=t-dip-flk-lb-fe, Pool=t-dip-flk-lb-bp)
+2026-05-20 17:15:16.070	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:16.125	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-geoap-lb (RG=hazr-t-dip-rg, FE=t-dip-geoap-lb-fe, Pool=t-dip-geoap-lb-bp)
+2026-05-20 17:15:16.192	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3660
+2026-05-20 17:15:16.236	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3661
+2026-05-20 17:15:16.282	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3670
+2026-05-20 17:15:16.325	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule3671
+2026-05-20 17:15:16.350	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-geoap-lb/t-dip-geoap-lb-rule9100
+2026-05-20 17:15:16.387	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:16.434	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-mqap-lb (RG=hazr-t-dip-rg, FE=t-dip-mqap-lb-fe, Pool=t-dip-mqap-lb-bp)
+2026-05-20 17:15:16.504	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule1883
+2026-05-20 17:15:16.547	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule1884
+2026-05-20 17:15:16.588	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule18083
+2026-05-20 17:15:16.630	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqap-lb/t-dip-mqap-lb-rule9100
+2026-05-20 17:15:16.668	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:16.705	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-mqweb-lb (RG=hazr-t-dip-rg, FE=t-dip-mqweb-lb-fe, Pool=t-dip-mqweb-lb-bp)
+2026-05-20 17:15:16.746	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule8883
+2026-05-20 17:15:16.783	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule1884
+2026-05-20 17:15:16.817	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-mqweb-lb/t-dip-mqweb-lb-rule9100
+2026-05-20 17:15:16.865	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dip-rg (koreacentral)
+2026-05-20 17:15:16.893	[INFO] [DryRun] LB 배포 예정: hazr-t-dip-web-lb (RG=hazr-t-dip-rg, FE=t-dip-web-lb-fe, Pool=t-dip-web-lb-bp)
+2026-05-20 17:15:16.965	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-web-lb/t-dip-web-lb-rule443
+2026-05-20 17:15:17.015	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dip-web-lb/t-dip-web-lb-rule9100
+2026-05-20 17:15:17.074	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.133	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-adm-lb (RG=hazr-t-dis-rg, FE=t-dis-adm-lb-fe, Pool=t-dis-adm-lb-bp)
+2026-05-20 17:15:17.195	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-adm-lb/t-dis-adm-lb-rule443
+2026-05-20 17:15:17.248	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.300	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-ap-lb (RG=hazr-t-dis-rg, FE=t-dis-ap-lb-fe, Pool=t-dis-ap-lb-bp)
+2026-05-20 17:15:17.327	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-ap-lb/t-dis-ap-lb-rule8080
+2026-05-20 17:15:17.369	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.411	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbicltap-lb (RG=hazr-t-dis-rg, FE=t-dis-bbicltap-lb-fe, Pool=t-dis-bbicltap-lb-bp)
+2026-05-20 17:15:17.450	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule20000
+2026-05-20 17:15:17.485	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule21000
+2026-05-20 17:15:17.530	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbicltap-lb/t-dis-bbicltap-lb-rule22000
+2026-05-20 17:15:17.594	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.640	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbimsgap-lb (RG=hazr-t-dis-rg, FE=t-dis-bbimsgap-lb-fe, Pool=t-dis-bbimsgap-lb-bp)
+2026-05-20 17:15:17.691	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbimsgap-lb/t-dis-bbimsgap-lb-rule20030
+2026-05-20 17:15:17.730	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.774	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-bbiweb-lb (RG=hazr-t-dis-rg, FE=t-dis-bbiweb-lb-fe, Pool=t-dis-bbiweb-lb-bp)
+2026-05-20 17:15:17.826	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-bbiweb-lb/t-dis-bbiweb-lb-rule443
+2026-05-20 17:15:17.878	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:17.935	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmbsap-lb (RG=hazr-t-dis-rg, FE=t-dis-cmbsap-lb-fe, Pool=t-dis-cmbsap-lb-bp)
+2026-05-20 17:15:18.026	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmbsap-lb/t-dis-cmbsap-lb-rule8080
+2026-05-20 17:15:18.068	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.117	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsadm-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsadm-lb-fe, Pool=t-dis-cmsadm-lb-bp)
+2026-05-20 17:15:18.167	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsadm-lb/t-dis-cmsadm-lb-rule443
+2026-05-20 17:15:18.220	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.260	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsap-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsap-lb-fe, Pool=t-dis-cmsap-lb-bp)
+2026-05-20 17:15:18.304	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsap-lb/t-dis-cmsap-lb-rule4001
+2026-05-20 17:15:18.349	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.392	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-cmsweb-lb (RG=hazr-t-dis-rg, FE=t-dis-cmsweb-lb-fe, Pool=t-dis-cmsweb-lb-bp)
+2026-05-20 17:15:18.455	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsweb-lb/t-dis-cmsweb-lb-rule80
+2026-05-20 17:15:18.505	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-cmsweb-lb/t-dis-cmsweb-lb-rule443
+2026-05-20 17:15:18.556	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.594	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-drvcltap-lb (RG=hazr-t-dis-rg, FE=t-dis-drvcltap-lb-fe, Pool=t-dis-drvcltap-lb-bp)
+2026-05-20 17:15:18.619	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-drvcltap-lb/t-dis-drvcltap-lb-rule8081
+2026-05-20 17:15:18.645	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.668	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-drvmsgap-lb (RG=hazr-t-dis-rg, FE=t-dis-drvmsgap-lb-fe, Pool=t-dis-drvmsgap-lb-bp)
+2026-05-20 17:15:18.720	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-drvmsgap-lb/t-dis-drvmsgap-lb-rule8080
+2026-05-20 17:15:18.762	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:18.852	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-walkap-lb (RG=hazr-t-dis-rg, FE=t-dis-walkap-lb-fe, Pool=t-dis-walkap-lb-bp)
+2026-05-20 17:15:18.940	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-walkap-lb/t-dis-walkap-lb-rule8080
+2026-05-20 17:15:18.989	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:19.038	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-walkweb-lb (RG=hazr-t-dis-rg, FE=t-dis-walkweb-lb-fe, Pool=t-dis-walkweb-lb-bp)
+2026-05-20 17:15:19.088	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-walkweb-lb/t-dis-walkweb-lb-rule443
+2026-05-20 17:15:19.157	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dis-rg (koreacentral)
+2026-05-20 17:15:19.200	[INFO] [DryRun] LB 배포 예정: hazr-t-dis-web-lb (RG=hazr-t-dis-rg, FE=t-dis-web-lb-fe, Pool=t-dis-web-lb-bp)
+2026-05-20 17:15:19.242	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-web-lb/t-dis-web-lb-rule80
+2026-05-20 17:15:19.311	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dis-web-lb/t-dis-web-lb-rule443
+2026-05-20 17:15:19.351	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:15:19.386	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-adm-lb (RG=hazr-t-doip-rg, FE=t-doip-adm-lb-fe, Pool=t-doip-adm-lb-bp)
+2026-05-20 17:15:19.438	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:15:19.487	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-ap-lb (RG=hazr-t-doip-rg, FE=t-doip-ap-lb-fe, Pool=t-doip-ap-lb-bp)
+2026-05-20 17:15:19.542	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-doip-rg (koreacentral)
+2026-05-20 17:15:19.622	[INFO] [DryRun] LB 배포 예정: hazr-t-doip-web-lb (RG=hazr-t-doip-rg, FE=t-doip-web-lb-fe, Pool=t-doip-web-lb-bp)
+2026-05-20 17:15:19.691	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:19.741	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admap-lb-fe, Pool=t-dtg-admap-lb-bp)
+2026-05-20 17:15:19.782	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admap-lb/t-dtg-admap-lb-rule8085
+2026-05-20 17:15:19.804	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admap-lb/t-dtg-admap-lb-rule8087
+2026-05-20 17:15:19.849	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:19.876	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-admweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-admweb-lb-fe, Pool=t-dtg-admweb-lb-bp)
+2026-05-20 17:15:19.935	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-admweb-lb/t-dtg-admweb-lb-rule8088
+2026-05-20 17:15:19.984	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.011	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ap-lb-fe, Pool=t-dtg-ap-lb-bp)
+2026-05-20 17:15:20.062	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ap-lb/t-dtg-ap-lb-rule8080
+2026-05-20 17:15:20.188	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ap-lb/t-dtg-ap-lb-rule9087
+2026-05-20 17:15:20.222	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.268	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdmlap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdmlap-lb-fe, Pool=t-dtg-cdmlap-lb-bp)
+2026-05-20 17:15:20.325	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdmlap-lb/t-dtg-cdmlap-lb-rule9305
+2026-05-20 17:15:20.363	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdmlap-lb/t-dtg-cdmlap-lb-rule9306
+2026-05-20 17:15:20.399	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.439	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdstap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdstap-lb-fe, Pool=t-dtg-cdstap-lb-bp)
+2026-05-20 17:15:20.461	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.496	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-cdsvadm-lb (RG=hazr-t-dtg-rg, FE=t-dtg-cdsvadm-lb-fe, Pool=t-dtg-cdsvadm-lb-bp)
+2026-05-20 17:15:20.551	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9100
+2026-05-20 17:15:20.597	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9300
+2026-05-20 17:15:20.639	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9105
+2026-05-20 17:15:20.673	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule9003
+2026-05-20 17:15:20.721	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-cdsvadm-lb/t-dtg-cdsvadm-lb-rule8088
+2026-05-20 17:15:20.778	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.832	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosap-lb-fe, Pool=t-dtg-diosap-lb-bp)
+2026-05-20 17:15:20.892	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-diosap-lb/t-dtg-diosap-lb-rule8080
+2026-05-20 17:15:20.948	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:20.998	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-diosweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-diosweb-lb-fe, Pool=t-dtg-diosweb-lb-bp)
+2026-05-20 17:15:21.051	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-diosweb-lb/t-dtg-diosweb-lb-rule443
+2026-05-20 17:15:21.110	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.164	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprap-lb-fe, Pool=t-dtg-dprap-lb-bp)
+2026-05-20 17:15:21.224	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-dprap-lb/t-dtg-dprap-lb-rule8082
+2026-05-20 17:15:21.267	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.312	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-dprweb-lb (RG=hazr-t-dtg-rg, FE=t-dtg-dprweb-lb-fe, Pool=t-dtg-dprweb-lb-bp)
+2026-05-20 17:15:21.365	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-dprweb-lb/t-dtg-dprweb-lb-rule443
+2026-05-20 17:15:21.406	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.448	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-extgeoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-extgeoap-lb-fe, Pool=t-dtg-extgeoap-lb-bp)
+2026-05-20 17:15:21.498	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-extgeoap-lb/t-dtg-extgeoap-lb-rule3660
+2026-05-20 17:15:21.541	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-extgeoap-lb/t-dtg-extgeoap-lb-rule3661
+2026-05-20 17:15:21.576	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.612	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-geoap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-geoap-lb-fe, Pool=t-dtg-geoap-lb-bp)
+2026-05-20 17:15:21.664	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-geoap-lb/t-dtg-geoap-lb-rule8089
+2026-05-20 17:15:21.714	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-geoap-lb/t-dtg-geoap-lb-rule9089
+2026-05-20 17:15:21.766	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.809	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-ingap-lb (RG=hazr-t-dtg-rg, FE=t-dtg-ingap-lb-fe, Pool=t-dtg-ingap-lb-bp)
+2026-05-20 17:15:21.855	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-ingap-lb/t-dtg-ingap-lb-rule8081
+2026-05-20 17:15:21.909	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:21.951	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-mq-lb (RG=hazr-t-dtg-rg, FE=t-dtg-mq-lb-fe, Pool=t-dtg-mq-lb-bp)
+2026-05-20 17:15:22.006	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-mq-lb/t-dtg-mq-lb-rule1883
+2026-05-20 17:15:22.041	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-mq-lb/t-dtg-mq-lb-rule1884
+2026-05-20 17:15:22.079	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-t-dtg-rg (koreacentral)
+2026-05-20 17:15:22.129	[INFO] [DryRun] LB 배포 예정: hazr-t-dtg-web-lb (RG=hazr-t-dtg-rg, FE=t-dtg-web-lb-fe, Pool=t-dtg-web-lb-bp)
+2026-05-20 17:15:22.174	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-web-lb/t-dtg-web-lb-rule8080
+2026-05-20 17:15:22.213	[INFO] [DryRun] LB Rule 배포 예정: hazr-t-dtg-web-lb/t-dtg-web-lb-rule8081
+2026-05-20 17:15:22.252	[INFO] [END] Deploy-LoadBalancers
+2026-05-20 17:15:22.288	[INFO] [END] Script
