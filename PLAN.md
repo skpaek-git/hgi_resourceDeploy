@@ -1,21 +1,28 @@
 # PLAN
 
-## 목표
-- VM OS 디스크 CMK 활성화를 위해 Key Vault, DES, VM 연계를 Excel 기반 자동화로 구현
-- `3. Deploy KV.ps1`, `4. Deploy DES.ps1`를 추가하고 통합 스크립트와 동일 파라미터 방식으로 실행
-- VM 배포 시 DES를 템플릿 파라미터로 전달하여 CMK가 배포 시점에 적용되도록 구성
+## 목적
+- 현재 배포 운영을 `99. Deploy Resources.ps1` 단일 진입점으로 유지한다.
+- Excel 시트 변경이 스크립트 동작에 미치는 영향을 사전에 최소화한다.
 
-## 작업 순서
-- [x] 요구사항 분석
-- [x] VM 템플릿 4종에 `diskEncryptionSetId` 파라미터 추가
-- [x] `99. Deploy Resources.ps1`에 `KV`, `DES` 배포 타입 추가
-- [x] `3. Deploy KV.ps1`, `4. Deploy DES.ps1` 작성
-- [x] `5. Deploy VM.ps1`에 DES 컬럼 기반 CMK 파라미터 전달 반영
-- [x] DryRun/문법 테스트
-- [x] README/TODO/Agent 문서 업데이트
+## 현행 배포 범위(2026-05-22 기준)
+- 포함: `RG`, `VNET`, `UDR`, `LB`, `LB_PROBE`, `LB_RULE`, `VM`, `DATADISK`, `NSG`
+- 제외: `STORAGE`, `KV`, `DES`
 
-## 사전 정의/제안
-- Excel에 신규 시트 `KV`, `DES`를 추가하고 아래 컬럼을 운영 표준으로 확정 필요
-  - KV: `KVName`, `RGname`, `Location`, `KeyName` (권장: `SkuName`, `KeyType`, `KeySize`)
-  - DES: `DESName`, `RGname`, `Location`, `KeyVaultName`, `KeyName` (권장: `KeyVersion`, `KeyVaultRG`)
-- VM 시트는 `DESName`(+선택 `DesRG`) 또는 `DiskEncryptionSetId` 중 하나를 필수 입력
+## 현행 실행/의존 구조
+- 메인: `99. Deploy Resources.ps1`
+- 래퍼(선택): `5. LEG_Deploy LB.ps1` -> 내부에서 `99` 호출
+- DataDisk: `99` 내부 함수(`Deploy-DataDisks`)로 처리, 외부 `8` 의존 없음
+- 레거시: `0~8 LEG_*` 파일은 과거 단독 실행 호환 목적 보관
+
+## 운영 계획
+- [x] 파일명 체계 정리(`LEG_`, `TEMP_Deploy Resource_OnlyNSG`)
+- [x] DataDisk 8->99 통합 및 동작 검증(DryRun)
+- [x] LB Probe 포트 누락 스킵 처리 검증
+- [x] 이름 변경 후 호출 오류 재점검
+- [ ] 레거시 스크립트 폐기 시점 확정(운영 합의 필요)
+- [ ] 정기 검증 자동화(예: 주간 DryRun 배치) 여부 결정
+
+## 검증 기준
+- 동일 Excel 기준 `99 -DeployType DATADISK -DryRun` 정상 종료(code 0)
+- LB 단독/래퍼 실행 정상 종료(code 0)
+- 시트 컬럼 변경(`FEProtocol` -> `Protocol`)에도 오류 없이 처리

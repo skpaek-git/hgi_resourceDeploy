@@ -10,5 +10,4 @@ param(
     [switch]$DryRun
 )
 
-$scriptPath = Join-Path -Path $PSScriptRoot -ChildPath '99. Deploy Resources.ps1'
-& $scriptPath -ExcelPath $ExcelPath -DeployType @('DES') -ConnectAccount:$ConnectAccount -DryRun:$DryRun
+throw "현재 운영 정책에서 KV 배포는 제외되었습니다. '99. Deploy Resources.ps1'의 DeployType에서 KV는 지원하지 않습니다."
