@@ -7508,3 +7508,19 @@ le 배포 예정: hazr-t-dtg-mq-lb/t-dtg-mq-lb-rule1883
 2026-05-22 14:39:06.917	[INFO] [DryRun] VNet 배포 예정: hazr-t-dch-int-vnet
 2026-05-22 14:39:06.991	[INFO] [END] Deploy-Vnets
 2026-05-22 14:39:07.013	[INFO] [END] Script
+2026-05-22 15:07:10.577	[INFO] [START] Script
+2026-05-22 15:07:10.609	[INFO] [START] Initialize-Modules
+2026-05-22 15:07:26.345	[INFO] [END] Initialize-Modules
+2026-05-22 15:07:26.374	[INFO] [START] Ensure-AzSession
+2026-05-22 15:07:28.800	[INFO] [END] Ensure-AzSession
+2026-05-22 15:07:28.847	[INFO] [START] Validate-Inputs
+2026-05-22 15:07:29.176	[INFO] Excel 시트 로드: VNET
+2026-05-22 15:07:29.533	[INFO] [END] Validate-Inputs
+2026-05-22 15:07:29.552	[INFO] [START] Deploy-Vnets
+2026-05-22 15:07:29.730	[INFO] Excel 시트 로드: VNET
+2026-05-22 15:07:29.926	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-p-dch-rg (koreacentral)
+2026-05-22 15:07:29.986	[INFO] [DryRun] VNet 배포 예정: hazr-p-dch-ext-vnet
+2026-05-22 15:07:30.007	[INFO] [DryRun] 리소스 그룹 생성 예정: hazr-p-dch-rg (koreacentral)
+2026-05-22 15:07:30.032	[INFO] [DryRun] VNet 배포 예정: hazr-p-dch-int-vnet
+2026-05-22 15:07:30.093	[INFO] [END] Deploy-Vnets
+2026-05-22 15:07:30.111	[INFO] [END] Script

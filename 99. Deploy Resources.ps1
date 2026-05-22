@@ -894,9 +894,17 @@ function Get-VnetName {
 function Get-VnetSubnets {
     param([psobject]$Row)
     $pairs = @{}
-    for ($i = 1; $i -le 10; $i++) {
-        $nameKey = "Subnet$($i) Name"
-        $addrKey = "Subnet$($i) Address"
+
+    $indices = @(
+        $Row.PSObject.Properties |
+            Where-Object { $_.Name -match '^Subnet(\d+)\s+Name$' } |
+            ForEach-Object { [int]$matches[1] } |
+            Sort-Object -Unique
+    )
+
+    foreach ($i in $indices) {
+        $nameKey = "Subnet$i Name"
+        $addrKey = "Subnet$i Address"
         $subnetName = Get-CellValue -Row $Row -Field $nameKey
         $subnetAddress = Get-CellValue -Row $Row -Field $addrKey
         if ($subnetName -and $subnetAddress) {
