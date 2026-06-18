@@ -2144,9 +2144,9 @@ function Resolve-DataDiskSku {
     switch ($InputValue.Trim()) {
         'StandardSSD_LRS' { return 'StandardSSD_LRS' }
         'StandardSSD' { return 'StandardSSD_LRS' }
-        'PremiumSSD_LRS'  { return 'PremiumSSD_LRS' }
-        'Premium'         { return 'PremiumSSD_LRS' }
-        'PremiumSSD'      { return 'PremiumSSD_LRS' } # (선택) 사용자가 이렇게 입력할 수도 있으니 대비
+        'PremiumSSD_LRS'  { return 'Premium_LRS' }
+        'Premium'         { return 'Premium_LRS' }
+        'PremiumSSD'      { return 'Premium_LRS' } # (선택) 사용자가 이렇게 입력할 수도 있으니 대비
         default { throw "Only StandardSSD_LRS or PremiumSSD_LRS is allowed. Input: $InputValue" }
     }
 }
