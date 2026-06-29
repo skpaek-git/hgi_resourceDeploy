@@ -1425,7 +1425,7 @@ function Get-LbZoneArray {
 }
 
 function Deploy-LoadBalancers {
-param([DeploymentContext]$Context)
+    param([DeploymentContext]$Context)
     Start-Step 'Deploy-LoadBalancers'
     
     # 1. 엑셀 시트에서 데이터 로드
@@ -1455,10 +1455,9 @@ param([DeploymentContext]$Context)
         $rgName = Get-CellValue -Row $base -Field 'RGName'
         $location = Get-CellValue -Row $base -Field 'Location'
         
-        # [에러 해결 수정] 원본 스크립트 방식에 맞춰 SKU 파싱 오류 안전하게 우회
         $skuRaw = Get-CellValue -Row $base -Field 'SKU'
         $skuName = if ($skuRaw) { $skuRaw } else { 'Standard' }
-        if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' } # 데이터 예외 방어
+        if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' }
         
         Write-Info "로드밸런서 상태 확인 및 정리 중: $lbName (RG: $rgName)"
         
@@ -1466,47 +1465,49 @@ param([DeploymentContext]$Context)
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # 기존 자식 리소스 강제 삭제(Clean-up) 로직
+        # [의존성 격파 복합형] 기존 자식 리소스 강제 삭제(Clean-up) 로직
         # -------------------------------------------------------------
         if ($lb) {
-            $isChanged = $false
+            $isRuleOrProbeChanged = $false
             
-            # (1) 부하 분산 규칙 초기화 (의존성 때문에 규칙을 가장 먼저 제거해야 합니다)
+            # (1) 부하 분산 규칙 초기화 (의존성 제거 1순위)
             if ($Context.DeployType -contains 'LB_RULE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.LoadBalancingRules.Count -gt 0) {
                     Write-Info "기존 부하 분산 규칙(LB Rules)을 초기화합니다: $lbName"
                     $lb.LoadBalancingRules.Clear()
-                    $isChanged = $true
+                    $isRuleOrProbeChanged = $true
                 }
             }
             
-            # (2) 상태 프로브 초기화
+            # (2) 상태 프로브 초기화 (의존성 제거 2순위)
             if ($Context.DeployType -contains 'LB_PROBE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.Probes.Count -gt 0) {
                     Write-Info "기존 상태 프로브(Probes)를 초기화합니다: $lbName"
                     $lb.Probes.Clear()
-                    $isChanged = $true
+                    $isRuleOrProbeChanged = $true
                 }
             }
             
-            # (3) 프론트엔드 IP 구성 초기화 (Zone 구성을 변경하려면 기존 것이 완전히 밀려야 함)
+            # [규칙/프로브 선제 격파] 1차적으로 룰과 프로브를 밀어서 프론트엔드 잠금을 해제합니다.
+            if ($isRuleOrProbeChanged -and -not $Context.DryRun) {
+                Write-Info "1차 작업: 규칙 및 프로브 삭제 실서버 동기화 중 (Set-AzLoadBalancer)..."
+                $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
+                # 규칙이 증발하여 깨끗해진 LB 상태를 실시간 재동기화 로드
+                $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
+            }
+
+            # (3) 프론트엔드 IP 구성 초기화 (참조하는 룰이 완전히 사라졌으므로 안전하게 삭제됩니다)
             if ($Context.DeployType -contains 'LB') {
                 if ($lb.FrontendIpConfigurations.Count -gt 0) {
-                    Write-Info "기존 프론트엔드 IP 구성(Frontend IP)을 초기화합니다: $lbName"
+                    Write-Info "2차 작업: 기존 프론트엔드 IP 구성(Frontend IP)을 초기화합니다: $lbName"
                     $lb.FrontendIpConfigurations.Clear()
-                    $isChanged = $true
-                }
-            }
-            
-            # 변경 사항이 있을 경우 Azure 실 서버에 세팅 반영하여 빈 껍데기로 만듦
-            if ($isChanged) {
-                if (-not $Context.DryRun) {
-                    Write-Info "Azure 기존 내부 설정 동기화 중 (Set-AzLoadBalancer)..."
-                    $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                    # 깨끗해진 로드밸런서 객체를 다시 불러옴
-                    $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
-                } else {
-                    Write-Info "[DryRun] 기존 자식 리소스 규칙/프로브/프론트엔드가 초기화될 예정입니다."
+                    
+                    if (-not $Context.DryRun) {
+                        Write-Info "2차 작업: 프론트엔드 IP 삭제 실서버 동기화 중 (Set-AzLoadBalancer)..."
+                        $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
+                        # 자식 리소스 청소가 완전히 끝난 뼈대 인스턴스를 최종 확보
+                        $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
+                    }
                 }
             }
         }
@@ -1526,7 +1527,6 @@ param([DeploymentContext]$Context)
             if (-not $privateIpAllocation) { $privateIpAllocation = 'Dynamic' }
             $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
             
-            # FEZoneMode가 ZoneRedundant이거나 FEZone에 영역이 적혀있을 때 '1','2','3' 명시적 추출
             $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
             $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
             $zones = @()
@@ -1639,7 +1639,6 @@ param([DeploymentContext]$Context)
             }
 
             if ($Context.DryRun) {
-                # [에러 해결 수정] 변수 바인딩 중괄호화 완료
                 Write-Info "[DryRun] LB Probe 설정 예정: $probeName (${probeProtocol}:${probePortText})"
             } else {
                 $lb | Add-AzLoadBalancerProbeConfig @probeParams | Out-Null
