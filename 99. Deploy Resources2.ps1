@@ -1465,12 +1465,12 @@ function Deploy-LoadBalancers {
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # [의존성 캐시 격파형] 기존 자식 리소스 강제 삭제(Clean-up) 로직
+        # [근본 해결: 인플레이스 잠금 해제형] 기존 자식 리소스 강제 소멸 로직
         # -------------------------------------------------------------
         if ($lb) {
             $isRuleOrProbeChanged = $false
             
-            # (1) 부하 분산 규칙 초기화 (의존성 제거 1순위)
+            # (1) 부하 분산 규칙 완전 청소 (의존성 제거 1순위)
             if ($Context.DeployType -contains 'LB_RULE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.LoadBalancingRules.Count -gt 0) {
                     Write-Info "1단계: 기존 부하 분산 규칙(LB Rules) 제거 중: $lbName"
@@ -1479,7 +1479,7 @@ function Deploy-LoadBalancers {
                 }
             }
             
-            # (2) 상태 프로브 초기화 (의존성 제거 2순위)
+            # (2) 상태 프로브 완전 청소 (의존성 제거 2순위)
             if ($Context.DeployType -contains 'LB_PROBE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.Probes.Count -gt 0) {
                     Write-Info "1단계: 기존 상태 프로브(Probes) 제거 중: $lbName"
@@ -1488,27 +1488,26 @@ function Deploy-LoadBalancers {
                 }
             }
             
-            # 1단계 커밋: 부하 분산 규칙과 프로브를 완전히 청소하여 먼저 Azure 실서버에 반영합니다.
+            # 1단계 커밋: 규칙과 프로브를 완전히 밀어서 프론트엔드가 혼자 고립되도록 실서버 동기화합니다.
             if ($isRuleOrProbeChanged -and -not $Context.DryRun) {
-                Write-Info "1단계 커밋: 규칙 및 프로브 제거 사항을 Azure 실서버에 반영 중..."
+                Write-Info "1단계 커밋: 규칙 및 프로브 제거 사항을 Azure 실서버에 적용 중..."
                 $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                
-                Write-Info "의존성 초기화 확인을 위해 로드밸런서 객체를 강제 재로드(Reload)합니다."
                 $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
             }
 
-            # (3) 프론트엔드 IP 구성 초기화
+            # (3) 프론트엔드 IP 구성 소멸 (중요: 단순 .Clear()가 아닌 새로운 빈 배열화로 인플레이스 충돌 회피)
             if ($Context.DeployType -contains 'LB') {
-                # 갱신된 깨끗한 객체를 기준으로 다시 확인하여 완전히 고립시킨 상태로 삭제를 유도합니다.
                 if ($lb.FrontendIpConfigurations.Count -gt 0) {
-                    Write-Info "2단계: 고립 완료된 프론트엔드 IP 구성을 초기화합니다: $lbName"
-                    $lb.FrontendIpConfigurations.Clear()
+                    Write-Info "2단계: 기존 프론트엔드 구성 객체 자체를 소멸 처리합니다: $lbName"
+                    
+                    # 단순 클리어가 아닌 빈 컴포넌트 리스트 할당으로 구형 인스턴스 사양 초기화
+                    $lb.FrontendIpConfigurations = New-Object System.Collections.Generic.List[Microsoft.Azure.Commands.Network.Models.PSFrontendIPConfiguration]
                     
                     if (-not $Context.DryRun) {
-                        Write-Info "2단계 커밋: 프론트엔드 IP 제거 사항을 Azure 실서버에 반영 중..."
+                        Write-Info "2단계 커밋: 프론트엔드 IP 완전 소멸 사항을 Azure 실서버에 동기화 중..."
                         $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
                         
-                        # 다음 파트(생성 로직) 배포를 위해 완벽히 비워진 순수 뼈대 객체 로드
+                        # 완벽한 백지 상태의 리얼 순수 뼈대 LB 객체를 강제 확보
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
                 }
@@ -1530,6 +1529,7 @@ function Deploy-LoadBalancers {
             if (-not $privateIpAllocation) { $privateIpAllocation = 'Dynamic' }
             $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
             
+            # FEZoneMode 또는 FEZone 값을 분석하여 고가용성 멀티존 배열 셋 도출
             $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
             $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
             $zones = @()
