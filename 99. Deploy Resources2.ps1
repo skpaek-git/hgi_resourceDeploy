@@ -1454,7 +1454,11 @@ param([DeploymentContext]$Context)
         $lbName = $group.Name
         $rgName = Get-CellValue -Row $base -Field 'RGName'
         $location = Get-CellValue -Row $base -Field 'Location'
-        $skuName = Convert-LbSku -Value (Get-CellValue -Row $base -Field 'SKU') -Default 'Standard'
+        
+        # [에러 해결 수정] 원본 스크립트 방식에 맞춰 SKU 파싱 오류 안전하게 우회
+        $skuRaw = Get-CellValue -Row $base -Field 'SKU'
+        $skuName = if ($skuRaw) { $skuRaw } else { 'Standard' }
+        if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' } # 데이터 예외 방어
         
         Write-Info "로드밸런서 상태 확인 및 정리 중: $lbName (RG: $rgName)"
         
@@ -1462,7 +1466,7 @@ param([DeploymentContext]$Context)
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # [신규 추가] 기존 자식 리소스 강제 삭제(Clean-up) 로직
+        # 기존 자식 리소스 강제 삭제(Clean-up) 로직
         # -------------------------------------------------------------
         if ($lb) {
             $isChanged = $false
@@ -1522,7 +1526,7 @@ param([DeploymentContext]$Context)
             if (-not $privateIpAllocation) { $privateIpAllocation = 'Dynamic' }
             $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
             
-            # [보완] FEZoneMode가 ZoneRedundant이거나 FEZone에 영역이 적혀있을 때 '1','2','3' 명시적 추출
+            # FEZoneMode가 ZoneRedundant이거나 FEZone에 영역이 적혀있을 때 '1','2','3' 명시적 추출
             $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
             $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
             $zones = @()
@@ -1635,6 +1639,7 @@ param([DeploymentContext]$Context)
             }
 
             if ($Context.DryRun) {
+                # [에러 해결 수정] 변수 바인딩 중괄호화 완료
                 Write-Info "[DryRun] LB Probe 설정 예정: $probeName (${probeProtocol}:${probePortText})"
             } else {
                 $lb | Add-AzLoadBalancerProbeConfig @probeParams | Out-Null
@@ -1691,7 +1696,7 @@ param([DeploymentContext]$Context)
                     if ($ruleProbe) {
                         $ruleParams['Probe'] = $ruleProbe
                     } else {
-                        Write-WarnLog "LB Rule의 Probe를 찾지 못해 바인딩을 건너뜁니다: $probeName"
+                        Write-WarnLog "LB Rule의 Probe를 찾지 못해 바인딩을 건너뜜: $probeName"
                     }
                 }
 
