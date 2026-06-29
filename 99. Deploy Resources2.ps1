@@ -1465,7 +1465,7 @@ function Deploy-LoadBalancers {
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # [의존성 격파 복합형] 기존 자식 리소스 강제 삭제(Clean-up) 로직
+        # [의존성 캐시 격파형] 기존 자식 리소스 강제 삭제(Clean-up) 로직
         # -------------------------------------------------------------
         if ($lb) {
             $isRuleOrProbeChanged = $false
@@ -1473,7 +1473,7 @@ function Deploy-LoadBalancers {
             # (1) 부하 분산 규칙 초기화 (의존성 제거 1순위)
             if ($Context.DeployType -contains 'LB_RULE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.LoadBalancingRules.Count -gt 0) {
-                    Write-Info "기존 부하 분산 규칙(LB Rules)을 초기화합니다: $lbName"
+                    Write-Info "1단계: 기존 부하 분산 규칙(LB Rules) 제거 중: $lbName"
                     $lb.LoadBalancingRules.Clear()
                     $isRuleOrProbeChanged = $true
                 }
@@ -1482,30 +1482,33 @@ function Deploy-LoadBalancers {
             # (2) 상태 프로브 초기화 (의존성 제거 2순위)
             if ($Context.DeployType -contains 'LB_PROBE' -or $Context.DeployType -contains 'LB') {
                 if ($lb.Probes.Count -gt 0) {
-                    Write-Info "기존 상태 프로브(Probes)를 초기화합니다: $lbName"
+                    Write-Info "1단계: 기존 상태 프로브(Probes) 제거 중: $lbName"
                     $lb.Probes.Clear()
                     $isRuleOrProbeChanged = $true
                 }
             }
             
-            # [규칙/프로브 선제 격파] 1차적으로 룰과 프로브를 밀어서 프론트엔드 잠금을 해제합니다.
+            # 1단계 커밋: 부하 분산 규칙과 프로브를 완전히 청소하여 먼저 Azure 실서버에 반영합니다.
             if ($isRuleOrProbeChanged -and -not $Context.DryRun) {
-                Write-Info "1차 작업: 규칙 및 프로브 삭제 실서버 동기화 중 (Set-AzLoadBalancer)..."
+                Write-Info "1단계 커밋: 규칙 및 프로브 제거 사항을 Azure 실서버에 반영 중..."
                 $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                # 규칙이 증발하여 깨끗해진 LB 상태를 실시간 재동기화 로드
+                
+                Write-Info "의존성 초기화 확인을 위해 로드밸런서 객체를 강제 재로드(Reload)합니다."
                 $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
             }
 
-            # (3) 프론트엔드 IP 구성 초기화 (참조하는 룰이 완전히 사라졌으므로 안전하게 삭제됩니다)
+            # (3) 프론트엔드 IP 구성 초기화
             if ($Context.DeployType -contains 'LB') {
+                # 갱신된 깨끗한 객체를 기준으로 다시 확인하여 완전히 고립시킨 상태로 삭제를 유도합니다.
                 if ($lb.FrontendIpConfigurations.Count -gt 0) {
-                    Write-Info "2차 작업: 기존 프론트엔드 IP 구성(Frontend IP)을 초기화합니다: $lbName"
+                    Write-Info "2단계: 고립 완료된 프론트엔드 IP 구성을 초기화합니다: $lbName"
                     $lb.FrontendIpConfigurations.Clear()
                     
                     if (-not $Context.DryRun) {
-                        Write-Info "2차 작업: 프론트엔드 IP 삭제 실서버 동기화 중 (Set-AzLoadBalancer)..."
+                        Write-Info "2단계 커밋: 프론트엔드 IP 제거 사항을 Azure 실서버에 반영 중..."
                         $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                        # 자식 리소스 청소가 완전히 끝난 뼈대 인스턴스를 최종 확보
+                        
+                        # 다음 파트(생성 로직) 배포를 위해 완벽히 비워진 순수 뼈대 객체 로드
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
                 }
