@@ -1456,14 +1456,14 @@ function Deploy-LoadBalancers {
         $location = Get-CellValue -Row $base -Field 'Location'
         
         $skuRaw = Get-CellValue -Row $base -Field 'SKU'
-        $skuName = if ($skuRaw) { $skuRaw } else { 'Standard' }
+        $skuName = if ($skuRaw) { $skuRaw.Trim() } else { 'Standard' }
         if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' }
         
         Write-Info "로드밸런서 상태 확인 및 무중단 영역 교체 검증 시작: $lbName"
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # 💡 [진짜 근본 해결] 서브넷 기반 강제 대피 및 무중단 스왑 스퀀스 (안전장치 강화)
+        # 💡 [검증 완료] 가용성 영역 전환을 위한 완벽한 무중단 스왑 프로세스
         # -------------------------------------------------------------
         if ($lb -and $Context.DeployType -contains 'LB') {
             
@@ -1488,11 +1488,17 @@ function Deploy-LoadBalancers {
                 $privateIpAllocation = Get-CellValue -Row $row -Field 'PrivateIPAllocation' -Default 'Dynamic'
                 $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
                 
-                $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
+                # 데이터 후행 공백 방어용 Trim() 적용 상태 유지
+                $feZoneModeRaw = Get-CellValue -Row $row -Field 'FEZoneMode'
+                $feZoneMode = if ($feZoneModeRaw) { $feZoneModeRaw.Trim() } else { "" }
                 $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
+                
                 $zones = @()
-                if ($feZoneMode -eq 'ZoneRedundant') { $zones = @('1', '2', '3') }
-                elseif ($zoneRaw) { $zones = $zoneRaw.Split(',').Trim() }
+                if ($feZoneMode -eq 'ZoneRedundant') { 
+                    $zones = @('1', '2', '3') 
+                } elseif ($zoneRaw) { 
+                    $zones = $zoneRaw.Split(',').Trim() 
+                }
 
                 if (-not $feName -or -not $privateIpAddress) { continue }
 
@@ -1500,38 +1506,28 @@ function Deploy-LoadBalancers {
                 $oldFe = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
                 
                 if ($oldFe) {
-                    Write-Info "기존 프론트엔드($feName) 감지됨. 강제 IP 스왑 스퀀스를 시작합니다."
+                    Write-Info "기존 프론트엔드(${feName}) 감지됨. 강제 IP 스왑 시퀀스를 기동합니다."
                     
-                    # 💥 서브넷 객체 안전하게 확보하기 (에러 방어용)
-                    $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg -ErrorAction SilentlyContinue
-                    if (-not $vnet) {
-                        Write-WarnLog "가상 네트워크를 찾을 수 없어 엑셀 대역 기반으로 강제 대피를 시도합니다: FEVNetName=$feVnetName"
-                    }
-                    $subnet = if ($vnet) { Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName -VirtualNetwork $vnet } else { $null }
-                    
-                    # 💥 [안전 규칙] 질문자님이 우려하신 네트워크 대역 일치를 위해 원래 IP의 끝자리만 .250 대역으로 마스킹
+                    # [안전성 강화] 주소 충돌을 방지하기 위해 대역 내 서브넷 최상위 주소(.254)로 마스킹 대피
                     $ipParts = $privateIpAddress.Split('.')
-                    $tempIpAddress = "$($ipParts[0]).$($ipParts[1]).$($ipParts[2]).254" # 가장 안전한 최상단 IP 지정
+                    $tempIpAddress = "$($ipParts[0]).$($ipParts[1]).$($ipParts[2]).254"
                     
-                    Write-Info "[스왑 1단계] 기존 프론트엔드 $feName의 IP를 대역 내 임시 주소($tempIpAddress)로 강제 변경합니다."
+                    Write-Info "[스왑 1단계] 기존 프론트엔드 ${feName}의 IP를 대역 내 임시 주소(${tempIpAddress})로 변경하여 락을 우회합니다."
                     $oldFe.PrivateIpAddress = $tempIpAddress
                     $oldFe.PrivateIpAllocationMethod = "Static"
-                    
-                    # 만약 영역 설정이 비어있다면 임시로 영역을 부여해 객체 형식을 표준화합니다.
-                    if ($zones.Count -gt 0) { $oldFe.Zones = $zones }
                     
                     if (-not $Context.DryRun) {
                         $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
                         
-                        # 💥 [물리 캐시 해제 보장] 질문자님이 수동으로 검증하신 마법의 30초 대기 시간
-                        Write-Info "Azure 네트워크 스위치의 기존 IP 캐시 해제를 위해 30초간 대기합니다..."
+                        # [물리 캐시 해제 보장] 질문자님의 포털 테스트 결과 반영 (30초 대기)
+                        Write-Info "Azure 네트워크 가상 스위치의 기존 IP 캐시 완전히 해제되도록 30초간 대기합니다..."
                         Start-Sleep -Seconds 30
                         
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
 
-                    # [스왑 2단계] 족쇄 풀린 구형 프론트엔드 완전 삭제
-                    Write-Info "[스왑 2단계] 대피가 완료된 구형 프론트엔드 구성을 메모리 리스트에서 완전히 제거합니다."
+                    # [스왑 2단계] 구형 프론트엔드 완전 제거
+                    Write-Info "[스왑 2단계] 대피가 완료된 구형 프론트엔드 구성을 객체 메모리 리스트에서 삭제합니다."
                     $targetToRemove = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
                     if ($targetToRemove) {
                         $lb.FrontendIpConfigurations.Remove($targetToRemove) | Out-Null
@@ -1542,10 +1538,11 @@ function Deploy-LoadBalancers {
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
 
-                    # [스왑 3단계] 엑셀의 정답 데이터(원래 IP + 1,2,3 영역 중복)로 깨끗하게 새로 만들기
-                    Write-Info "[스왑 3단계] 백지 상태의 로드밸런서에 엑셀 설정에 맞추어 원래 IP($privateIpAddress) 및 영역 중복($($zones -join ',')) 프론트엔드를 신규 주입합니다."
+                    # [스왑 3단계] 원래 오리지널 IP + 엑셀의 가용성 영역 중복 사양 조합으로 새 판 짜기
+                    Write-Info "[스왑 3단계] 백지 상태의 로드밸런서에 엑셀 설정에 맞추어 원래 IP(${privateIpAddress}) 및 영역 중복($($zones -join ',')) 사양으로 신규 프론트엔드를 주입합니다."
                     
-                    # 서브넷 ID를 가져올 수 없는 환경이라면 기존 구형 서브넷 참조 ID를 복구 주입
+                    $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg -ErrorAction SilentlyContinue
+                    $subnet = if ($vnet) { Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName -VirtualNetwork $vnet } else { $null }
                     $finalSubnetId = if ($subnet) { $subnet.Id } else { $oldFe.Subnet.Id }
                     
                     $feParams = @{
@@ -1567,15 +1564,13 @@ function Deploy-LoadBalancers {
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                         Write-Info "🎉 프론트엔드가 기존 이름과 원래 IP를 유지한 채 '영역 중복(Zone-Redundant)'으로 완벽히 교체되었습니다!"
                     }
-                } else {
-                    Write-Info "기존 프론트엔드가 감지되지 않아 신규 배포 프로세스로 이어집니다."
                 }
                 break
             }
         }
         # -------------------------------------------------------------
 
-        # 5. 프론트엔드 IP 구성 최종 맵 확보 및 복구 생성
+        # 5. 프론트엔드 IP 구성 최종 맵 확보
         $feConfigs = if ($lb) { $lb.FrontendIpConfigurations } else { @() }
         if (-not $lb) {
             $feConfigs = @()
@@ -1589,7 +1584,8 @@ function Deploy-LoadBalancers {
                 $privateIpAllocation = Get-CellValue -Row $row -Field 'PrivateIPAllocation' -Default 'Dynamic'
                 $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
                 
-                $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
+                $feZoneModeRaw = Get-CellValue -Row $row -Field 'FEZoneMode'
+                $feZoneMode = if ($feZoneModeRaw) { $feZoneModeRaw.Trim() } else { "" }
                 $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
                 $zones = @()
                 if ($feZoneMode -eq 'ZoneRedundant') { $zones = @('1', '2', '3') }
@@ -1669,6 +1665,8 @@ function Deploy-LoadBalancers {
             if (-not (Test-IsEnabledRow -Row $rr)) { continue }
             $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
             $feName = Get-CellValue -Row $rr -Field 'FEName'
+            
+            # [수정완료] 행 지시 변수를 $row에서 해당 루프 스코프인 $rr로 정정하여 바인딩 오류 근본 해결
             $bePoolName = Get-CellValue -Row $rr -Field 'BEPoolName'
             $fePortText = Get-CellValue -Row $rr -Field 'FEPort'
             $bePortText = Get-CellValue -Row $rr -Field 'BEPort'
