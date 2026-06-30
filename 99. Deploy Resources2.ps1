@@ -1417,284 +1417,307 @@ function Get-LbZoneArray {
     $zoneMode = Get-CellValueAny -Row $Row -Fields @('FEZoneMode','FrontendZoneMode')
     if (-not $zoneMode) { return @() }
 
-    if ($zoneMode.Trim().ToUpperInvariant() -eq 'ZONAL') {
-        $zone = Get-CellValueAny -Row $Row -Fields @('FEZone','FrontendZone')
-        if ($zone) { return @($zone) }
+    $modeUpper = $zoneMode.Trim().ToUpperInvariant()
+
+    # ZONAL 이거나 ZONEREDUNDANT 일 때 모두 영역 값을 처리하도록 변경
+    if ($modeUpper -eq 'ZONAL' -or $modeUpper -eq 'ZONEREDUNDANT') {
+        $zoneRaw = Get-CellValueAny -Row $Row -Fields @('FEZone','FrontendZone')
+        if ($zoneRaw) {
+            # "1,2,3" 같은 문자열을 콤마로 쪼개고 앞뒤 공백을 제거하여 배열로 만듭니다.
+            return @($zoneRaw.ToString().Split(',')).ForEach({ $_.Trim() })
+        }
     }
     return @()
 }
 
 function Deploy-LoadBalancers {
     param([DeploymentContext]$Context)
+
     Start-Step 'Deploy-LoadBalancers'
-    
-    # 1. 엑셀 시트에서 데이터 로드
+    $deployLbResource = ($Context.DeployType -contains 'LB')
+    $deployProbes = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_PROBE')
+    $deployRules = (($Context.DeployType -contains 'LB') -and -not $Context.LbResourceOnly) -or ($Context.DeployType -contains 'LB_RULE')
+
     $lbRows = Get-SheetRows -Context $Context -SheetCandidates @('LB','LB_PRD','Load Balancer')
     $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
     $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
+    $lbRows = Get-FilteredRowsByOption -Rows $lbRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+    $probeRows = Get-FilteredRowsByOption -Rows $probeRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
+    $ruleRows = Get-FilteredRowsByOption -Rows $ruleRows -OptionFilters $Context.VmRoleFilter -Columns @('Role','Option')
 
-    # 2. -Option 필터 처리
-    if ($Context.VmRoleFilter.Count -gt 0) {
-        $lbRows = @($lbRows | Where-Object { $target = Get-CellValue -Row $_ -Field 'Role'; $target -and $Context.VmRoleFilter -contains $target })
-        
-        $selectedLbNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
-        foreach ($row in $lbRows) {
-            $lbName = Get-CellValueAny -Row $row -Fields @('LBName','LoadBalancerName')
-            if ($lbName) { [void]$selectedLbNames.Add($lbName) }
-        }
-        
-        $probeRows = @($probeRows | Where-Object { $target = Get-CellValue -Row $_ -Field 'LBName'; $target -and $selectedLbNames.Contains($target) })
-        $ruleRows = @($ruleRows | Where-Object { $target = Get-CellValue -Row $_ -Field 'LBName'; $target -and $selectedLbNames.Contains($target) })
+    $selectedLbNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    foreach ($lr in $lbRows) {
+        $ln = Get-CellValueAny -Row $lr -Fields @('LBName','LoadBalancerName')
+        if ($ln) { [void]$selectedLbNames.Add($ln) }
+    }
+    if ($selectedLbNames.Count -gt 0) {
+        $probeRows = @($probeRows | Where-Object {
+            $target = Get-CellValue -Row $_ -Field 'LBName'
+            $target -and $selectedLbNames.Contains($target)
+        })
+        $ruleRows = @($ruleRows | Where-Object {
+            $target = Get-CellValue -Row $_ -Field 'LBName'
+            $target -and $selectedLbNames.Contains($target)
+        })
     }
 
-    # 3. 로드밸런서별 루프 시작
     $groups = $lbRows | Where-Object { Get-CellValueAny -Row $_ -Fields @('LBName','LoadBalancerName') } | Group-Object -Property LBName
     foreach ($group in $groups) {
         $base = $group.Group | Select-Object -First 1
-        $lbName = $group.Name
-        $rgName = Get-CellValue -Row $base -Field 'RGName'
+        $lbName = Get-CellValueAny -Row $base -Fields @('LBName','LoadBalancerName')
+        $rgName = Get-CellValueAny -Row $base -Fields @('RGName','RGname')
         $location = Get-CellValue -Row $base -Field 'Location'
-        
-        $skuRaw = Get-CellValue -Row $base -Field 'SKU'
-        $skuName = if ($skuRaw) { $skuRaw.Trim() } else { 'Standard' }
-        if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' }
-        
-        Write-Info "로드밸런서 상태 확인 및 무중단 영역 교체 검증 시작: $lbName"
-        $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
-        
-        # -------------------------------------------------------------
-        # 💡 [트랜잭션 결합형] 백엔드 풀 제약 탈출 및 무중단 영역 스왑 시퀀스
-        # -------------------------------------------------------------
-        if ($lb -and $Context.DeployType -contains 'LB') {
-            
-            # [사전 단계] 족쇄가 되는 기존 규칙 및 프로브 전면 제거 후 실서버 1차 저장
-            if ($lb.LoadBalancingRules.Count -gt 0 -or $lb.Probes.Count -gt 0) {
-                Write-Info "의존성 제거를 위해 기존 규칙 및 프로브를 1차 클리어합니다."
-                $lb.LoadBalancingRules.Clear()
-                $lb.Probes.Clear()
-                if (-not $Context.DryRun) {
-                    $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                    $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
+        $sku = Get-CellValueAny -Row $base -Fields @('SKU','Sku')
+        if (-not $sku) { $sku = 'Standard' }
+
+        $feName = Get-CellValueAny -Row $base -Fields @('FEName','FrontendName')
+        $feType = Get-CellValueAny -Row $base -Fields @('FEType','FrontendType')
+        if (-not $feType) { $feType = 'Internal' }
+        $feType = $feType.Trim()
+
+        $feVnetName = Get-CellValueAny -Row $base -Fields @('FEVNetName','FrontendVnetName','VnetName')
+        $feVnetRg = Get-CellValueAny -Row $base -Fields @('FEVNetRG','FrontendVnetRG','VnetRG')
+        if (-not $feVnetRg) { $feVnetRg = $rgName }
+        $feSubnetName = Get-CellValueAny -Row $base -Fields @('FESubnetName','FrontendSubnetName','SubnetName')
+        $privateIpAllocation = Get-CellValue -Row $base -Field 'PrivateIPAllocation'
+        if (-not $privateIpAllocation) { $privateIpAllocation = 'Dynamic' }
+        $privateIpAddress = Get-CellValue -Row $base -Field 'PrivateIPAddress'
+        $bePoolName = Get-CellValueAny -Row $base -Fields @('BEPoolName','BackendPoolName')
+        $zones = @(Get-LbZoneArray -Row $base)
+
+        Ensure-ResourceGroup -Name $rgName -Location $location -DryRun:$Context.DryRun
+
+        if ($Context.DryRun) {
+            Write-Info "[DryRun] LB 배포 예정: $lbName (RG=$rgName, FE=$feName, Pool=$bePoolName)"
+            if ($deployProbes) {
+                $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+                foreach ($pr in $targetProbes) {
+                    $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
+                    if (-not $probeName) { continue }
+                    $probePortText = Get-CellValue -Row $pr -Field 'Port'
+                    if (-not $probePortText) {
+                        Write-Info "[DryRun][SKIP] LB Probe 필수값 누락(Port): $lbName/$probeName"
+                        continue
+                    }
+                    Write-Info "[DryRun] LB Probe 배포 예정: $lbName/$probeName"
                 }
             }
-
-            foreach ($row in $group.Group) {
-                if (-not (Test-IsEnabledRow -Row $row)) { continue }
-                
-                $feName = Get-CellValue -Row $row -Field 'FEName'
-                $feVnetName = Get-CellValue -Row $row -Field 'FEVNetName'
-                $feSubnetName = Get-CellValue -Row $row -Field 'FESubnetName'
-                $feVnetRg = Get-CellValue -Row $row -Field 'FEVNetRG' -Default $rgName
-                $privateIpAllocation = Get-CellValue -Row $row -Field 'PrivateIPAllocation' -Default 'Dynamic'
-                $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
-                
-                $feZoneModeRaw = Get-CellValue -Row $row -Field 'FEZoneMode'
-                $feZoneMode = if ($feZoneModeRaw) { $feZoneModeRaw.Trim() } else { "" }
-                $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
-                
-                $zones = @()
-                if ($feZoneMode -eq 'ZoneRedundant') { 
-                    $zones = @('1', '2', '3') 
-                } elseif ($zoneRaw) { 
-                    $zones = $zoneRaw.Split(',').Trim() 
-                }
-
-                if (-not $feName -or -not $privateIpAddress) { continue }
-
-                $oldFe = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
-                
-                if ($oldFe) {
-                    Write-Info "기존 프론트엔드(${feName}) 감지됨. 강제 IP 스왑 시퀀스를 기동합니다."
-                    
-                    # [1단계 완주 확인점] 원래 IP 대역을 이탈하지 않는 최고 상위 IP(.254)로 대피
-                    $ipParts = $privateIpAddress.Split('.')
-                    $tempIpAddress = "$($ipParts[0]).$($ipParts[1]).$($ipParts[2]).254"
-                    
-                    Write-Info "[스왑 1단계] 기존 프론트엔드 ${feName}의 IP를 대역 내 임시 주소(${tempIpAddress})로 변경하여 락을 우회합니다."
-                    $oldFe.PrivateIpAddress = $tempIpAddress
-                    $oldFe.PrivateIpAllocationMethod = "Static"
-                    
-                    if (-not $Context.DryRun) {
-                        $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                        
-                        # [물리 캐시 해제 보장] 질문자님이 검증하신 마법의 30초 대기 시간
-                        Write-Info "Azure 네트워크 가상 스위치의 기존 IP 캐시 완전히 해제되도록 30초간 대기합니다..."
-                        Start-Sleep -Seconds 30
-                        
-                        $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
+            if ($deployRules) {
+                $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+                foreach ($rr in $targetRules) {
+                    $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
+                    if ($ruleName) {
+                        Write-Info "[DryRun] LB Rule 배포 예정: $lbName/$ruleName"
                     }
-
-                    # 💥 [핵심 보완] 백엔드 풀 유지 제약 에러(No Frontend IP Setup)를 차단하기 위해
-                    # 메모리 배열 상에서만 삭제와 생성을 동시에 묶어 단 하나의 Set 명령으로 커밋합니다.
-                    Write-Info "[스왑 2,3단계 결합] 구형 프론트엔드를 삭제함과 동시에 영역 중복 사양의 신규 프론트엔드로 즉시 대체 조립합니다."
-                    
-                    # 메모리 상에서 구형 객체 제거
-                    $targetToRemove = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
-                    if ($targetToRemove) {
-                        $lb.FrontendIpConfigurations.Remove($targetToRemove) | Out-Null
-                    }
-                    
-                    # 서브넷 ID 식별 및 안전장치 구동
-                    $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg -ErrorAction SilentlyContinue
-                    $subnet = if ($vnet) { Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName -VirtualNetwork $vnet } else { $null }
-                    $finalSubnetId = if ($subnet) { $subnet.Id } else { $oldFe.Subnet.Id }
-                    
-                    # 새 영역 중복 프론트엔드 사양 빌드
-                    $feParams = @{
-                        Name = $feName
-                        SubnetId = $finalSubnetId
-                        PrivateIpAddress = $privateIpAddress
-                        PrivateIpAllocationMethod = "Static"
-                    }
-                    if ($zones.Count -gt 0) { $feParams['Zone'] = $zones }
-                    
-                    # 메모리 상에 신규 사양 바로 주입 (이 순간 프론트엔드 개수는 0개가 아니라 무조건 1개가 유지됨)
-                    $lb | Add-AzLoadBalancerFrontendIpConfig @feParams | Out-Null
-                    
-                    # 최종 교체 승인 도장 찍기 (트랜잭션 결합 완료)
-                    if (-not $Context.DryRun) {
-                        Write-Info "Azure 실서버에 프론트엔드 영역 중복 교체 최종 마이그레이션을 단일 커밋합니다..."
-                        $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                        
-                        Write-Info "최종 백엔드 구조 안정화를 위해 5초간 대기합니다..."
-                        Start-Sleep -Seconds 5
-                        
-                        $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
-                        Write-Info "🎉 프론트엔드가 기존 이름과 원래 IP를 유지한 채 '영역 중복(Zone-Redundant)'으로 완벽히 교체되었습니다!"
-                    }
-                }
-                break
-            }
-        }
-        # -------------------------------------------------------------
-
-        # 5. 프론트엔드 IP 구성 최종 맵 확보
-        $feConfigs = if ($lb) { $lb.FrontendIpConfigurations } else { @() }
-        if (-not $lb) {
-            $feConfigs = @()
-            foreach ($row in $group.Group) {
-                if (-not (Test-IsEnabledRow -Row $row)) { continue }
-                $feName = Get-CellValue -Row $row -Field 'FEName'
-                $feType = Get-CellValue -Row $row -Field 'FEType'
-                $feVnetRg = Get-CellValue -Row $row -Field 'FEVNetRG' -Default $rgName
-                $feVnetName = Get-CellValue -Row $row -Field 'FEVNetName'
-                $feSubnetName = Get-CellValue -Row $row -Field 'FESubnetName'
-                $privateIpAllocation = Get-CellValue -Row $row -Field 'PrivateIPAllocation' -Default 'Dynamic'
-                $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
-                
-                $feZoneModeRaw = Get-CellValue -Row $row -Field 'FEZoneMode'
-                $feZoneMode = if ($feZoneModeRaw) { $feZoneModeRaw.Trim() } else { "" }
-                $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
-                $zones = @()
-                if ($feZoneMode -eq 'ZoneRedundant') { $zones = @('1', '2', '3') }
-                elseif ($zoneRaw) { $zones = $zoneRaw.Split(',').Trim() }
-
-                if (-not $feName) { continue }
-
-                if ($feType -and $feType.ToUpperInvariant() -eq 'INTERNAL') {
-                    $subnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg | Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName
-                    $feParams = @{ Name = $feName; SubnetId = $subnet.Id }
-                    if ($privateIpAllocation.ToUpperInvariant() -eq 'STATIC' -and $privateIpAddress) {
-                        $feParams['PrivateIpAddress'] = $privateIpAddress
-                    }
-                    if ($zones.Count -gt 0) { $feParams['Zone'] = $zones }
-                    
-                    if (-not $Context.DryRun) { $feConfigs += New-AzLoadBalancerFrontendIpConfig @feParams }
                 }
             }
+            continue
         }
 
-        # 6. 백엔드 주소 풀(Backend Pool) 구성 동기화
-        $beConfigs = if ($lb) { $lb.BackendAddressPools } else { @() }
-        $bePoolNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
-        foreach ($be in $beConfigs) { [void]$bePoolNames.Add($be.Name) }
-        foreach ($row in $group.Group) {
-            $bePoolName = Get-CellValue -Row $row -Field 'BEPoolName'
-            if ($bePoolName -and -not $bePoolNames.Contains($bePoolName)) {
-                [void]$bePoolNames.Add($bePoolName)
-                if (-not $Context.DryRun) { $beConfigs += New-AzLoadBalancerBackendAddressPoolConfig -Name $bePoolName }
+        $lb = Get-AzLoadBalancer -ResourceGroupName $rgName -Name $lbName -ErrorAction SilentlyContinue
+        if ($deployLbResource -and -not $lb) {
+            if ($feType.ToUpperInvariant() -ne 'INTERNAL') {
+                throw "현재 스크립트는 Internal FEType만 지원합니다. LB=$lbName, FEType=$feType"
             }
-        }
 
-        # 7. 기본 뼈대 안착 및 저장
-        if (-not $lb) {
-            Ensure-ResourceGroup -Name $rgName -Location $location -DryRun:$Context.DryRun
-            $lbParams = @{ ResourceGroupName = $rgName; Name = $lbName; Location = $location; Sku = $skuName }
-            if ($feConfigs.Count -gt 0) { $lbParams['FrontendIpConfiguration'] = $feConfigs }
-            if ($beConfigs.Count -gt 0) { $lbParams['BackendAddressPool'] = $beConfigs }
-            if (-not $Context.DryRun) { $lb = New-AzLoadBalancer @lbParams -ErrorAction Stop }
+            $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg -ErrorAction Stop
+            $subnet = $vnet.Subnets | Where-Object Name -eq $feSubnetName | Select-Object -First 1
+            if (-not $subnet) {
+                throw "LB Frontend Subnet을 찾을 수 없습니다. VNet=$feVnetName, Subnet=$feSubnetName, RG=$feVnetRg"
+            }
+
+            $feParams = @{
+                Name = $feName
+                SubnetId = $subnet.Id
+            }
+            if ($privateIpAllocation.ToUpperInvariant() -eq 'STATIC' -and $privateIpAddress) {
+                $feParams['PrivateIpAddress'] = $privateIpAddress
+            }
+            if ($zones.Count -gt 0) {
+                $feParams['Zone'] = $zones
+            }
+
+            $frontendConfig = New-AzLoadBalancerFrontendIpConfig @feParams
+            $backendPool = New-AzLoadBalancerBackendAddressPoolConfig -Name $bePoolName
+            $lb = New-AzLoadBalancer -ResourceGroupName $rgName -Name $lbName -Location $location -Sku $sku -FrontendIpConfiguration @($frontendConfig) -BackendAddressPool @($backendPool) -Force
+            Write-Info "LB 생성 완료: $lbName"
+        } elseif ($lb) {
+            Write-Info "LB 유지: $lbName"
         } else {
-            if (-not $Context.DryRun) {
-                $lb.BackendAddressPools = $beConfigs
-                $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-                $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
+            Write-WarnLog "LB가 없어 Probe/Rule 배포를 건너뜁니다. LB=$lbName, RG=$rgName"
+            continue
+        }
+
+        $changed = $false
+        $frontendRef = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName | Select-Object -First 1
+        if ($deployLbResource -and -not $frontendRef) {
+            if ($feType.ToUpperInvariant() -ne 'INTERNAL') {
+                throw "현재 스크립트는 Internal FEType만 지원합니다. LB=$lbName, FEType=$feType"
+            }
+            $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg -ErrorAction Stop
+            $subnet = $vnet.Subnets | Where-Object Name -eq $feSubnetName | Select-Object -First 1
+            if (-not $subnet) {
+                throw "LB Frontend Subnet을 찾을 수 없습니다. VNet=$feVnetName, Subnet=$feSubnetName, RG=$feVnetRg"
+            }
+            $addFrontendParams = @{
+                LoadBalancer = $lb
+                Name = $feName
+                SubnetId = $subnet.Id
+            }
+            if ($privateIpAllocation.ToUpperInvariant() -eq 'STATIC' -and $privateIpAddress) {
+                $addFrontendParams['PrivateIpAddress'] = $privateIpAddress
+            }
+            if ($zones.Count -gt 0) {
+                $addFrontendParams['Zone'] = $zones
+            }
+            $lb = Add-AzLoadBalancerFrontendIpConfig @addFrontendParams
+            $changed = $true
+            $frontendRef = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName | Select-Object -First 1
+            Write-Info "LB Frontend 추가: $lbName/$feName"
+        }
+
+        $backendRef = $lb.BackendAddressPools | Where-Object Name -eq $bePoolName | Select-Object -First 1
+        if ($deployLbResource -and -not $backendRef) {
+            $lb = Add-AzLoadBalancerBackendAddressPoolConfig -LoadBalancer $lb -Name $bePoolName
+            $changed = $true
+            $backendRef = $lb.BackendAddressPools | Where-Object Name -eq $bePoolName | Select-Object -First 1
+            Write-Info "LB BackendPool 추가: $lbName/$bePoolName"
+        }
+
+        if (-not $deployProbes -and -not $deployRules) {
+            if ($changed) {
+                $lb | Set-AzLoadBalancer | Out-Null
+                Write-Info "LB 리소스만 업데이트 완료(Probe/Rule 제외): $lbName"
+            } else {
+                Write-Info "LB 리소스 변경 없음(Probe/Rule 제외): $lbName"
+            }
+            continue
+        }
+
+        if ($deployProbes) {
+            $targetProbes = $probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+            foreach ($pr in $targetProbes) {
+                $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
+                if (-not $probeName) { continue }
+                if ($lb.Probes | Where-Object Name -eq $probeName) { continue }
+
+                $probePortText = Get-CellValue -Row $pr -Field 'Port'
+                if (-not $probePortText) {
+                    Write-Info "[SKIP] LB Probe 필수값 누락(Port): $lbName/$probeName"
+                    continue
+                }
+                $probeIntervalText = Get-CellValue -Row $pr -Field 'IntervalInSeconds'
+                $probeCountText = Get-CellValue -Row $pr -Field 'ProbeCount'
+
+                $probeProtocol = Convert-LbProtocol -Value (Get-CellValue -Row $pr -Field 'Protocol') -Default 'Tcp'
+                if ($probeProtocol -eq 'All') { $probeProtocol = 'Tcp' }
+
+                $probeParams = @{
+                    LoadBalancer = $lb
+                    Name = $probeName
+                    Protocol = $probeProtocol
+                    Port = [int]$probePortText
+                    IntervalInSeconds = if ($probeIntervalText) { [int]$probeIntervalText } else { 5 }
+                    ProbeCount = if ($probeCountText) { [int]$probeCountText } else { 2 }
+                }
+
+                $requestPath = Get-CellValue -Row $pr -Field 'RequestPath'
+                if (($probeProtocol -eq 'Http' -or $probeProtocol -eq 'Https') -and $requestPath) {
+                    $probeParams['RequestPath'] = $requestPath
+                }
+
+                $lb = Add-AzLoadBalancerProbeConfig @probeParams
+                $changed = $true
+                Write-Info "LB Probe 추가: $lbName/$probeName"
             }
         }
 
-        # 8. 상태 프로브(Probes) 클린 생성 단계 시작
-        $currentLbProbes = @($probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName })
-        foreach ($pr in $currentLbProbes) {
-            if (-not (Test-IsEnabledRow -Row $pr)) { continue }
-            $probeName = Get-CellValue -Row $pr -Field 'ProbeName'
-            $probePortText = Get-CellValue -Row $pr -Field 'Port'
-            if (-not $probeName -or -not $probePortText) { continue }
-            
-            $probeIntervalText = Get-CellValue -Row $pr -Field 'IntervalInSeconds'
-            $probeCountText = Get-CellValue -Row $pr -Field 'ProbeCount'
-            $probeProtocol = Convert-LbProtocol -Value (Get-CellValue -Row $pr -Field 'Protocol') -Default 'Tcp'
-
-            $probeParams = @{ LoadBalancer = $lb; Name = $probeName; Port = [int]$probePortText; Protocol = $probeProtocol }
-            if ($probeIntervalText) { $probeParams['IntervalInSeconds'] = [int]$probeIntervalText }
-            if ($probeCountText) { $probeParams['ProbeCount'] = [int]$probeCountText }
-
-            if (-not $Context.DryRun) {
-                $lb | Add-AzLoadBalancerProbeConfig @probeParams | Out-Null
-                Write-Info "상태 프로브 추가 구성 적용: $probeName"
-            }
-        }
-        if (-not $Context.DryRun -and $currentLbProbes.Count -gt 0) {
-            $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-            $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
-        }
-
-        # 9. 부하 분산 규칙(Rules) 클린 생성 단계 및 최종 바인딩 완료
-        $currentLbRules = @($ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName })
-        foreach ($rr in $currentLbRules) {
-            if (-not (Test-IsEnabledRow -Row $rr)) { continue }
+        if ($deployRules) {
+            $targetRules = $ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName }
+            foreach ($rr in $targetRules) {
             $ruleName = Get-CellValue -Row $rr -Field 'RuleName'
-            $feName = Get-CellValue -Row $rr -Field 'FEName'
-            
-            $bePoolName = Get-CellValue -Row $rr -Field 'BEPoolName'
-            $fePortText = Get-CellValue -Row $rr -Field 'FEPort'
-            $bePortText = Get-CellValue -Row $rr -Field 'BEPort'
-            $protocol = Convert-LbProtocol -Value (Get-CellValue -Row $rr -Field 'Protocol') -Default 'Tcp'
+            if (-not $ruleName) { continue }
+            if ($lb.LoadBalancingRules | Where-Object Name -eq $ruleName) { continue }
 
-            if (-not $ruleName -or -not $fePortText) { continue }
+            $ruleFeName = Get-CellValue -Row $rr -Field 'FEName'
+            if (-not $ruleFeName) { $ruleFeName = $feName }
+            $ruleBePoolName = Get-CellValue -Row $rr -Field 'BEPoolName'
+            if (-not $ruleBePoolName) { $ruleBePoolName = $bePoolName }
 
-            if (-not $Context.DryRun) {
-                $ruleFrontend = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName | Select-Object -First 1
-                $ruleBackend = $lb.BackendAddressPools | Where-Object Name -eq $bePoolName | Select-Object -First 1
-                
-                $ruleParams = @{
-                    LoadBalancer = $lb; Name = $ruleName; Protocol = $protocol; FrontendPort = [int]$fePortText
-                    BackendPort = if ($bePortText) { [int]$bePortText } else { [int]$fePortText }
-                    FrontendIpConfiguration = $ruleFrontend; BackendAddressPool = $ruleBackend
-                    EnableTcpReset = $true
+            $ruleFrontend = $lb.FrontendIpConfigurations | Where-Object Name -eq $ruleFeName | Select-Object -First 1
+            if (-not $ruleFrontend) {
+                throw "LB Rule 생성 실패: Frontend를 찾을 수 없습니다. LB=$lbName, Rule=$ruleName, FEName=$ruleFeName"
+            }
+            $ruleBackend = $lb.BackendAddressPools | Where-Object Name -eq $ruleBePoolName | Select-Object -First 1
+            if (-not $ruleBackend) {
+                throw "LB Rule 생성 실패: BackendPool을 찾을 수 없습니다. LB=$lbName, Rule=$ruleName, BEPoolName=$ruleBePoolName"
+            }
+
+            $enableHaPorts = Convert-ToBoolean -Value (Get-CellValue -Row $rr -Field 'EnableHAports') -Default $false
+            $frontendPortText = Get-CellValueAny -Row $rr -Fields @('FEPort','FrontendPort')
+            $backendPortText = Get-CellValueAny -Row $rr -Fields @('BEPort','BackendPort')
+            $protocol = Convert-LbProtocol -Value (Get-CellValueAny -Row $rr -Fields @('FEProtocol','Protocol')) -Default 'Tcp'
+
+            if ($enableHaPorts) {
+                $protocol = 'All'
+                $frontendPortText = '0'
+                $backendPortText = '0'
+            } elseif (-not $frontendPortText -or -not $backendPortText) {
+                Write-Info "[SKIP] LB Rule 필수값 누락(FEPort/BEPort): $lbName/$ruleName"
+                continue
+            }
+            $frontendPort = [int]$frontendPortText
+            $backendPort = [int]$backendPortText
+
+            $idleTimeoutValue = Get-CellValueAny -Row $rr -Fields @('IdleTimeoutInMinutes','IdleTimeouInMin')
+            if (-not $idleTimeoutValue) { $idleTimeoutValue = '4' }
+
+            $ruleParams = @{
+                LoadBalancer = $lb
+                Name = $ruleName
+                Protocol = $protocol
+                FrontendPort = $frontendPort
+                BackendPort = $backendPort
+                FrontendIpConfiguration = $ruleFrontend
+                BackendAddressPool = @($ruleBackend)
+                LoadDistribution = (Convert-LbLoadDistribution -Value (Get-CellValue -Row $rr -Field 'LoadDistribution'))
+                IdleTimeoutInMinutes = [int]$idleTimeoutValue
+            }
+
+            $probeName = Get-CellValue -Row $rr -Field 'ProbeName'
+            if ($probeName) {
+                $ruleProbe = $lb.Probes | Where-Object Name -eq $probeName | Select-Object -First 1
+                if ($ruleProbe) {
+                    $ruleParams['Probe'] = $ruleProbe
+                } else {
+                    Write-WarnLog "LB Rule의 Probe를 찾지 못해 Probe 없이 생성합니다. LB=$lbName, Rule=$ruleName, Probe=$probeName"
                 }
-                $probeName = Get-CellValue -Row $rr -Field 'ProbeName'
-                if ($probeName) {
-                    $ruleProbe = $lb.Probes | Where-Object Name -eq $probeName | Select-Object -First 1
-                    if ($ruleProbe) { $ruleParams['Probe'] = $ruleProbe }
-                }
-                $lb | Add-AzLoadBalancerRuleConfig @ruleParams | Out-Null
-                Write-Info "부하 분산 규칙 추가 구성 적용: $ruleName"
+            }
+
+            if (Convert-ToBoolean -Value (Get-CellValue -Row $rr -Field 'EnableFloatingIP') -Default $false) {
+                $ruleParams['EnableFloatingIP'] = $true
+            }
+            if (Convert-ToBoolean -Value (Get-CellValueAny -Row $rr -Fields @('EnableTcpReset','EnableTcpReset ')) -Default $false) {
+                $ruleParams['EnableTcpReset'] = $true
+            }
+            if (Convert-ToBoolean -Value (Get-CellValueAny -Row $rr -Fields @('DisableOutboundSnat','DisableOutboundSNAT')) -Default $false) {
+                $ruleParams['DisableOutboundSNAT'] = $true
+            }
+
+            $lb = Add-AzLoadBalancerRuleConfig @ruleParams
+            $changed = $true
+            Write-Info "LB Rule 추가: $lbName/$ruleName"
             }
         }
-        if (-not $Context.DryRun -and $currentLbRules.Count -gt 0) {
-            $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-            Write-Info "로드밸런서 무중단 영역중복 스왑 및 하위 컴포넌트 전체 재배포 완료: $lbName"
+
+        if ($changed) {
+            $lb | Set-AzLoadBalancer | Out-Null
+            Write-Info "LB 업데이트 완료: $lbName"
+        } else {
+            Write-Info "LB 변경 없음: $lbName"
         }
     }
+
     End-Step 'Deploy-LoadBalancers'
 }
 
