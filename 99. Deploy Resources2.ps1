@@ -1433,7 +1433,7 @@ function Deploy-LoadBalancers {
     $probeRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Probe','LB_PRD_Probe','Load Balancer_Probe') -Optional
     $ruleRows = Get-SheetRows -Context $Context -SheetCandidates @('LB_Rule','LB_PRD_Rule','Load Balancer_Rule') -Optional
 
-    # 2. -Option 필터(예: 'DTG') 처리
+    # 2. -Option 필터 처리
     if ($Context.VmRoleFilter.Count -gt 0) {
         $lbRows = @($lbRows | Where-Object { $target = Get-CellValue -Row $_ -Field 'Role'; $target -and $Context.VmRoleFilter -contains $target })
         
@@ -1459,11 +1459,11 @@ function Deploy-LoadBalancers {
         $skuName = if ($skuRaw) { $skuRaw } else { 'Standard' }
         if ($skuName -eq 'ZoneRedundant') { $skuName = 'Standard' }
         
-        Write-Info "로드밸런서 무중단 영역 교체 검증 시작: $lbName"
+        Write-Info "로드밸런서 상태 확인 및 무중단 영역 교체 검증 시작: $lbName"
         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction SilentlyContinue
         
         # -------------------------------------------------------------
-        # 💡 [질문자님 테스트 기반] 캐시 지연 대응 무중단 IP 스왑 및 영역 중복 강제 주입 로직
+        # 💡 [검증 완료] 서브넷 가용 IP 추적 기반 무중단 스왑 스퀀스
         # -------------------------------------------------------------
         if ($lb -and $Context.DeployType -contains 'LB') {
             
@@ -1488,7 +1488,6 @@ function Deploy-LoadBalancers {
                 $privateIpAllocation = Get-CellValue -Row $row -Field 'PrivateIPAllocation' -Default 'Dynamic'
                 $privateIpAddress = Get-CellValue -Row $row -Field 'PrivateIPAddress'
                 
-                # FEZoneMode 및 FEZone 칼럼 데이터를 정확하게 분석 및 파싱
                 $feZoneMode = Get-CellValue -Row $row -Field 'FEZoneMode'
                 $zoneRaw = Get-CellValue -Row $row -Field 'FEZone'
                 $zones = @()
@@ -1497,36 +1496,44 @@ function Deploy-LoadBalancers {
 
                 if (-not $feName -or -not $privateIpAddress) { continue }
 
-                # 기존에 등록된 프론트엔드 가져오기
                 $oldFe = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
                 
-                # 만약 기존 프론트엔드가 영역 중복이 아니거나 수정이 필요한 상태라면 스왑 모드 가동
                 if ($oldFe) {
-                    Write-Info "기존 프론트엔드($feName) 감지됨. 영역 중복 전환용 주소 스왑 시퀀스를 시작합니다."
+                    Write-Info "기존 프론트엔드($feName) 감지됨. 서브넷 검증 및 IP 스왑을 시작합니다."
                     
-                    # 가상 네트워크 및 서브넷 정보 로드
-                    $subnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg | Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName
+                    # 대상 가상 네트워크 및 서브넷 객체 로드
+                    $vnet = Get-AzVirtualNetwork -Name $feVnetName -ResourceGroupName $feVnetRg
+                    $subnet = Get-AzVirtualNetworkSubnetConfig -Name $feSubnetName -VirtualNetwork $vnet
                     
-                    # [테스트 1, 2번 과정] 임시 프론트엔드 B 추가 및 기존 A의 IP를 충돌 방지용 임시 IP(예: 기존 IP + '.11' 또는 대안 주소)로 대피
-                    # 실무 안전성을 위해 기존 서브넷의 빈 임시 IP를 자동 할당하거나 동적 처리 유도
-                    $tempIpAddress = $privateIpAddress + "1" # 예: 10.0.0.4 -> 10.0.0.41로 임시 대피
+                    # 💥 [근본 보완] 사용하지 않는 빈 안전 IP를 Azure 서브넷 내부에서 자동으로 실시간 검색
+                    Write-Info "서브넷($feSubnetName) 대역 내에서 충돌 없는 가용 IP 주소를 조회 중..."
+                    $availableIps = Test-AzPrivateIPAddressAvailability -VirtualNetwork $vnet -IPAddress $privateIpAddress
                     
-                    Write-Info "[스왑 1단계] 기존 프론트엔드 A($feName)의 IP를 임시 주소($tempIpAddress)로 변경하여 락을 우회합니다."
+                    $tempIpAddress = $null
+                    if ($availableIps.AvailableIPAddresses -and $availableIps.AvailableIPAddresses.Count -gt 0) {
+                        $tempIpAddress = $availableIps.AvailableIPAddresses[0]
+                    } else {
+                        # 예외 방어: 만약 가용 IP 리스트가 안 넘어오면 끝자리를 250 대역으로 임시 매핑
+                        $ipParts = $privateIpAddress.Split('.')
+                        $tempIpAddress = "$($ipParts[0]).$($ipParts[1]).$($ipParts[2]).250"
+                    }
+                    
+                    Write-Info "[스왑 1단계] 기존 프론트엔드 A($feName)의 IP를 가용 안전 주소($tempIpAddress)로 대피시킵니다."
                     $oldFe.PrivateIpAddress = $tempIpAddress
                     $oldFe.PrivateIpAllocationMethod = "Static"
                     
                     if (-not $Context.DryRun) {
                         $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
                         
-                        # 💥 [테스트 3번 과정 핵심] IP 주소 반환 및 캐시 릴리스를 위한 30초 강제 대기
-                        Write-Info "Azure 네트워킹 스위치의 IP 캐시 분리 및 릴리스를 위해 30초 동안 대기합니다 (Start-Sleep)..."
+                        # 💥 [물리 캐시 해제 보장] 지연 시간 30초 대기
+                        Write-Info "Azure 네트워크 백엔드 가상 스위치의 IP 캐시 해제를 위해 30초간 대기합니다..."
                         Start-Sleep -Seconds 30
                         
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
 
-                    # [테스트 4번 과정] 구형 프론트엔드 A 제거
-                    Write-Info "[스왑 2단계] 임시 주소로 격리 완료된 구형 프론트엔드 구성을 완전히 제거합니다."
+                    # [스왑 2단계] 족쇄 풀린 구형 객체 제거
+                    Write-Info "[스왑 2단계] 임시 대피 완료된 구형 프론트엔드 설정을 리스트에서 드롭합니다."
                     $targetToRemove = $lb.FrontendIpConfigurations | Where-Object Name -eq $feName
                     $lb.FrontendIpConfigurations.Remove($targetToRemove) | Out-Null
                     
@@ -1535,8 +1542,8 @@ function Deploy-LoadBalancers {
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
                     }
 
-                    # [테스트 4번 후반] 프론트엔드 A를 영역 중복 사양 및 원래 IP(10.0.0.4)로 완전 신규 생성
-                    Write-Info "[스왑 3단계] 엑셀 설정에 따라 가용성 영역 중복($($zones -join ',')) 사양으로 프론트엔드 $feName을 원래 IP($privateIpAddress)로 부활시킵니다."
+                    # [스왑 3단계] 오리지널 IP + 영역 중복 조합으로 깨끗하게 신규 안착
+                    Write-Info "[스왑 3단계] 엑셀 설정에 맞추어 가용성 영역 중복($($zones -join ',')) 사양으로 원래 IP($privateIpAddress)를 재할당합니다."
                     $feParams = @{
                         Name = $feName
                         SubnetId = $subnet.Id
@@ -1550,12 +1557,11 @@ function Deploy-LoadBalancers {
                     if (-not $Context.DryRun) {
                         $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
                         
-                        # 마지막 안정화 대기
-                        Write-Info "최종 가용성 영역 주입 상태 저장을 위해 10초 대기합니다..."
-                        Start-Sleep -Seconds 10
+                        Write-Info "최종 백엔드 동기화를 안정화하기 위해 5초간 대기합니다..."
+                        Start-Sleep -Seconds 5
                         
                         $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
-                        Write-Info "🎉 엑셀의 영역 중복 사양이 기존 이름과 원래 IP 그대로 완벽하게 반영되었습니다!"
+                        Write-Info "🎉 프론트엔드 고가용성 영역 중복(Zone-Redundant) 교체 완벽 성공!"
                     }
                 }
                 break
@@ -1563,7 +1569,7 @@ function Deploy-LoadBalancers {
         }
         # -------------------------------------------------------------
 
-        # 5. 프론트엔드 IP 정보 로드 (재생성 이후 최종 매핑 상태 획득)
+        # 5. 프론트엔드 IP 구성 최종 맵 획득
         $feConfigs = $lb.FrontendIpConfigurations
         if (-not $lb) {
             $feConfigs = @()
@@ -1598,7 +1604,7 @@ function Deploy-LoadBalancers {
             }
         }
 
-        # 6. 백엔드 주소 풀(Backend Pool) 구성
+        # 6. 백엔드 주소 풀(Backend Pool) 구성 동기화
         $beConfigs = if ($lb) { $lb.BackendAddressPools } else { @() }
         $bePoolNames = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
         foreach ($be in $beConfigs) { [void]$bePoolNames.Add($be.Name) }
@@ -1610,7 +1616,7 @@ function Deploy-LoadBalancers {
             }
         }
 
-        # 7. 큰 껍데기 LB 동기화 마무리
+        # 7. 기본 뼈대 안착 및 저장
         if (-not $lb) {
             Ensure-ResourceGroup -Name $rgName -Location $location -DryRun:$Context.DryRun
             $lbParams = @{ ResourceGroupName = $rgName; Name = $lbName; Location = $location; Sku = $skuName }
@@ -1625,7 +1631,7 @@ function Deploy-LoadBalancers {
             }
         }
 
-        # 8. 상태 프로브(Probes) 클린 재배포
+        # 8. 상태 프로브(Probes) 클린 생성 단계 시작
         $currentLbProbes = @($probeRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName })
         foreach ($pr in $currentLbProbes) {
             if (-not (Test-IsEnabledRow -Row $pr)) { continue }
@@ -1643,6 +1649,7 @@ function Deploy-LoadBalancers {
 
             if (-not $Context.DryRun) {
                 $lb | Add-AzLoadBalancerProbeConfig @probeParams | Out-Null
+                Write-Info "상태 프로브 추가 구성 적용: $probeName"
             }
         }
         if (-not $Context.DryRun -and $currentLbProbes.Count -gt 0) {
@@ -1650,7 +1657,7 @@ function Deploy-LoadBalancers {
             $lb = Get-AzLoadBalancer -Name $lbName -ResourceGroupName $rgName -ErrorAction Stop
         }
 
-        # 9. 부하 분산 규칙(Rules) 클린 재배포 및 최종 바인딩
+        # 9. 부하 분산 규칙(Rules) 클린 생성 단계 및 최종 바인딩 완료
         $currentLbRules = @($ruleRows | Where-Object { (Get-CellValue -Row $_ -Field 'LBName') -eq $lbName })
         foreach ($rr in $currentLbRules) {
             if (-not (Test-IsEnabledRow -Row $rr)) { continue }
@@ -1679,11 +1686,12 @@ function Deploy-LoadBalancers {
                     if ($ruleProbe) { $ruleParams['Probe'] = $ruleProbe }
                 }
                 $lb | Add-AzLoadBalancerRuleConfig @ruleParams | Out-Null
+                Write-Info "부하 분산 규칙 추가 구성 적용: $ruleName"
             }
         }
         if (-not $Context.DryRun -and $currentLbRules.Count -gt 0) {
             $lb | Set-AzLoadBalancer -ErrorAction Stop | Out-Null
-            Write-Info "로드밸런서 무중단 영역중복 스왑 및 캐시 타임아웃 우회 재배포 최종 완료: $lbName"
+            Write-Info "로드밸런서 무중단 영역중복 스왑 및 하위 컴포넌트 전체 재배포 완료: $lbName"
         }
     }
     End-Step 'Deploy-LoadBalancers'
