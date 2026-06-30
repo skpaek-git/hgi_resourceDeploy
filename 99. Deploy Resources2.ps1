@@ -1419,12 +1419,12 @@ function Get-LbZoneArray {
 
     $modeUpper = $zoneMode.Trim().ToUpperInvariant()
 
-    # ZONAL 이거나 ZONEREDUNDANT 일 때 모두 영역 값을 처리하도록 변경
+    # ZONAL 이거나 ZONEREDUNDANT 모두 영역 값이 있을 때 추출
     if ($modeUpper -eq 'ZONAL' -or $modeUpper -eq 'ZONEREDUNDANT') {
         $zoneRaw = Get-CellValueAny -Row $Row -Fields @('FEZone','FrontendZone')
         if ($zoneRaw) {
-            # "1,2,3" 같은 문자열을 콤마로 쪼개고 앞뒤 공백을 제거하여 배열로 만듭니다.
-            return @($zoneRaw.ToString().Split(',')).ForEach({ $_.Trim() })
+            # 확실하게 [string[]] 배열 형태로 쪼개어 반환
+            return [string[]](@($zoneRaw.ToString().Split(',')).ForEach({ $_.Trim() }))
         }
     }
     return @()
@@ -1533,8 +1533,8 @@ function Deploy-LoadBalancers {
             if ($privateIpAllocation.ToUpperInvariant() -eq 'STATIC' -and $privateIpAddress) {
                 $feParams['PrivateIpAddress'] = $privateIpAddress
             }
-            if ($zones.Count -gt 0) {
-                $feParams['Zone'] = $zones
+            if ($null -ne $zones -and $zones.Count -gt 0) {
+            $feParams['Zone'] = [System.String[]]$zones
             }
 
             $frontendConfig = New-AzLoadBalancerFrontendIpConfig @feParams
